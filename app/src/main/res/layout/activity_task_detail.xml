@@ -1,0 +1,49 @@
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="25">
+    <FrameLayout
+        android:layout_weight="10"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <ImageView
+            android:id="@+id/taskDetailImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/vegetables" />
+
+        <ImageView
+            android:id="@+id/taskDetailBack"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="fitXY"
+            android:layout_gravity="top|left"
+            android:src="@mipmap/glyph_back_arrow" />
+
+    </FrameLayout>
+    <TextView
+        android:id="@+id/taskDetailTitle"
+        android:layout_weight="2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textSize="22sp"
+        android:layout_margin="16dp"
+        android:gravity="center|bottom"
+        android:text="Предпочитаете есть?"/>
+    <TextView
+        android:id="@+id/taskDetailText"
+        android:layout_weight="13"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textSize="18sp"
+        android:textColor="@color/colorBlack"
+        android:text="Lionel Messi is the greatest player of all time. Argue about it all you want, but facts are facts. Being considered the greatest of all time takes a little more than just talent. In the world of soccer, especially at this time, impressive statistics don’t do much to make you stand out — let alone be considered the the best soccer player of all time. Though if we are talking purely statistics then, in most categories, Messi is outperforming every player, with Cristiano Ronaldo ."
+        android:layout_margin="16dp"/>
+</LinearLayout>

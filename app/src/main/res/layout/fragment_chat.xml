@@ -1,0 +1,98 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="kz.production.kuanysh.tarelka.ui.fragments.MainTaskFragment">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/main_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="@color/colorPrimary"
+        >
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/chat_mail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Консультация"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/toolbarTitle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.433"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.515" />
+
+            <ImageView
+                android:id="@+id/chat_new_mail"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="15dp"
+                android:src="@mipmap/mail"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.Toolbar>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:layout_below="@id/main_toolbar"
+        android:weightSum="15">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/chat_recycler"
+            android:layout_weight="14.2"
+            android:layout_width="match_parent"
+            android:scrollbars="vertical"
+            android:background="@drawable/rectangle_left_top_right"
+            android:layout_height="0dp">
+
+        </android.support.v7.widget.RecyclerView>
+        <LinearLayout
+            android:layout_weight="0.8"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_margin="5dp"
+            android:padding="3dp"
+            android:background="@drawable/rect_with_corner"
+            android:orientation="horizontal"
+            android:weightSum="10">
+            <EditText
+                android:id="@+id/chat_message"
+                android:layout_weight="8"
+                android:layout_width="0dp"
+                android:layout_marginLeft="15dp"
+                android:textSize="14sp"
+                android:hint="Написать сообщение..."
+                android:inputType="textMultiLine"
+                android:background="@drawable/shape_rect_without_border"
+                android:layout_height="match_parent"
+                />
+            <TextView
+                android:id="@+id/chat_send"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="@color/colorMoreGrey"
+                android:textSize="16sp"
+                android:text="Отпр."/>
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_main"
+        android:icon="@mipmap/list_1"
+        android:title=""/>
+
+    <item
+        android:id="@+id/navigation_chat"
+        android:icon="@mipmap/dialog_1"
+        android:title=""/>
+
+    <item
+        android:id="@+id/navigation_useful"
+        android:icon="@mipmap/magic_1"
+        android:title=""/>
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@mipmap/profile_1"
+        android:title=""/>
+
+</menu>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="kz.production.kuanysh.tarelka">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name=".Tarelka"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.activities.mainactivity.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan|adjustResize" />
+        <activity
+            android:name=".ui.welcome.SplashScreenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.welcome.CreateAimActivity"
+            android:theme="@style/Fullscreen" />
+        <activity
+            android:name=".ui.welcome.ChooseFoodActivity"
+            android:theme="@style/Fullscreen" />
+        <activity
+            android:name=".ui.activities.TaskDetailActivity"
+            android:theme="@style/Fullscreen" />
+        <activity
+            android:name=".ui.activities.test.TestActivity"
+            android:theme="@style/Fullscreen" />
+        <activity android:name=".ui.welcome.LoginActivity">
+        </activity>
+
+        <activity
+            android:name="com.facebook.accountkit.ui.AccountKitActivity"
+            android:theme="@style/AppLoginTheme"
+            tools:replace="android:theme">
+        </activity>
+
+        <meta-data android:name="com.facebook.accountkit.ApplicationName" android:value="@string/app_name" />
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" />
+        <meta-data android:name="com.facebook.accountkit.ClientToken" android:value="@string/account_kit_client_token" />
+
+    </application>
+
+</manifest>

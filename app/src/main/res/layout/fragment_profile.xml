@@ -1,0 +1,187 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorWhite"
+    android:orientation="vertical"
+    tools:context="kz.production.kuanysh.tarelka.ui.fragments.ProfileFragment"
+    android:weightSum="25">
+    <FrameLayout
+        android:layout_weight="11.5"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:weightSum="10">
+
+            <ImageView
+                android:id="@+id/profile_edit"
+                android:layout_weight="2"
+                android:layout_gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_height="0dp"
+                android:src="@mipmap/rename" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_weight="3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:weightSum="10">
+                <View
+                    android:layout_weight="4"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+
+                </View>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_photo"
+                    android:layout_weight="2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:src="@drawable/android_circle"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="@color/colorWhite"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true" />
+                <TextView
+                    android:id="@+id/profile_pro"
+                    android:layout_weight="4"
+                    android:layout_width="0dp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="right"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorWhite"
+                    android:layout_height="match_parent"
+                    android:text="Upgrade PRO"/>
+            </LinearLayout>
+
+
+        </LinearLayout>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:background="@color/colorWhite"
+            android:scaleType="fitXY"
+            android:layout_gravity="bottom"
+            >
+
+        </View>
+        <android.support.v7.widget.CardView
+            android:layout_width="fill_parent"
+            android:layout_height="85dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:scaleType="fitXY"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="7dp"
+            android:layout_marginBottom="3dp"
+            app:cardBackgroundColor="@color/colorWhite"
+            android:layout_gravity="bottom|center">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="2">
+                <TextView
+                    android:id="@+id/profile_name"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:text="Серик Байдылда"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:gravity="center_vertical|center_horizontal"/>
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:weightSum="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/profile_age"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="25 лет"
+                        android:textSize="18sp"
+                        android:textAppearance="@style/TextAppearance.AppCompat" />
+
+                    <TextView
+                        android:id="@+id/profile_weight"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="70 кг"
+                        android:textSize="18sp"
+                        android:textAppearance="@style/TextAppearance.AppCompat" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </android.support.v7.widget.CardView>
+
+    </FrameLayout>
+    <LinearLayout
+        android:layout_weight="13.5"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        android:weightSum="8">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.8"
+            android:gravity="left|center"
+            android:textSize="15sp"
+            android:text="Цель" />
+
+        <TextView
+            android:id="@+id/profile_aim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:scrollbars="vertical"
+            android:layout_marginTop="15dp"
+            android:gravity="left|top"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:text="Stu Unger Rise And Fall Of A Lord of the "/>
+
+        <android.support.v7.widget.CardView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:cardElevation="3dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            app:cardCornerRadius="3dp">
+            <TextView
+                android:id="@+id/profile_phone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="+7 777 505 66 33"
+                android:paddingLeft="15dp"
+                android:gravity="left|center"
+                android:textColor="@color/colorMoreGrey"
+                android:textSize="18sp"/>
+
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+</LinearLayout>
