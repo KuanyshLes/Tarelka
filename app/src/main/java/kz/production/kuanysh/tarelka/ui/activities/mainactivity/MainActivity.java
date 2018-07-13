@@ -1,7 +1,13 @@
 package kz.production.kuanysh.tarelka.ui.activities.mainactivity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,10 +28,14 @@ import com.facebook.accountkit.ui.AccountKitActivity;
 import com.facebook.accountkit.ui.AccountKitConfiguration;
 import com.facebook.accountkit.ui.LoginType;
 
+import java.util.Calendar;
+import java.util.Random;
+
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import kz.production.kuanysh.tarelka.R;
+import kz.production.kuanysh.tarelka.push.AlarmReceiver;
 import kz.production.kuanysh.tarelka.ui.base.BaseActivity;
 import kz.production.kuanysh.tarelka.ui.welcome.LoginActivity;
 import kz.production.kuanysh.tarelka.utils.AppConst;
@@ -49,6 +59,7 @@ public class MainActivity extends BaseActivity implements MainMvpView{
     public static final String TAG_PROFILE="profile";
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,32 +70,23 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         mPresenter.onAttach(this);
 
         setUp();
+        if(getIntent().getStringExtra(TAG_PROGRESS)!=null){
+            if(getIntent().getStringExtra(TAG_PROGRESS).equals(TAG_PROGRESS)){
+                mPresenter.onProgressClick();
+            }
+            else{
+                mPresenter.onMainCLick();
+            }
+        }else{
+            mPresenter.onMainCLick();
+        }
+
+
+        mPresenter.getMvpView().fireNotificationMorning();
+        mPresenter.getMvpView().fireNotificationAfternoon();
+        mPresenter.getMvpView().fireNotificationEvening();
         mPresenter.onMainCLick();
 
-        AccountKit.getCurrentAccount(new AccountKitCallback<Account>() {
-            @Override
-            public void onSuccess(final Account account) {
-                // Get Account Kit ID
-                String accountKitId = account.getId();
-
-                // Get phone number
-                PhoneNumber phoneNumber = account.getPhoneNumber();
-                String phoneNumberString = phoneNumber.toString();
-
-                // Surface the result to your user in an appropriate way.
-                Toast.makeText(
-                        MainActivity.this,
-                        phoneNumberString,
-                        Toast.LENGTH_LONG)
-                        .show();
-            }
-
-            @Override
-            public void onError(final AccountKitError error) {
-                Log.e("AccountKit",error.toString());
-                // Handle Error
-            }
-        });
     }
 
     @Override
@@ -142,7 +144,7 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         getSupportFragmentManager()
                 .beginTransaction()
                 .disallowAddToBackStack()
-                .add(R.id.content_frame, MainTaskFragment.newInstance(), TAG_MAINTASK)
+                .replace(R.id.content_frame, MainTaskFragment.newInstance(), TAG_MAINTASK)
                 .commit();
     }
 
@@ -151,7 +153,7 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         getSupportFragmentManager()
                 .beginTransaction()
                 .disallowAddToBackStack()
-                .add(R.id.content_frame, ChatFragment.newInstance(), TAG_CHAT)
+                .replace(R.id.content_frame, ChatFragment.newInstance(), TAG_CHAT)
                 .commit();
     }
 
@@ -160,7 +162,7 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         getSupportFragmentManager()
                 .beginTransaction()
                 .disallowAddToBackStack()
-                .add(R.id.content_frame, ProfileFragment.newInstance(), TAG_PROFILE)
+                .replace(R.id.content_frame, ProfileFragment.newInstance(), TAG_PROFILE)
                 .commit();
     }
 
@@ -169,8 +171,52 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         getSupportFragmentManager()
                 .beginTransaction()
                 .disallowAddToBackStack()
-                .add(R.id.content_frame, ProgressFragment.newInstance(), TAG_PROGRESS)
+                .replace(R.id.content_frame, ProgressFragment.newInstance(), TAG_PROGRESS)
                 .commit();
+    }
+
+    @Override
+    public void fireNotificationMorning() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+        Random ran = new Random();
+        int x = ran.nextInt(1000) + 5;
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, x, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 14);
+        cal.set(Calendar.MINUTE, 2);
+        cal.set(Calendar.SECOND, 0);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
+    }
+    @Override
+    public void fireNotificationAfternoon() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+        Random ran = new Random();
+        int x = ran.nextInt(1000) + 5;
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, x, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 14);
+        cal.set(Calendar.MINUTE, 3);
+        cal.set(Calendar.SECOND, 0);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
+    }
+
+    @Override
+    public void fireNotificationEvening() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+        Random ran = new Random();
+        int x = ran.nextInt(1000) + 5;
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, x, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 14);
+        cal.set(Calendar.MINUTE, 4);
+        cal.set(Calendar.SECOND, 0);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
     }
 
     @Override

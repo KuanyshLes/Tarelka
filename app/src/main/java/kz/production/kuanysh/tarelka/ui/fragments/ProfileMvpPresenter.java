@@ -10,4 +10,7 @@ import kz.production.kuanysh.tarelka.ui.base.MvpPresenter;
 public interface ProfileMvpPresenter <V extends ProfileMvpView> extends MvpPresenter<V> {
 
     void onEditClick();
+
+
+    void onViewPrepared();
 }

@@ -11,7 +11,11 @@ public interface TestMvpPresenter <V extends TestMvpView> extends MvpPresenter<V
 
     void onAnswerClick();
 
-    void onNextClick();
+    void onNextClick(int position);
 
     void onCancellClick();
+
+    void onViewPrepared(String id);
+
+    void sendResult(int quiz_id,int max_answer,int correct_answer);
 }

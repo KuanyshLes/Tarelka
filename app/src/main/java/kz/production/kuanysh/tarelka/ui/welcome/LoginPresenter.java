@@ -21,10 +21,9 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
-import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.data.DataManager;
+import kz.production.kuanysh.tarelka.data.network.model.profile.Authorization;
 import kz.production.kuanysh.tarelka.ui.base.BasePresenter;
-import kz.production.kuanysh.tarelka.utils.CommonUtils;
 import kz.production.kuanysh.tarelka.utils.rx.SchedulerProvider;
 
 /**
@@ -46,9 +45,65 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V>
 
     @Override
     public void onPhone(String phone) {
-        if(phone!=null){
+        if(phone==null){
             getMvpView().onError("Ошибка:(");
         }
+        getCompositeDisposable().add(getDataManager().getApiHelper().getAccessTokenAndLogin(phone)
+                                        .subscribeOn(getSchedulerProvider().io()).
+                                        observeOn(getSchedulerProvider().ui())
+                .subscribe(new Consumer<Authorization>() {
+                    @Override
+                    public void accept(Authorization response) throws Exception {
+                        getMvpView().showMessage("Accept");
+                        String str="";
+                        /*if(response.getResult().getGoals()==null || response.getResult().getGoals().equals("")){
+                            StringBuilder builder = new StringBuilder();
+                            for(String s : response.getResult().getGoals()) {
+                                builder.append(s+",");
+                            }
+                            str = builder.toString();
+                        }*/
+                        getDataManager().updateUserInfo(
+                                response.getResult().getToken(),
+                                response.getResult().getId(),
+                                DataManager.LoggedInMode.LOGGED_IN_MODE_SERVER,
+                                response.getResult().getFio(),
+                                response.getResult().getStatus(),
+                                response.getResult().getPhone(),
+                                response.getResult().getAvatar(),
+                                response.getResult().getAge(),
+                                response.getResult().getWeight(),
+                                str,
+                                response.getResult().getHeight());
+
+                        if (!isViewAttached()) {
+                            return;
+                        }
+                        getMvpView().hideLoading();
+                        if(response.getStatusCode()==200){
+                            getMvpView().openAimsActivity();
+                        }else if(response.getStatusCode()==201){
+                            getMvpView().openMainActivity();
+                        }
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                        if (!isViewAttached()) {
+                            return;
+                        }
+
+                        getMvpView().hideLoading();
+
+                        // handle the login error here
+                        if (throwable instanceof ANError) {
+                            ANError anError = (ANError) throwable;
+                            handleApiError(anError);
+                        }
+                    }
+                }));
 
 
     }

@@ -18,6 +18,8 @@ package kz.production.kuanysh.tarelka.data.prefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -36,10 +38,17 @@ public class AppPreferencesHelper implements PreferencesHelper {
 
     private static final String PREF_KEY_USER_LOGGED_IN_MODE = "PREF_KEY_USER_LOGGED_IN_MODE";
     private static final String PREF_KEY_CURRENT_USER_ID = "PREF_KEY_CURRENT_USER_ID";
-    private static final String PREF_KEY_CURRENT_USER_NAME = "PREF_KEY_CURRENT_USER_NAME";
     private static final String PREF_KEY_ACCESS_TOKEN = "PREF_KEY_ACCESS_TOKEN";
-    private static final String PREF_KEY_CURRENT_USER_PHONE= "PREF_KEY_CURRENT_USER_PHONE";
+
+    private static final String PREF_KEY_CURRENT_USER_NAME = "PREF_KEY_CURRENT_USER_NAME";
     private static final String PREF_KEY_CURRENT_USER_STATUS= "PREF_KEY_CURRENT_USER_STATUS";
+    private static final String PREF_KEY_CURRENT_USER_IMAGE= "PREF_KEY_CURRENT_USER_IMAGE";
+    private static final String PREF_KEY_CURRENT_USER_AGE= "PREF_KEY_CURRENT_USER_AGE";
+    private static final String PREF_KEY_CURRENT_USER_WEIGHT= "PREF_KEY_CURRENT_USER_WEIGHT";
+    private static final String PREF_KEY_CURRENT_USER_AIMS= "PREF_KEY_CURRENT_USER_AIMS";
+    private static final String PREF_KEY_CURRENT_USER_PHONE= "PREF_KEY_CURRENT_USER_PHONE";
+    private static final String PREF_KEY_CURRENT_USER_HEIGHT= "PREF_KEY_CURRENT_USER_HEIGHT";
+
 
 
     private final SharedPreferences mPrefs;
@@ -57,7 +66,7 @@ public class AppPreferencesHelper implements PreferencesHelper {
     }
 
     @Override
-    public void setCurrentUserId(Long userId) {
+    public void setCurrentUserId(Integer userId) {
         long id = userId == null ? AppConstants.NULL_INDEX : userId;
         mPrefs.edit().putLong(PREF_KEY_CURRENT_USER_ID, id).apply();
     }
@@ -104,6 +113,57 @@ public class AppPreferencesHelper implements PreferencesHelper {
     @Override
     public void setPhoneNumber(String phone) {
         mPrefs.edit().putString(PREF_KEY_CURRENT_USER_PHONE, phone).apply();
+    }
+
+    @Override
+    public String getImage() {
+        return mPrefs.getString(PREF_KEY_CURRENT_USER_IMAGE, null);
+    }
+
+    @Override
+    public void setImage(String phone) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_USER_IMAGE, phone).apply();
+    }
+
+
+    @Override
+    public String getAge() {
+        return mPrefs.getString(PREF_KEY_CURRENT_USER_AGE, null);
+    }
+
+    @Override
+    public void setAge(String phone) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_USER_AGE, phone).apply();
+    }
+
+    @Override
+    public String getWeight() {
+        return mPrefs.getString(PREF_KEY_CURRENT_USER_WEIGHT, null);
+    }
+
+    @Override
+    public void setWeight(String phone) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_USER_WEIGHT, phone).apply();
+    }
+
+    @Override
+    public String getAims() {
+        return mPrefs.getString(PREF_KEY_CURRENT_USER_AIMS, null);
+    }
+
+    @Override
+    public void setAims(String phone) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_USER_AIMS, phone).apply();
+    }
+
+    @Override
+    public String getHeight() {
+        return mPrefs.getString(PREF_KEY_CURRENT_USER_HEIGHT, null);
+    }
+
+    @Override
+    public void setHeight(String height) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_USER_HEIGHT, height).apply();
     }
 
     @Override

@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+
     <application
         android:name=".Tarelka"
         android:allowBackup="true"
@@ -31,7 +34,8 @@
         </activity>
         <activity
             android:name=".ui.welcome.CreateAimActivity"
-            android:theme="@style/Fullscreen" />
+            android:theme="@style/Fullscreen" >
+        </activity>
         <activity
             android:name=".ui.welcome.ChooseFoodActivity"
             android:theme="@style/Fullscreen" />
@@ -50,10 +54,15 @@
             tools:replace="android:theme">
         </activity>
 
+        <receiver android:name=".push.AlarmReceiver" />
+
         <meta-data android:name="com.facebook.accountkit.ApplicationName" android:value="@string/app_name" />
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" />
         <meta-data android:name="com.facebook.accountkit.ClientToken" android:value="@string/account_kit_client_token" />
-
+        <meta-data
+            tools:replace="android:value"
+            android:name="android.support.VERSION"
+            android:value="26.1.0" />
     </application>
 
 </manifest>

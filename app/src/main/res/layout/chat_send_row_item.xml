@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:weightSum="10"
     android:orientation="horizontal"
     android:layout_height="wrap_content"
@@ -14,13 +14,13 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginRight="3dp"
-        android:text="22.08"
+        android:text=""
         android:layout_marginLeft="8dp"
         android:gravity="center"
-        android:textSize="15dp" />
+        android:textSize="14sp" />
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_weight="8.7"
         android:layout_width="0dp"
         android:layout_marginRight="8dp"
@@ -32,8 +32,48 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:padding="12dp"
-            android:text="Привет админ как ты?  "
+            android:text=""
             android:textColor="@color/colorBlack"
             android:textSize="15sp" />
+        <carbon.widget.ImageView
+            android:id="@+id/chat_send_image1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="right"
+            app:carbon_cornerRadius="8dp"
+            />
+        <carbon.widget.ImageView
+            android:id="@+id/chat_send_image2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginBottom="2dp"
+            app:carbon_cornerRadius="8dp"
+            />
+        <carbon.widget.ImageView
+            android:id="@+id/chat_send_image3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginBottom="2dp"
+            app:carbon_cornerRadius="8dp"
+            />
+        <carbon.widget.ImageView
+            android:id="@+id/chat_send_image4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="right"
+            app:carbon_cornerRadius="8dp"
+            />
+        <carbon.widget.ImageView
+            android:id="@+id/chat_send_image5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="right"
+            app:carbon_cornerRadius="8dp"
+            />
     </LinearLayout>
 </LinearLayout>

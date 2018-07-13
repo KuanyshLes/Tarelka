@@ -10,4 +10,6 @@ import kz.production.kuanysh.tarelka.ui.base.MvpPresenter;
 public interface MainTaskMvpPresenter<V extends MainTaskMvpView> extends MvpPresenter<V> {
 
     void onItemClick(int position);
+
+    void onViewPrepared();
 }

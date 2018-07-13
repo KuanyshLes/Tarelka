@@ -81,8 +81,6 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
                 if (loginResult.getAccessToken() != null) {
                     toastMessage = "Success:" + loginResult.getAccessToken().getAccountId();
                     getAccount();
-                    Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                    startActivity(intent);
                 }
             }
             // Surface the result to your user in an appropriate way.
@@ -129,6 +127,12 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
     @Override
     public void openAimsActivity() {
         Intent intent =new Intent(LoginActivity.this,CreateAimActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void openMainActivity() {
+        Intent intent =new Intent(LoginActivity.this,MainActivity.class);
         startActivity(intent);
     }
 

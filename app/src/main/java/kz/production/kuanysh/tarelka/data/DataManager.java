@@ -1,6 +1,5 @@
 package kz.production.kuanysh.tarelka.data;
 
-import io.reactivex.Observable;
 import kz.production.kuanysh.tarelka.data.network.ApiHelper;
 import kz.production.kuanysh.tarelka.data.prefs.PreferencesHelper;
 
@@ -9,19 +8,28 @@ import kz.production.kuanysh.tarelka.data.prefs.PreferencesHelper;
  */
 
 public interface DataManager extends ApiHelper,PreferencesHelper {
-    void updateApiHeader(Long userId, String accessToken);
+    void updateApiHeader(Integer userId, String accessToken);
 
     void setUserAsLoggedOut();
+
+    ApiHelper getApiHelper();
+
+    ApiHelper getImageApiHelper();
 
 
 
     void updateUserInfo(
             String accessToken,
-            Long userId,
+            Integer userId,
             LoggedInMode loggedInMode,
             String userName,
-            String email,
-            String profilePicPath);
+            String status,
+            String phone,
+            String image,
+            String age,
+            String weight,
+            String aims,
+            String height);
 
     enum LoggedInMode {
 

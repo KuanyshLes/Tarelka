@@ -9,19 +9,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.List;
+import com.bumptech.glide.Glide;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.di.component.ActivityComponent;
 import kz.production.kuanysh.tarelka.ui.base.BaseFragment;
 import kz.production.kuanysh.tarelka.utils.AppConst;
-import kz.production.kuanysh.tarelka.data.TarelkaDataFactory;
 
 import static kz.production.kuanysh.tarelka.utils.AppConst.TAG_FRAGMENT;
 
@@ -51,6 +49,9 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
 
     @BindView(R.id.profile_weight)
     TextView weight;
+
+    @BindView(R.id.profile_heigth)
+    TextView height;
 
     @BindView(R.id.profile_aim)
     TextView aim;
@@ -84,8 +85,8 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
             component.inject(this);
             setUnBinder(ButterKnife.bind(this, view));
             mPresenter.onAttach(this);
-        }
 
+        }
         return  view;
     }
 
@@ -103,23 +104,41 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
     }
 
 
-
     @Override
-    public void updateInfo(List<String> info) {
+    public void updateInfo(String usernameText, String statusText, String phoneText, String ageText, String weightText, String aimsText, String imageText,String heightText) {
+        name.setText(usernameText);
+        if(ageText.length()!=0){
+            age.setText(ageText + AppConst.YEAR);
+        }if(weightText.length()!=0){
+            weight.setText(weightText + AppConst.WEIGHT);
+        }if(heightText.length()!=0){
+            height.setText(heightText + AppConst.HEIGHT);
+        }
+        if(!aimsText.equals("")){
+            aim.setText(aimsText.substring(0,aimsText.length()-1));
+        }else{
+            aim.setText("");
+        }
+        phone.setText(phoneText);
+        if(imageText.length()!=0){
+            Glide.with(this)
+                    .load(imageText)
+                    .into(photo);
+        }
 
     }
 
     @Override
     public void openEditFragment() {
         ProfileEditFragment profileEditFragment=new ProfileEditFragment();
-        bundle=new Bundle();
-        bundle.putParcelable(AppConst.KEY_PROFILE, TarelkaDataFactory.getProfile());
+        //profileEditFragment.setArguments(bundle);
         setFragment(profileEditFragment);
     }
 
     @Override
     protected void setUp(View view) {
 
+        mPresenter.onViewPrepared();
     }
 
     @Override

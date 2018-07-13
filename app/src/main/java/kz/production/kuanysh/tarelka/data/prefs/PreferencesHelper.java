@@ -16,6 +16,8 @@
 package kz.production.kuanysh.tarelka.data.prefs;
 
 
+import java.util.List;
+
 import kz.production.kuanysh.tarelka.data.DataManager;
 
 /**
@@ -30,7 +32,7 @@ public interface PreferencesHelper {
 
     Long getCurrentUserId();
 
-    void setCurrentUserId(Long userId);
+    void setCurrentUserId(Integer userId);
 
     String getCurrentUserName();
 
@@ -40,7 +42,6 @@ public interface PreferencesHelper {
 
     void setCurrentStatus(String status);
 
-
     String getAccessToken();
 
     void setAccessToken(String accessToken);
@@ -48,5 +49,26 @@ public interface PreferencesHelper {
     String getPhoneNumber();
 
     void setPhoneNumber(String phone);
+
+    String getImage();
+
+    void setImage(String image);
+
+    String getAge();
+
+    void setAge(String age);
+
+    String getWeight();
+
+    void setWeight(String weight);
+
+    String getAims();
+
+    void setAims(String aims);
+
+    String getHeight();
+
+    void setHeight(String height);
+
 
 }

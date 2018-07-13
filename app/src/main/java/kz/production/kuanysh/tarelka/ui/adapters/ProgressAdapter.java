@@ -1,6 +1,5 @@
 package kz.production.kuanysh.tarelka.ui.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,22 +9,29 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import kz.production.kuanysh.tarelka.R;
+import kz.production.kuanysh.tarelka.data.network.model.quiz.Result;
 import kz.production.kuanysh.tarelka.helper.Listener;
+import kz.production.kuanysh.tarelka.ui.fragments.ProgressMvpView;
+import kz.production.kuanysh.tarelka.ui.fragments.ProgressPresenter;
 
 /**
  * Created by User on 20.06.2018.
  */
 
 public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.ViewHolder> {
-    private List<String> progress_task_list;
-    private Context context;
+
+    @Inject
+    ProgressPresenter<ProgressMvpView> mPresenter;
+
+    private List<Result> progress_task_list;
     private Listener listener;
 
 
-    public ProgressAdapter  (List<String> progress_task_list, Context context) {
+    public ProgressAdapter(List<Result> progress_task_list) {
         this.progress_task_list = progress_task_list;
-        this.context = context;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -55,13 +61,13 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.ViewHo
         TextView order = (TextView) cardView.findViewById(R.id.progress_order);
         TextView text= (TextView) cardView.findViewById(R.id.progress_text);
         order.setText((i+1)+"");
-        text.setText(progress_task_list.get(i).toString());
+        text.setText(progress_task_list.get(i).getTitle());
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(listener!=null){
-                    listener.onClick(i);
+                    listener.onClick(progress_task_list.get(i).getId());
                 }
 
             }
@@ -71,8 +77,11 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.ViewHo
     public int getItemCount() {
         return progress_task_list.size();
     }
-    
 
+    public void addItems(List<Result> progress_task) {
+        progress_task_list.addAll(progress_task);
+        notifyDataSetChanged();
+    }
 
 }
 

@@ -26,4 +26,6 @@ public interface LoginMvpView extends MvpView {
 
     void openAimsActivity();
 
+    void openMainActivity();
+
 }

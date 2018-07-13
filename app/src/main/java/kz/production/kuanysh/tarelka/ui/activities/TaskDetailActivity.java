@@ -1,13 +1,14 @@
 package kz.production.kuanysh.tarelka.ui.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -16,11 +17,11 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import kz.production.kuanysh.tarelka.R;
+import kz.production.kuanysh.tarelka.data.network.model.main.Result;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
 import kz.production.kuanysh.tarelka.ui.base.BaseActivity;
-import kz.production.kuanysh.tarelka.utils.AppConst;
+import kz.production.kuanysh.tarelka.ui.fragments.MainTaskFragment;
 
 public class TaskDetailActivity extends BaseActivity implements TaskDetailMvpView{
 
@@ -39,7 +40,7 @@ public class TaskDetailActivity extends BaseActivity implements TaskDetailMvpVie
     @BindView(R.id.taskDetailText)
     TextView text;
 
-    private String titleExtra,textExtra;
+    private Result result;
     private static Intent intent;
 
     @Override
@@ -57,9 +58,12 @@ public class TaskDetailActivity extends BaseActivity implements TaskDetailMvpVie
         mPresenter.onAttach(TaskDetailActivity.this);
 
 
-        textExtra=getIntent().getStringExtra(AppConst.TASK_KEY);
-        if(textExtra!=null){
+        result=getIntent().getParcelableExtra(MainTaskFragment.KEY_MAIN_TASK);
+        if(result!=null){
             Toast.makeText(this, "extra", Toast.LENGTH_SHORT).show();
+            title.setText(result.getTitle());
+            text.setText(result.getText());
+            Glide.with(TaskDetailActivity.this).load(result.getImage()).into(image);
 
         }else{
             Toast.makeText(this, "error:(", Toast.LENGTH_SHORT).show();

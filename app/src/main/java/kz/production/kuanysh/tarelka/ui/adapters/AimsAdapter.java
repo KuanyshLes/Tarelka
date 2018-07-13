@@ -15,20 +15,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 import kz.production.kuanysh.tarelka.R;
+import kz.production.kuanysh.tarelka.data.network.model.aim.Result;
 import kz.production.kuanysh.tarelka.utils.AppConst;
 
 public class AimsAdapter extends BaseAdapter {
 
     private final Context mContext;
-    private List<String> aimsList;
+    private List<Result> aimsList;
     private List<Integer> list;
 
 
-    public AimsAdapter(Context context, List<String> aimsList,List<Integer> list) {
+    public AimsAdapter(Context context, List<Result> aimsList,List<Integer> list) {
         this.mContext = context;
         this.aimsList = aimsList;
         this.list = list;
@@ -60,13 +62,8 @@ public class AimsAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(R.layout.aims_grid_item, null);
         }
 
-
-        //convertView.setBackgroundResource(R.mipmap.ic_radio_button_checked_24px);
-        //convertView.setBackgroundColor(Color.TRANSPARENT);
-        ViewGroup.LayoutParams layoutParams=new ViewGroup.LayoutParams(125,125);
-        convertView.setLayoutParams(layoutParams);
-
         final TextView name=(TextView)convertView.findViewById(R.id.aims_name);
+        final ImageView image=(ImageView)convertView.findViewById(R.id.aims_grid_item_image);
         name.setPadding(0,20,0,0);
 
         final ImageView select=(ImageView)convertView.findViewById(R.id.aims_select);
@@ -92,7 +89,12 @@ public class AimsAdapter extends BaseAdapter {
         convertView.setTag(viewHolder);
 
         final ViewHolder getViewHolder = (ViewHolder)convertView.getTag();
-        viewHolder.name.setText(aimsList.get(position).toString());
+        viewHolder.name.setText(aimsList.get(position).getTitle());
+
+        Glide.with(mContext)
+                .load(aimsList.get(position).getImage())
+                .into(image);
+        Toast.makeText(mContext, aimsList.get(position).getTitle()+"", Toast.LENGTH_SHORT).show();
 
 
         return convertView;
@@ -132,6 +134,9 @@ public class AimsAdapter extends BaseAdapter {
 
 
         //return animate;
+    }
+    public void addItems(List<Result> aims){
+        aimsList=aims;
     }
 
 

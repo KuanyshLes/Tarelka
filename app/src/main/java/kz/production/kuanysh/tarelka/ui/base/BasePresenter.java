@@ -33,7 +33,7 @@ import javax.net.ssl.HttpsURLConnection;
 import io.reactivex.disposables.CompositeDisposable;
 import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.data.DataManager;
-import kz.production.kuanysh.tarelka.data.network.module.ApiError;
+import kz.production.kuanysh.tarelka.data.network.model.ApiError;
 import kz.production.kuanysh.tarelka.utils.AppConstants;
 import kz.production.kuanysh.tarelka.utils.rx.SchedulerProvider;
 

@@ -1,7 +1,14 @@
 package kz.production.kuanysh.tarelka.ui.fragments;
 
 
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,24 +19,24 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import kz.production.kuanysh.tarelka.R;
+import kz.production.kuanysh.tarelka.data.network.model.chat.Chat;
 import kz.production.kuanysh.tarelka.di.component.ActivityComponent;
 import kz.production.kuanysh.tarelka.ui.base.BaseFragment;
-import kz.production.kuanysh.tarelka.utils.AppConst;
-import kz.production.kuanysh.tarelka.model.ChatItem;
 import kz.production.kuanysh.tarelka.ui.adapters.ChatAdapter;
 
+import static android.app.Activity.RESULT_OK;
 import static kz.production.kuanysh.tarelka.utils.AppConst.TAG_FRAGMENT;
 
 /**
@@ -52,9 +59,20 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
     @BindView(R.id.chat_send)
     TextView send;
 
+    @BindView(R.id.chat_image_message)
+    ImageView imageMessage;
+
+    @Inject
+    ChatAdapter chatAdapter;
+
+    private static List<Chat> chatsListFra;
+
     private LinearLayoutManager linearLayoutManager;
-    private List<ChatItem> chatItemList;
-    private static ChatAdapter chatAdapter;
+    private static Uri uriImage;
+    private static String filePath;
+    private static String imageString;
+    private static  Bitmap imageMap;
+
 
     public ChatFragment() {
         // Required empty public constructor
@@ -81,8 +99,6 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
             mPresenter.onAttach(this);
         }
 
-        setUp(view);
-
         return view;
     }
 
@@ -93,31 +109,20 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
     }
 
     @OnClick(R.id.chat_send)
-    public void sendMessage(View view){
-        Random r = new Random();
-        int randInt = r.nextInt(2);
-        chatItemList.add(new ChatItem(randInt,message.getText().toString(),"22.04"));
-        chatItemList.add(new ChatItem(AppConst.VIEW_TYPE_RECEIVE,message.getText().toString(),"22.04"));
-        chatAdapter.notifyDataSetChanged();
-        chats.getLayoutManager().scrollToPosition(chatItemList.size()-1);
-
+    public void sendMessage(){
+        mPresenter.onSendClick(message.getText().toString());
         message.setText("");
+        if(chatsListFra.size()!=0){
+            chats.getLayoutManager().scrollToPosition(chatsListFra.size()-1);
+        }
+
+
     }
 
-    private void setCustomChat(){
-        chatItemList=new ArrayList<>();
-        chatItemList.add(new ChatItem(AppConst.VIEW_TYPE_SEND,"Hello","22.04"));
-        chatItemList.add(new ChatItem(AppConst.VIEW_TYPE_RECEIVE,"Hello my dear friend","22.04"));
-        chatItemList.add(new ChatItem(AppConst.VIEW_TYPE_SEND,"How are you?","22.04"));
-        chatItemList.add(new ChatItem(AppConst.VIEW_TYPE_RECEIVE,"Fine! And you?","22.04"));
-        chatItemList.add(new ChatItem(AppConst.VIEW_TYPE_SEND,"Good!","22.04"));
-        chatItemList.add(new ChatItem(AppConst.VIEW_TYPE_RECEIVE,"What's the news?","22.04"));
-        chatItemList.add(new ChatItem(AppConst.VIEW_TYPE_SEND,"I am leaning MVP design pattern","22.04"));
-        chatItemList.add(new ChatItem(AppConst.VIEW_TYPE_RECEIVE,"Oh, that's good!","22.04"));
+    @OnClick(R.id.chat_image_message)
+    public void sendImage(){
+        mPresenter.onImageclick();
     }
-
-
-
 
     @Override
     public void openSendAsSocial() {
@@ -128,19 +133,67 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
     }
 
     @Override
-    public void updateChat() {
-
+    public void updateChat(List<Chat> chatList) {
+        chatsListFra=chatList;
+        chatAdapter.addItems(chatList);
+        chats.getLayoutManager().scrollToPosition(chatList.size()-1);
     }
 
     @Override
+    public void openImagePicker() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
+    }
+    @Override
+    public  void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK && null != data) {
+            try{
+                uriImage = data.getData();
+                filePath=getPath(getActivity(),uriImage);
+                mPresenter.getMvpView().showMessage(filePath+"");
+                final InputStream inputStream = getActivity().getContentResolver().openInputStream(uriImage);
+                imageMap = BitmapFactory.decodeStream(inputStream);
+
+                mPresenter.getMvpView().showMessage("result on activity");
+                mPresenter.onSendImage(uriImage,filePath,getActivity());
+
+
+            }
+            catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity(), "Image was not found", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    }
+
+    public static String getPath(Context context, Uri uri ) {
+        String result = null;
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = context.getContentResolver( ).query( uri, proj, null, null, null );
+        if(cursor != null){
+            if ( cursor.moveToFirst( ) ) {
+                int column_index = cursor.getColumnIndexOrThrow( proj[0] );
+                result = cursor.getString( column_index );
+            }
+            cursor.close( );
+        }
+        if(result == null) {
+            result = "Not found";
+        }
+        return result;
+    }
+
+
+
+    @Override
     protected void setUp(View view) {
-        setCustomChat();
         linearLayoutManager=new LinearLayoutManager(getActivity());
         chats.setLayoutManager(linearLayoutManager);
-
-        chatAdapter=new ChatAdapter(chatItemList,getActivity());
-        chats.getLayoutManager().scrollToPosition(chatItemList.size()-1);
         chats.setAdapter(chatAdapter);
+        mPresenter.onViewPrepared();
     }
 
     @Override

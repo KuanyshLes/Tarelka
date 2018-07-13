@@ -21,7 +21,7 @@ public class ApiEndPoint {
 
     public static final String SEND_FOODS="api/send_goal";
 
-    public static final String CHAT="api/chat";
+    public static final String CHAT="api/chat?page=0";
 
     public static final String SEND_MESSAGE="api/send_message";
 
@@ -36,6 +36,8 @@ public class ApiEndPoint {
     public static final String LIST_QUESTIONS="api/list_question";
 
     public static final String SEND_RESULTS ="api/send_result";
+
+    public static final String BASE_URL="http://95.163.215.169/";
 
 
 }

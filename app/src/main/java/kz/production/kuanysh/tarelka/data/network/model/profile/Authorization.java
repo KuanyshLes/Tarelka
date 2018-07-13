@@ -1,12 +1,13 @@
-package kz.production.kuanysh.tarelka.data.network.module; ;
+package kz.production.kuanysh.tarelka.data.network.model.profile; ;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.Parcelable.Creator;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Authorization implements Parcelable {
+public class Authorization implements Parcelable
+{
 
     @SerializedName("statusCode")
     @Expose
@@ -16,7 +17,7 @@ public class Authorization implements Parcelable {
     private String message;
     @SerializedName("result")
     @Expose
-    private Result result;
+    private kz.production.kuanysh.tarelka.data.network.model.profile.Result result;
     public final static Parcelable.Creator<Authorization> CREATOR = new Creator<Authorization>() {
 
 
@@ -31,12 +32,13 @@ public class Authorization implements Parcelable {
             return (new Authorization[size]);
         }
 
-    };
+    }
+            ;
 
     protected Authorization(Parcel in) {
         this.statusCode = ((Integer) in.readValue((Integer.class.getClassLoader())));
         this.message = ((String) in.readValue((String.class.getClassLoader())));
-        this.result = ((Result) in.readValue((Result.class.getClassLoader())));
+        this.result = ((kz.production.kuanysh.tarelka.data.network.model.profile.Result) in.readValue((kz.production.kuanysh.tarelka.data.network.model.profile.Result.class.getClassLoader())));
     }
 
     /**
@@ -52,7 +54,7 @@ public class Authorization implements Parcelable {
      * @param statusCode
      * @param result
      */
-    public Authorization(Integer statusCode, String message, Result result) {
+    public Authorization(Integer statusCode, String message, kz.production.kuanysh.tarelka.data.network.model.profile.Result result) {
         super();
         this.statusCode = statusCode;
         this.message = message;
@@ -75,13 +77,14 @@ public class Authorization implements Parcelable {
         this.message = message;
     }
 
-    public Result getResult() {
+    public kz.production.kuanysh.tarelka.data.network.model.profile.Result getResult() {
         return result;
     }
 
-    public void setResult(Result result) {
+    public void setResult(kz.production.kuanysh.tarelka.data.network.model.profile.Result result) {
         this.result = result;
     }
+
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(statusCode);

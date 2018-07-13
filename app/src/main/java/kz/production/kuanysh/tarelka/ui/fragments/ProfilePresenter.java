@@ -23,5 +23,25 @@ public class ProfilePresenter<V extends ProfileMvpView> extends BasePresenter<V>
     @Override
     public void onEditClick() {
         getMvpView().openEditFragment();
+
+    }
+
+    @Override
+    public void onViewPrepared() {
+        if(getDataManager().getAccessToken()!=null){
+
+            getMvpView().updateInfo(getDataManager().getCurrentUserName(),getDataManager().getCurrentStatus()
+            ,getDataManager().getPhoneNumber(),
+                    getDataManager().getAge(),
+                    getDataManager().getWeight(),
+                    getDataManager().getAims(),
+                    getDataManager().getImage(),
+                    getDataManager().getHeight());
+        }
+        else{
+            getMvpView().showMessage("Something went wrong!");
+        }
+
+
     }
 }

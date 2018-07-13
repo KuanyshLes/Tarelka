@@ -1,5 +1,7 @@
 package kz.production.kuanysh.tarelka.ui.fragments;
 
+import java.io.File;
+
 import kz.production.kuanysh.tarelka.ui.base.MvpView;
 
 /**
@@ -10,7 +12,6 @@ public interface ProfileEditMvpView extends MvpView{
 
     void openProfileFragment();
 
-    void updateInfo();
 
     void openImagePicker();
 }

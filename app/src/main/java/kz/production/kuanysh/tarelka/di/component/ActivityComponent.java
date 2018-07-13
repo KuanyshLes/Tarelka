@@ -28,6 +28,8 @@ import kz.production.kuanysh.tarelka.ui.fragments.ProfileEditFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.ProfileFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.ProgressFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.SendMessageFragment;
+import kz.production.kuanysh.tarelka.ui.welcome.ChooseFoodActivity;
+import kz.production.kuanysh.tarelka.ui.welcome.CreateAimActivity;
 import kz.production.kuanysh.tarelka.ui.welcome.LoginActivity;
 import kz.production.kuanysh.tarelka.ui.welcome.SplashScreenActivity;
 
@@ -57,6 +59,10 @@ public interface ActivityComponent {
     void inject(SplashScreenActivity splashScreenActivity);
 
     void inject(LoginActivity loginActivity);
+
+    void inject(CreateAimActivity createAimActivity);
+
+    void inject(ChooseFoodActivity chooseFoodActivity);
 
 
 }

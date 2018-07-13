@@ -1,22 +1,77 @@
 package kz.production.kuanysh.tarelka.ui.activities.test;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import kz.production.kuanysh.tarelka.R;
+import kz.production.kuanysh.tarelka.data.network.model.quizquestions.Result;
+import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
 import kz.production.kuanysh.tarelka.ui.base.BaseActivity;
+import kz.production.kuanysh.tarelka.ui.fragments.ProgressFragment;
 
 public class TestActivity extends BaseActivity implements TestMvpView {
 
     @Inject
     TestPresenter<TestMvpView> mPresenter;
 
-   // @BindView(R.id.test_current_question_number)
+    @BindView(R.id.test_all_question_number)
+    TextView allNumber;
+
+    @BindView(R.id.test_current_question_number)
+    TextView currentNumber;
+
+    @BindView(R.id.test_cancell)
+    TextView cancell;
+
+    @BindView(R.id.test_question)
+    TextView question;
+
+    @BindView(R.id.test_radiogroup)
+    RadioGroup radioGroup;
+
+    @BindView(R.id.test_ans1)
+    RadioButton answer1;
+
+    @BindView(R.id.test_ans2)
+    RadioButton answer2;
+
+    @BindView(R.id.test_ans3)
+    RadioButton answer3;
+
+    @BindView(R.id.test_ans4)
+    RadioButton answer4;
+
+    @BindView(R.id.test_ans5)
+    RadioButton answer5;
+
+    @BindView(R.id.test_next)
+    ImageView next;
+
+    private static List<Result> quizQuestion;
+
+    public static int currentTestNumber=0;
+    public static int correctAnswer;
+    public static String ANSWER;
+    public static String correctAnswerString;
+    public static String CORRECT_COLOR ="#23eabf";
+    public static String WRONG_COLOR ="#bf7669";
+    public static String WHITE_COLOR ="#FFFFFF";
 
 
 
@@ -28,28 +83,237 @@ public class TestActivity extends BaseActivity implements TestMvpView {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_test);
-
         getActivityComponent().inject(this);
         setUnBinder(ButterKnife.bind(this));
         mPresenter.onAttach(TestActivity.this);
 
+        setUp();
+    }
 
+    @OnClick(R.id.test_cancell)
+    public void goQuiz(){
+        mPresenter.onCancellClick();
+    }
+
+    @OnClick(R.id.test_next)
+    public void next(){
+        if(answer1.isChecked() || answer2.isChecked() || answer3.isChecked() || answer4.isChecked() || answer5.isChecked()){
+            currentTestNumber++;
+            mPresenter.getMvpView().showMessage("Next if");
+            if(currentTestNumber!=quizQuestion.size()){
+                setDefault();
+                setChecked();
+                setClickable(true);
+                mPresenter.onNextClick(currentTestNumber);
+            }
+            else if(currentTestNumber==quizQuestion.size()){
+                mPresenter.getMvpView().showMessage("Next else if");
+                mPresenter.onNextClick(currentTestNumber);
+            }
+        }else{
+            mPresenter.getMvpView().showMessage("Please select one item");
+        }
+
+    }
+    @OnClick(R.id.test_ans1)
+    public void ans1(){
+        mPresenter.onAnswerClick();
+        setClickable(false);
+    }
+    @OnClick(R.id.test_ans2)
+    public void ans2(){
+        mPresenter.onAnswerClick();
+        setClickable(false);
+    }
+    @OnClick(R.id.test_ans3)
+    public void ans3(){
+        mPresenter.onAnswerClick();
+        setClickable(false);
+    }
+    @OnClick(R.id.test_ans4)
+    public void ans4(){
+        mPresenter.onAnswerClick();
+        setClickable(false);
+    }
+    @OnClick(R.id.test_ans5)
+    public void ans5(){
+        mPresenter.onAnswerClick();
+        setClickable(false);
     }
 
     @Override
     protected void setUp() {
-
+        if(getIntent().getStringExtra(ProgressFragment.KEY_QUIZ_TEST) != null){
+            String extra=getIntent().getStringExtra(ProgressFragment.KEY_QUIZ_TEST);
+            mPresenter.onViewPrepared(extra);
+        }else {
+            mPresenter.getMvpView().showMessage("error");
+        }
     }
+    private void setClickable(Boolean clickableFalse){
+        answer1.setClickable(clickableFalse);
+        answer2.setClickable(clickableFalse);
+        answer3.setClickable(clickableFalse);
+        answer4.setClickable(clickableFalse);
+        answer5.setClickable(clickableFalse);
+    }
+    private void setDefault(){
+        answer1.setTextColor(Color.parseColor(WHITE_COLOR));
+        answer2.setTextColor(Color.parseColor(WHITE_COLOR));
+        answer3.setTextColor(Color.parseColor(WHITE_COLOR));
+        answer4.setTextColor(Color.parseColor(WHITE_COLOR));
+        answer5.setTextColor(Color.parseColor(WHITE_COLOR));
+    }
+    private void setChecked(){
+        answer1.setChecked(false);
+        answer2.setChecked(false);
+        answer3.setChecked(false);
+        answer4.setChecked(false);
+        answer5.setChecked(false);
+    }
+
+
+    @Override
+    public void showResult() {
+        switch (radioGroup.getCheckedRadioButtonId()) {
+            case R.id.test_ans1:
+                ANSWER="A";
+                break;
+            case R.id.test_ans2:
+                ANSWER="B";
+                break;
+            case R.id.test_ans3:
+                ANSWER="C";
+                break;
+            case R.id.test_ans4:
+                ANSWER="D";
+                break;
+            case R.id.test_ans5:
+                ANSWER="E";
+                break;
+        }
+        correctAnswerString=quizQuestion.get(currentTestNumber).getRightAnswer();
+        if (correctAnswerString.equals(ANSWER)){
+            correctAnswer++;
+            try {
+                TimeUnit.MILLISECONDS.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+                switch (ANSWER) {
+                    case "A":
+                        answer1.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        break;
+                    case "B":
+                        answer2.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        break;
+                    case "C":
+                        answer3.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        break;
+                    case "D":
+                        answer4.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        break;
+                    case "E":
+                        answer5.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        break;
+                }
+
+                mPresenter.getMvpView().showMessage("True! Cool");
+            }
+
+        }else{
+            try {
+                TimeUnit.MILLISECONDS.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+                switch (ANSWER) {
+                    case "A":
+                        answer1.setTextColor(Color.parseColor(WRONG_COLOR));
+                        break;
+                    case "B":
+                        answer2.setTextColor(Color.parseColor(WRONG_COLOR));
+                        break;
+                    case "C":
+                        answer3.setTextColor(Color.parseColor(WRONG_COLOR));
+                        break;
+                    case "D":
+                        answer4.setTextColor(Color.parseColor(WRONG_COLOR));
+                        break;
+                    case "E":
+                        answer5.setTextColor(Color.parseColor(WRONG_COLOR));
+                        break;
+                }
+                switch (correctAnswerString) {
+                    case "A":
+                        answer1.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer1.setChecked(true);
+                        break;
+                    case "B":
+                        answer2.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer2.setChecked(true);
+                        break;
+                    case "C":
+                        answer3.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer3.setChecked(true);
+                        break;
+                    case "D":
+                        answer4.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer4.setChecked(true);
+                        break;
+                    case "E":
+                        answer5.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer5.setChecked(true);
+                        break;
+                }
+                mPresenter.getMvpView().showMessage("Not correct answer:(");
+            }
+
+        }
+        int minus=quizQuestion.size()-currentTestNumber;
+        if(minus==1){
+            if(minus==1){
+                mPresenter.getMvpView().showMessage(correctAnswer+" correct answer");
+                mPresenter.sendResult(Integer.parseInt(getIntent().getStringExtra(ProgressFragment.KEY_QUIZ_TEST)),
+                        currentTestNumber+1,correctAnswer);
+
+            }
+        }
+    }
+
 
     @Override
     public void openProgressFragment() {
+        Intent intent=new Intent(TestActivity.this,MainActivity.class);
+        intent.putExtra(MainActivity.TAG_PROGRESS,MainActivity.TAG_PROGRESS);
+        startActivity(intent);
+    }
+
+    @Override
+    public void updateTest(int position) {
+        if(quizQuestion.size()>position){
+            allNumber.setText("из "+quizQuestion.size()+"");
+            currentNumber.setText(String.valueOf(position+1));
+            question.setText("  " +quizQuestion.get(position).getQuestion().toString());
+            answer1.setText("  " +quizQuestion.get(position).getAnswerA().toString());
+            answer2.setText("  " +quizQuestion.get(position).getAnswerB().toString());
+            answer3.setText("  " +quizQuestion.get(position).getAnswerC().toString());
+            answer4.setText("  " +quizQuestion.get(position).getAnswerD().toString());
+            answer5.setText("  " +quizQuestion.get(position).getAnswerE().toString());
+        }
 
     }
 
     @Override
-    public void updateTest() {
+    public void getQuestions(List<Result> quiz) {
+        quizQuestion=new ArrayList<>();
+        quizQuestion.addAll(quiz);
+        mPresenter.getMvpView().showMessage(quizQuestion.size()+" size");
+        mPresenter.getMvpView().updateTest(currentTestNumber);
 
     }
+
+
 
     @Override
     protected void onDestroy() {

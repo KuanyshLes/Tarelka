@@ -13,6 +13,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -21,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.data.TarelkaDataFactory;
+import kz.production.kuanysh.tarelka.data.network.model.quiz.Result;
 import kz.production.kuanysh.tarelka.di.component.ActivityComponent;
 import kz.production.kuanysh.tarelka.ui.activities.test.TestActivity;
 import kz.production.kuanysh.tarelka.helper.Listener;
@@ -44,9 +48,13 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
     @BindView(R.id.progress_recycler)
     RecyclerView progress_recycler;
 
+    @Inject
+    ProgressAdapter progressAdapter;
+
+    public static final String KEY_QUIZ_TEST="test";
+
     private LinearLayoutManager linearLayoutManager;
     private static String textSpinner;
-    private ProgressAdapter progressAdapter;
     private Intent intent;
 
 
@@ -77,7 +85,6 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
 
         textSpinner=getDate(TarelkaDataFactory.getDateList());
         progressBar.setProgress(56);
-        setUp(view);
 
         return view;
     }
@@ -96,17 +103,20 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
     @Override
     public void openTestActivity(int position) {
         intent=new Intent(getActivity(), TestActivity.class);
+        intent.putExtra(KEY_QUIZ_TEST,position+"");
         startActivity(intent);
     }
 
     @Override
-    public void updateTestList(List<String> testList) {
-
+    public void updateQuizList(List<Result> quizList) {
+        progressAdapter.addItems(quizList);
+        mPresenter.getMvpView().showMessage("Start showing....");
     }
+
+
 
     @Override
     public void updateDate() {
-
     }
 
     @Override
@@ -118,8 +128,6 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
     protected void setUp(View view) {
         linearLayoutManager=new LinearLayoutManager(getActivity());
         progress_recycler.setLayoutManager(linearLayoutManager);
-
-        progressAdapter=new ProgressAdapter(TarelkaDataFactory.getProgress_task_list(),getActivity());
         progress_recycler.setAdapter(progressAdapter);
 
         progressAdapter.setListener(new Listener() {
@@ -128,6 +136,12 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
                 mPresenter.onTestItemClick(position);
             }
         });
+        mPresenter.onViewPrepared();
+
+
+      /*  Calendar cal = Calendar.getInstance();
+        Date format=new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(cal));
+        System.out.println(format(cal.getTime()));*/
     }
 
     @Override

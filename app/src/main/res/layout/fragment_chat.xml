@@ -61,38 +61,56 @@
             android:layout_height="0dp">
 
         </android.support.v7.widget.RecyclerView>
+
         <LinearLayout
-            android:layout_weight="0.8"
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:layout_margin="5dp"
-            android:padding="3dp"
-            android:background="@drawable/rect_with_corner"
+            android:layout_weight="0.8"
             android:orientation="horizontal"
-            android:weightSum="10">
-            <EditText
-                android:id="@+id/chat_message"
-                android:layout_weight="8"
+            android:weightSum="1">
+            <ImageView
+                android:id="@+id/chat_image_message"
+                android:layout_weight="0.085"
                 android:layout_width="0dp"
-                android:layout_marginLeft="15dp"
-                android:textSize="14sp"
-                android:hint="Написать сообщение..."
-                android:inputType="textMultiLine"
-                android:background="@drawable/shape_rect_without_border"
                 android:layout_height="match_parent"
-                />
-            <TextView
-                android:id="@+id/chat_send"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textColor="@color/colorMoreGrey"
-                android:textSize="16sp"
-                android:text="Отпр."/>
+                android:src="@drawable/attachment"/>
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="0.9"
+                android:background="@drawable/rect_with_corner"
+                android:orientation="horizontal"
+                android:padding="3dp"
+                android:weightSum="10">
+
+                <EditText
+                    android:id="@+id/chat_message"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/shape_rect_without_border"
+                    android:hint="Написать сообщение..."
+                    android:inputType="textMultiLine"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/chat_send"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:text="Отпр."
+                    android:textColor="@color/colorMoreGrey"
+                    android:textSize="16sp" />
+
+
+            </LinearLayout>
 
         </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>

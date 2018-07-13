@@ -1,17 +1,11 @@
-package kz.production.kuanysh.tarelka.data.network.module;
-
+package kz.production.kuanysh.tarelka.data.network.model.profile;
+import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
-/**
- * Created by User on 27.06.2018.
- */
-
-public class Result implements Parcelable
-{
+public class Result implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -22,45 +16,48 @@ public class Result implements Parcelable
     @SerializedName("phone")
     @Expose
     private String phone;
-    @SerializedName("code")
-    @Expose
-    private Object code;
     @SerializedName("status")
     @Expose
     private String status;
     @SerializedName("avatar")
     @Expose
     private String avatar;
-    @SerializedName("first_name")
+    @SerializedName("fio")
     @Expose
-    private String firstName;
-    @SerializedName("last_name")
-    @Expose
-    private String lastName;
+    private String fio;
     @SerializedName("weight")
     @Expose
-    private Integer weight;
+    private String weight;
     @SerializedName("age")
     @Expose
-    private Integer age;
+    private String age;
+    @SerializedName("height")
+    @Expose
+    private String height;
+    @SerializedName("goals")
+    @Expose
+    private List<String> goals = null;
+    @SerializedName("meals")
+    @Expose
+    private List<String> meals = null;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
-    public final static Parcelable.Creator<Result> CREATOR = new Creator<Result>() {
+    public final static Parcelable.Creator<kz.production.kuanysh.tarelka.data.network.model.profile.Result> CREATOR = new Creator<kz.production.kuanysh.tarelka.data.network.model.profile.Result>() {
 
 
         @SuppressWarnings({
                 "unchecked"
         })
-        public Result createFromParcel(Parcel in) {
-            return new Result(in);
+        public kz.production.kuanysh.tarelka.data.network.model.profile.Result createFromParcel(Parcel in) {
+            return new kz.production.kuanysh.tarelka.data.network.model.profile.Result(in);
         }
 
-        public Result[] newArray(int size) {
-            return (new Result[size]);
+        public kz.production.kuanysh.tarelka.data.network.model.profile.Result[] newArray(int size) {
+            return (new kz.production.kuanysh.tarelka.data.network.model.profile.Result[size]);
         }
 
     }
@@ -70,13 +67,14 @@ public class Result implements Parcelable
         this.id = ((Integer) in.readValue((Integer.class.getClassLoader())));
         this.token = ((String) in.readValue((String.class.getClassLoader())));
         this.phone = ((String) in.readValue((String.class.getClassLoader())));
-        this.code = ((Object) in.readValue((Object.class.getClassLoader())));
         this.status = ((String) in.readValue((String.class.getClassLoader())));
         this.avatar = ((String) in.readValue((String.class.getClassLoader())));
-        this.firstName = ((String) in.readValue((String.class.getClassLoader())));
-        this.lastName = ((String) in.readValue((String.class.getClassLoader())));
-        this.weight = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.age = ((Integer) in.readValue((Integer.class.getClassLoader())));
+        this.fio = ((String) in.readValue((String.class.getClassLoader())));
+        this.weight = ((String) in.readValue((String.class.getClassLoader())));
+        this.age = ((String) in.readValue((String.class.getClassLoader())));
+        this.height = ((String) in.readValue((String.class.getClassLoader())));
+        in.readList(this.goals, (java.lang.String.class.getClassLoader()));
+        in.readList(this.meals, (java.lang.String.class.getClassLoader()));
         this.createdAt = ((String) in.readValue((String.class.getClassLoader())));
         this.updatedAt = ((String) in.readValue((String.class.getClassLoader())));
     }
@@ -90,31 +88,33 @@ public class Result implements Parcelable
 
     /**
      *
-     * @param updatedAt
-     * @param id
-     * @param lastName
      * @param phone
      * @param weight
      * @param status
+     * @param avatar
+     * @param fio
+     * @param updatedAt
+     * @param id
+     * @param goals
+     * @param height
+     * @param meals
      * @param token
      * @param createdAt
      * @param age
-     * @param code
-     * @param firstName
-     * @param avatar
      */
-    public Result(Integer id, String token, String phone, Object code, String status, String avatar, String firstName, String lastName, Integer weight, Integer age, String createdAt, String updatedAt) {
+    public Result(Integer id, String token, String phone, String status, String avatar, String fio, String weight, String age, String height, List<String> goals, List<String> meals, String createdAt, String updatedAt) {
         super();
         this.id = id;
         this.token = token;
         this.phone = phone;
-        this.code = code;
         this.status = status;
         this.avatar = avatar;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.fio = fio;
         this.weight = weight;
         this.age = age;
+        this.height = height;
+        this.goals = goals;
+        this.meals = meals;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -143,14 +143,6 @@ public class Result implements Parcelable
         this.phone = phone;
     }
 
-    public Object getCode() {
-        return code;
-    }
-
-    public void setCode(Object code) {
-        this.code = code;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -167,36 +159,52 @@ public class Result implements Parcelable
         this.avatar = avatar;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFio() {
+        return fio;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFio(String fio) {
+        this.fio = fio;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Integer getWeight() {
+    public String getWeight() {
         return weight;
     }
 
-    public void setWeight(Integer weight) {
+    public void setWeight(String weight) {
         this.weight = weight;
     }
 
-    public Integer getAge() {
+    public String getAge() {
         return age;
     }
 
-    public void setAge(Integer age) {
+    public void setAge(String age) {
         this.age = age;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
+
+    public List<String> getGoals() {
+        return goals;
+    }
+
+    public void setGoals(List<String> goals) {
+        this.goals = goals;
+    }
+
+    public List<String> getMeals() {
+        return meals;
+    }
+
+    public void setMeals(List<String> meals) {
+        this.meals = meals;
     }
 
     public String getCreatedAt() {
@@ -215,18 +223,18 @@ public class Result implements Parcelable
         this.updatedAt = updatedAt;
     }
 
-
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(id);
         dest.writeValue(token);
         dest.writeValue(phone);
-        dest.writeValue(code);
         dest.writeValue(status);
         dest.writeValue(avatar);
-        dest.writeValue(firstName);
-        dest.writeValue(lastName);
+        dest.writeValue(fio);
         dest.writeValue(weight);
         dest.writeValue(age);
+        dest.writeValue(height);
+        dest.writeList(goals);
+        dest.writeList(meals);
         dest.writeValue(createdAt);
         dest.writeValue(updatedAt);
     }

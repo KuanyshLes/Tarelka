@@ -11,5 +11,7 @@ public interface ProgressMvpPresenter<V extends ProgressMvpView> extends MvpPres
 
     void onTestItemClick(int position);
 
+    void onViewPrepared();
+
 
 }

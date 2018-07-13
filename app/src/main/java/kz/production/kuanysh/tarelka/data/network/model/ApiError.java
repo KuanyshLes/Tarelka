@@ -1,4 +1,4 @@
-package kz.production.kuanysh.tarelka.data.network.module;
+package kz.production.kuanysh.tarelka.data.network.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

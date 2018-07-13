@@ -4,9 +4,12 @@ package kz.production.kuanysh.tarelka.di.module;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
+import java.util.ArrayList;
+
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.disposables.CompositeDisposable;
+import kz.production.kuanysh.tarelka.data.network.model.chat.Chat;
 import kz.production.kuanysh.tarelka.di.ActivityContext;
 import kz.production.kuanysh.tarelka.di.PerActivity;
 import kz.production.kuanysh.tarelka.ui.activities.TaskDetailMvpPresenter;
@@ -18,6 +21,8 @@ import kz.production.kuanysh.tarelka.ui.activities.test.TestPresenter;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainMvpView;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainPresenter;
+import kz.production.kuanysh.tarelka.ui.adapters.ChatAdapter;
+import kz.production.kuanysh.tarelka.ui.adapters.ProgressAdapter;
 import kz.production.kuanysh.tarelka.ui.fragments.ChatMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.ChatMvpView;
 import kz.production.kuanysh.tarelka.ui.fragments.ChatPresenter;
@@ -36,6 +41,12 @@ import kz.production.kuanysh.tarelka.ui.fragments.ProgressPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.SendMessageMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.SendMessageMvpView;
 import kz.production.kuanysh.tarelka.ui.fragments.SendMessagePresenter;
+import kz.production.kuanysh.tarelka.ui.welcome.ChooseFoodMvpPresenter;
+import kz.production.kuanysh.tarelka.ui.welcome.ChooseFoodMvpView;
+import kz.production.kuanysh.tarelka.ui.welcome.ChooseFoodPresenter;
+import kz.production.kuanysh.tarelka.ui.welcome.CreateAimMvpPresenter;
+import kz.production.kuanysh.tarelka.ui.welcome.CreateAimMvpView;
+import kz.production.kuanysh.tarelka.ui.welcome.CreateAimPresenter;
 import kz.production.kuanysh.tarelka.ui.welcome.LoginMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.welcome.LoginMvpView;
 import kz.production.kuanysh.tarelka.ui.welcome.LoginPresenter;
@@ -152,6 +163,40 @@ public class ActivityModule {
             LoginPresenter<LoginMvpView> presenter) {
         return presenter;
     }
+
+    @Provides
+    @PerActivity
+    CreateAimMvpPresenter<CreateAimMvpView> provideCreateAimPresenter(
+            CreateAimPresenter<CreateAimMvpView> presenter) {
+        return presenter;
+    }
+
+    @Provides
+    @PerActivity
+    ChooseFoodMvpPresenter<ChooseFoodMvpView> provideChooseFoodPresenter(
+            ChooseFoodPresenter<ChooseFoodMvpView> presenter) {
+        return presenter;
+    }
+
+    @Provides
+    ChatAdapter provideChatAdapter(){
+        return new ChatAdapter(new ArrayList<Chat>());
+    }
+
+    @Provides
+    ProgressAdapter providerPregressAdapter(){
+        return new ProgressAdapter(new ArrayList<kz.production.kuanysh.tarelka.data.network.model.quiz.Result>());
+    }
+
+//    @Provides
+//    TaskAdapter providerTaskAdapter(){
+//        return new TaskAdapter(new ArrayList<kz.production.kuanysh.tarelka.data.network.module.main.Result>());
+//    }
+//
+//    @Provides
+//    AimsAdapter provideAimsAdapter(){
+//        return new AimsAdapter(new ArrayList<kz.production.kuanysh.tarelka.data.network.module.aim.Result>());
+//    }
 
 
 

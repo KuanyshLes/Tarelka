@@ -12,6 +12,10 @@
     <color name="colorProgress">#23eabf</color>
     <color name="colorTestBack">#3a3c48</color>
     <color name="colorTestBack1">#643a3c48</color>
+    <color name="colorBlackTrans">#ab000000</color>
+    <color name="colorBlackTransNew">#f5060215</color>
+    <color name="colorNotCorrect">#bf7669</color>
+
 
     <color name="black_effective">#2a2a2a</color>
 

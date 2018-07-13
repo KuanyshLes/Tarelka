@@ -1,31 +1,41 @@
 package kz.production.kuanysh.tarelka.ui.welcome;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import kz.production.kuanysh.tarelka.R;
-import kz.production.kuanysh.tarelka.data.TarelkaDataFactory;
+import kz.production.kuanysh.tarelka.data.network.model.aim.Result;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
-import kz.production.kuanysh.tarelka.ui.adapters.AimsAdapter;
+import kz.production.kuanysh.tarelka.ui.adapters.FoodsAdapter;
+import kz.production.kuanysh.tarelka.ui.base.BaseActivity;
 
-public class ChooseFoodActivity extends AppCompatActivity {
+public class ChooseFoodActivity extends BaseActivity implements ChooseFoodMvpView {
 
-    private AimsAdapter adapter;
+    @Inject
+    ChooseFoodPresenter<ChooseFoodMvpView> mPresenter;
+
+    @BindView(R.id.foods_next)
+    ImageView next;
+
+    @BindView(R.id.gridview_food)
+    GridView foods;
+
+    List<Result> foodsList;
+
+    private FoodsAdapter adapter;
     private Intent intent;
-    private GridView foods;
     public List<Integer> list;
 
     @Override
@@ -36,35 +46,51 @@ public class ChooseFoodActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_choose_food);
 
-        list=new ArrayList<>();
+        getActivityComponent().inject(this);
 
+        setUnBinder(ButterKnife.bind(this));
 
-
-
-        foods=(GridView)findViewById(R.id.gridview_food);
-        adapter=new AimsAdapter(ChooseFoodActivity.this, TarelkaDataFactory.getFoodsList(),list);
-        foods.setAdapter(adapter);
-
-
-        ImageView next=(ImageView)findViewById(R.id.foods_next);
-        next.setBackgroundColor(Color.parseColor("#5F000000"));
-
-
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent=new Intent(ChooseFoodActivity.this,MainActivity.class);
-                startActivity(intent);
-                for(int i=0;i<list.size();i++){
-                    Toast.makeText(ChooseFoodActivity.this, TarelkaDataFactory.getFoodsList().get(list.get(i))+"   Item" , Toast.LENGTH_LONG).show();
-
-                }
-                //Toast.makeText(ChooseFoodActivity.this, list.size()+" Selected item", Toast.LENGTH_SHORT).show();
-            }
-        });
+        mPresenter.onAttach(ChooseFoodActivity.this);
+        setUp();
 
     }
 
+    @OnClick(R.id.foods_next)
+    public void openmain(){
+        /*for(int i=0;i<list.size();i++){
+            Toast.makeText(ChooseFoodActivity.this, TarelkaDataFactory.getFoodsList().get(list.get(i))+"   Item" , Toast.LENGTH_LONG).show();
 
+        }*/
+        mPresenter.onNextClick();
+    }
+
+    @Override
+    protected void setUp() {
+        list=new ArrayList<>();
+        foodsList=new ArrayList<>();
+        adapter=new FoodsAdapter(ChooseFoodActivity.this, foodsList,list);
+        foods.setAdapter(adapter);
+        mPresenter.onViewPrepared();
+    }
+
+
+    @Override
+    public void updateFoods(List<Result> foods) {
+        foodsList=foods;
+        adapter.addItems(foodsList);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void openMainActivity() {
+        intent=new Intent(ChooseFoodActivity.this,MainActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mPresenter.onDetach();
+        super.onDestroy();
+    }
 }
 

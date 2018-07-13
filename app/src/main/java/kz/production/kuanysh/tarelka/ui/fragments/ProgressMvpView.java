@@ -2,6 +2,7 @@ package kz.production.kuanysh.tarelka.ui.fragments;
 
 import java.util.List;
 
+import kz.production.kuanysh.tarelka.data.network.model.quiz.Result;
 import kz.production.kuanysh.tarelka.ui.base.MvpView;
 
 /**
@@ -12,7 +13,7 @@ public interface ProgressMvpView extends MvpView{
 
     void openTestActivity(int position);
 
-    void updateTestList(List<String> testList);
+    void updateQuizList(List<Result> quizList);
 
     void updateDate();
 

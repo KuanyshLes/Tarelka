@@ -1,4 +1,4 @@
-package kz.production.kuanysh.tarelka.api;
+package kz.production.kuanysh.tarelka.data.network;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -8,6 +8,7 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import kz.production.kuanysh.tarelka.utils.AppConst;
 import kz.production.kuanysh.tarelka.utils.PrefUtils;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -20,10 +21,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by User on 22.06.2018.
  */
-public class ApiClient {
+public class RestApi {
     private static Retrofit retrofit = null;
     private static int REQUEST_TIMEOUT = 60;
     private static OkHttpClient okHttpClient;
+    private static Context mContext;
+
 
     public static Retrofit getClient(Context context) {
 
@@ -32,7 +35,23 @@ public class ApiClient {
 
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(ApiEndpoint.BASE_URL)
+                    .baseUrl(AppConst.BASE_URL)
+                    .client(okHttpClient)
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit;
+    }
+
+    public static Retrofit getImageClient(Context context) {
+
+        if (okHttpClient == null)
+            initOkHttpImage(context);
+
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(AppConst.BASE_URL)
                     .client(okHttpClient)
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
@@ -60,11 +79,7 @@ public class ApiClient {
                         .addHeader("Accept", "application/json")
                         .addHeader("Content-Type", "application/json");
 
-                // Adding Authorization token (API Key)
-                // Requests will be denied without API key
-                if (!TextUtils.isEmpty(PrefUtils.getApiKey(context))) {
-                    requestBuilder.addHeader("Authorization", PrefUtils.getApiKey(context));
-                }
+
 
                 Request request = requestBuilder.build();
                 return chain.proceed(request);
@@ -73,5 +88,55 @@ public class ApiClient {
 
         okHttpClient = httpClient.build();
     }
+    private static void initOkHttpImage(final Context context) {
+        OkHttpClient.Builder httpClient = new OkHttpClient().newBuilder()
+                .connectTimeout(REQUEST_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(REQUEST_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(REQUEST_TIMEOUT, TimeUnit.SECONDS);
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        httpClient.addInterceptor(interceptor);
+
+        httpClient.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request original = chain.request();
+                Request.Builder requestBuilder = original.newBuilder()
+                        .addHeader("Content-Type", "multipart/form-data");
+
+
+
+                Request request = requestBuilder.build();
+                return chain.proceed(request);
+            }
+        });
+
+        okHttpClient = httpClient.build();
+    }
+
+
+
+    private static ApiHelper apiHelper=getClient(mContext).create(ApiHelper.class);
+
+    private static ApiHelper apiImageHelper=getImageClient(mContext).create(ApiHelper.class);
+
+    public static ApiHelper getApiImageHelper(){
+        return apiImageHelper;
+    }
+
+    public static ApiHelper getApiHelper(){
+        return apiHelper;
+    }
+
+
+
+
+
+
+
+
+
 }
 

@@ -1,6 +1,7 @@
 package kz.production.kuanysh.tarelka.ui.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,18 +12,22 @@ import android.widget.TextView;
 import java.util.List;
 
 import kz.production.kuanysh.tarelka.R;
+import kz.production.kuanysh.tarelka.data.network.model.main.Result;
 import kz.production.kuanysh.tarelka.helper.Listener;
+import kz.production.kuanysh.tarelka.ui.activities.TaskDetailActivity;
+import kz.production.kuanysh.tarelka.ui.fragments.MainTaskFragment;
 
 /**
  * Created by User on 20.06.2018.
  */
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter .ViewHolder> {
-    private List<String> task_list;
+    private List<Result> task_list;
     private Context context;
     private Listener listener;
 
 
-    public TaskAdapter (List<String> task_list, Context context) {
+
+    public TaskAdapter (List<Result> task_list,Context context) {
         this.task_list = task_list;
         this.context = context;
     }
@@ -52,14 +57,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter .ViewHolder> {
         CardView cardView = viewHolder.cardView;
 
         TextView name = (TextView) cardView.findViewById(R.id.task_name);
-        name.setText(task_list.get(i).toString());
+        name.setText(task_list.get(i).getTitle().toString());
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(listener!=null){
-                    listener.onClick(i);
-                }
+                Intent intent=new Intent(context, TaskDetailActivity.class);
+                intent.putExtra(MainTaskFragment.KEY_MAIN_TASK,task_list.get(i));
+                context.startActivity(intent);
 
             }
         });
@@ -68,6 +73,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter .ViewHolder> {
     public int getItemCount() {
         return task_list.size();
     }
+
+   /* public void addItems(List<Result> mains){
+        task_list=mains;
+        notifyDataSetChanged();
+    }*/
 
 }
 

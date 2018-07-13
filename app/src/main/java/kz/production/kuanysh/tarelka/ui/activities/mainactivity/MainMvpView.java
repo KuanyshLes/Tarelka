@@ -18,4 +18,8 @@ public interface MainMvpView extends MvpView {
 
     void openProgressFragment();
 
+    void fireNotificationMorning();
+    void fireNotificationAfternoon();
+    void fireNotificationEvening();
+
 }

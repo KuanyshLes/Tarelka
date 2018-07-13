@@ -1,7 +1,5 @@
 package kz.production.kuanysh.tarelka.ui.fragments;
 
-import java.util.List;
-
 import kz.production.kuanysh.tarelka.ui.base.MvpView;
 
 /**
@@ -10,7 +8,9 @@ import kz.production.kuanysh.tarelka.ui.base.MvpView;
 
 public interface ProfileMvpView extends MvpView {
 
-    void updateInfo(List<String> info);
+    void updateInfo(String usernameText ,String statusText,String phoneText,String ageText,String weightText,
+                    String aimsText,String imageText,String heightText);
 
     void openEditFragment();
+
 }

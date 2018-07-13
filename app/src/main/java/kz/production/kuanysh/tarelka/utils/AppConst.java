@@ -15,4 +15,8 @@ public class AppConst {
     public static final int VIEW_TYPE_RECEIVE=2;
 
     public static final String BASE_URL="http://95.163.215.169/";
+
+    public static final String HEIGHT=" см";
+    public static final String WEIGHT=" кг";
+    public static final String YEAR=" лет";
 }
