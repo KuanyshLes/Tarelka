@@ -40,12 +40,18 @@ public class TestPresenter<V extends TestMvpView> extends BasePresenter<V>
     }
 
     @Override
+    public void onPrevClick(int position) {
+        getMvpView().updateTest(position);
+    }
+
+    @Override
     public void onCancellClick() {
-        getMvpView().openProgressFragment();
+        getMvpView().showCancellDialog();
     }
 
     @Override
     public void onViewPrepared(String id) {
+        getMvpView().showLoading();
         getCompositeDisposable().add(getDataManager()
                 .getApiHelper().getQuestions(getDataManager().getAccessToken(),id)
                 .subscribeOn(getSchedulerProvider().io())

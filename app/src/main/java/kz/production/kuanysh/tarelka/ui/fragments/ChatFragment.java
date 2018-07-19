@@ -12,17 +12,21 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -62,8 +66,19 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
     @BindView(R.id.chat_image_message)
     ImageView imageMessage;
 
+    @BindView(R.id.chat_progressbar)
+    ProgressBar progressBar;
+
     @Inject
     ChatAdapter chatAdapter;
+
+    private int page_number=0;
+
+    private static int all_page_number;
+
+    private boolean isLoading=true;
+    private int pastVisibleItems,visibleItemCount,totalItemCount,previous_total=0;
+    private int view_threshold=15;
 
     private static List<Chat> chatsListFra;
 
@@ -110,7 +125,7 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
 
     @OnClick(R.id.chat_send)
     public void sendMessage(){
-        mPresenter.onSendClick(message.getText().toString());
+        mPresenter.onSendClick(message.getText().toString(),page_number);
         message.setText("");
         if(chatsListFra.size()!=0){
             chats.getLayoutManager().scrollToPosition(chatsListFra.size()-1);
@@ -133,9 +148,15 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
     }
 
     @Override
-    public void updateChat(List<Chat> chatList) {
-        chatsListFra=chatList;
-        chatAdapter.addItems(chatList);
+    public void updateChat(List<Chat> chatList,int page_number) {
+        all_page_number=page_number;
+        progressBar.setVisibility(View.INVISIBLE);
+        //chatAdapter.removeItems();
+        for(int i=0;i<chatList.size();i++){
+            chatsListFra.add(0,chatList.get(i));
+        }
+        chatAdapter.addItems(chatsListFra);
+
         chats.getLayoutManager().scrollToPosition(chatList.size()-1);
     }
 
@@ -157,7 +178,7 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
                 imageMap = BitmapFactory.decodeStream(inputStream);
 
                 mPresenter.getMvpView().showMessage("result on activity");
-                mPresenter.onSendImage(uriImage,filePath,getActivity());
+                mPresenter.onSendImage(uriImage,filePath,getActivity(),page_number);
 
 
             }
@@ -193,7 +214,49 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
         linearLayoutManager=new LinearLayoutManager(getActivity());
         chats.setLayoutManager(linearLayoutManager);
         chats.setAdapter(chatAdapter);
-        mPresenter.onViewPrepared();
+        progressBar.setVisibility(View.VISIBLE);
+        mPresenter.onViewPrepared(page_number);
+        chatsListFra=new ArrayList<>();
+
+        /*Log.d("myTag", "onScrolled: visibleItem"+linearLayoutManager.getChildCount());
+        Log.d("myTag", "onScrolled: totalItemCount"+linearLayoutManager.getItemCount());
+        Log.d("myTag", "onScrolled: pastVisibleItems"+linearLayoutManager.findFirstVisibleItemPosition());*/
+
+
+        chats.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                visibleItemCount=linearLayoutManager.getChildCount();
+                totalItemCount=linearLayoutManager.getItemCount();
+                pastVisibleItems=linearLayoutManager.findFirstVisibleItemPosition();
+
+                Log.d("myTag", "onScrolled: ------------------------------------------------------------");
+                Log.d("myTag", "onScrolled: visibleItem"+linearLayoutManager.getChildCount());
+                Log.d("myTag", "onScrolled: totalItemCount"+linearLayoutManager.getItemCount());
+                Log.d("myTag", "onScrolled: pastVisibleItems"+linearLayoutManager.findFirstVisibleItemPosition());
+
+
+                if(dy<0){
+                    if(isLoading){
+                        if(totalItemCount>previous_total){
+                            isLoading=false;
+                            previous_total=totalItemCount;
+                        }
+                    }
+                    if(!isLoading && (pastVisibleItems + visibleItemCount >= totalItemCount)){
+                        if(all_page_number!=page_number){
+                            page_number++;
+                            progressBar.setVisibility(View.VISIBLE);
+                            mPresenter.onViewPrepared(page_number);
+                            isLoading=true;
+                        }
+
+                    }
+                }
+            }
+        });
     }
 
     @Override

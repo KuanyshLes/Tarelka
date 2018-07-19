@@ -8,6 +8,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -36,7 +37,7 @@ public class ChooseFoodActivity extends BaseActivity implements ChooseFoodMvpVie
 
     private FoodsAdapter adapter;
     private Intent intent;
-    public List<Integer> list;
+    public HashSet<Integer> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,17 +58,18 @@ public class ChooseFoodActivity extends BaseActivity implements ChooseFoodMvpVie
 
     @OnClick(R.id.foods_next)
     public void openmain(){
-        /*for(int i=0;i<list.size();i++){
-            Toast.makeText(ChooseFoodActivity.this, TarelkaDataFactory.getFoodsList().get(list.get(i))+"   Item" , Toast.LENGTH_LONG).show();
+        if(!list.isEmpty()){
+            mPresenter.onNextClick(list);
+        }else {
+            mPresenter.getMvpView().showMessage("Please select a meal(meals)");
+        }
 
-        }*/
-        mPresenter.onNextClick();
     }
 
     @Override
     protected void setUp() {
-        list=new ArrayList<>();
         foodsList=new ArrayList<>();
+        list=new HashSet<>();
         adapter=new FoodsAdapter(ChooseFoodActivity.this, foodsList,list);
         foods.setAdapter(adapter);
         mPresenter.onViewPrepared();
@@ -86,6 +88,7 @@ public class ChooseFoodActivity extends BaseActivity implements ChooseFoodMvpVie
         intent=new Intent(ChooseFoodActivity.this,MainActivity.class);
         startActivity(intent);
     }
+
 
     @Override
     protected void onDestroy() {

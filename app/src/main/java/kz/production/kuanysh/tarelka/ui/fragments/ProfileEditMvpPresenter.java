@@ -17,5 +17,7 @@ public interface ProfileEditMvpPresenter<V extends ProfileEditMvpView> extends M
 
     void onSaveClick(MultipartBody.Part image64, String name, String age, String weight,int height);
 
+    void onSaveClickWithoutImage(String name, String age, String weight,int height);
+
     void onAddPhotoClick();
 }

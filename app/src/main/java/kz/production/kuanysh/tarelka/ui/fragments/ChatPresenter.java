@@ -40,7 +40,7 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
     }
 
     @Override
-    public void onSendClick(String message) {
+    public void onSendClick(String message,int currentPage) {
 
         if(getDataManager().getAccessToken()!=null){
             if(message.length()!=0){
@@ -59,7 +59,7 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
                                     throws Exception {
 
                                 getMvpView().showMessage("Message sent!");
-                                onViewPrepared();
+                                onViewPrepared(currentPage);
                             }
                         }, new Consumer<Throwable>() {
                             @Override
@@ -90,7 +90,7 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
     }
 
     @Override
-    public void onSendImage(Uri uriImage, String filePath, Context context) {
+    public void onSendImage(Uri uriImage, String filePath, Context context,int currentPage) {
         if(filePath!=null && uriImage!=null){
             Log.i("PATH", uriImage.toString());
             File file = new File(filePath);
@@ -122,7 +122,7 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
 
                                 getMvpView().hideLoading();
                                 getMvpView().showMessage("Image sent!");
-                                onViewPrepared();
+                                onViewPrepared(currentPage);
                             }
                         }, new Consumer<Throwable>() {
                             @Override
@@ -168,18 +168,18 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
     }
 
     @Override
-    public void onViewPrepared() {
+    public void onViewPrepared(int pagenumber) {
         if(getDataManager().getAccessToken()!=null){
             getCompositeDisposable().add(getDataManager()
-                    .getApiHelper().getChats(getDataManager().getAccessToken())
+                    .getApiHelper().getChats(getDataManager().getAccessToken(),pagenumber)
                     .subscribeOn(getSchedulerProvider().io())
                     .observeOn(getSchedulerProvider().ui())
                     .subscribe(new Consumer<ChatInfo>() {
                         @Override
                         public void accept(@NonNull ChatInfo blogResponse)
                                 throws Exception {
-                            getMvpView().updateChat(blogResponse.getResult().getChats());
-
+                            getMvpView().updateChat(blogResponse.getResult().getChats(),blogResponse.getResult().getCountPages());
+                            getMvpView().showMessage("Accessed");
                         }
                     }, new Consumer<Throwable>() {
                         @Override

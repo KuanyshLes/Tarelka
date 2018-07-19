@@ -1,6 +1,7 @@
 package kz.production.kuanysh.tarelka.ui.fragments;
 
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,21 +10,22 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import kz.production.kuanysh.tarelka.R;
-import kz.production.kuanysh.tarelka.data.TarelkaDataFactory;
 import kz.production.kuanysh.tarelka.data.network.model.quiz.Result;
 import kz.production.kuanysh.tarelka.di.component.ActivityComponent;
 import kz.production.kuanysh.tarelka.ui.activities.test.TestActivity;
@@ -56,6 +58,7 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
     private LinearLayoutManager linearLayoutManager;
     private static String textSpinner;
     private Intent intent;
+    public static String SELECTED_DATE;
 
 
     public ProgressFragment() {
@@ -81,23 +84,8 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
             setUnBinder(ButterKnife.bind(this, view));
             mPresenter.onAttach(this);
         }
-
-
-        textSpinner=getDate(TarelkaDataFactory.getDateList());
-        progressBar.setProgress(56);
-
         return view;
     }
-
-    private String getDate(final List<String> dateList){
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_spinner_item, dateList);
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDate.setAdapter(categoryAdapter);
-
-        return spinnerDate.getSelectedItem().toString();
-    }
-
 
 
     @Override
@@ -110,18 +98,22 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
     @Override
     public void updateQuizList(List<Result> quizList) {
         progressAdapter.addItems(quizList);
-        mPresenter.getMvpView().showMessage("Start showing....");
-    }
-
-
-
-    @Override
-    public void updateDate() {
     }
 
     @Override
-    public void updateProgress() {
+    public void updateProgress(int progress) {
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", progressBar.getProgress(), progress);
+        animation.setDuration(1000);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.start();
+    }
 
+    @Override
+    public void onSetSpinnerDate(List<String> dates) {
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_spinner_item, dates);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDate.setAdapter(categoryAdapter);
     }
 
     @Override
@@ -137,11 +129,52 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
             }
         });
         mPresenter.onViewPrepared();
+        mPresenter.setDates();
 
 
-      /*  Calendar cal = Calendar.getInstance();
-        Date format=new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(cal));
-        System.out.println(format(cal.getTime()));*/
+        spinnerDate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar cal = Calendar.getInstance();
+                switch (position) {
+                    case 0:
+                        cal.add(Calendar.DATE, -2);
+                        SELECTED_DATE=format.format(cal.getTime());
+                        break;
+                    case 1:
+                        cal.add(Calendar.DATE, -1);
+                        SELECTED_DATE=format.format(cal.getTime());
+                        break;
+                    case 2:
+                        cal.add(Calendar.DATE, 0);
+                        SELECTED_DATE=format.format(cal.getTime());
+                        break;
+                    case 3:
+                        cal.add(Calendar.DATE, 1);
+                        SELECTED_DATE=format.format(cal.getTime());
+                        break;
+                    case 4:
+                        cal.add(Calendar.DATE, 2);
+                        SELECTED_DATE=format.format(cal.getTime());
+                        break;
+                    case 5:
+                        cal.add(Calendar.DATE, 3);
+                        SELECTED_DATE=format.format(cal.getTime());
+                        break;
+                }
+                mPresenter.onSendShowProgress(SELECTED_DATE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, -2);
+                SELECTED_DATE=format.format(cal.getTime());
+                mPresenter.onSendShowProgress(SELECTED_DATE);
+            }
+        });
     }
 
     @Override

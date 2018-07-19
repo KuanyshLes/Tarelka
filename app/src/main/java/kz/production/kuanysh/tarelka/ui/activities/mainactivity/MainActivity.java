@@ -1,9 +1,14 @@
 package kz.production.kuanysh.tarelka.ui.activities.mainactivity;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +16,8 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -27,6 +34,7 @@ import com.facebook.accountkit.PhoneNumber;
 import com.facebook.accountkit.ui.AccountKitActivity;
 import com.facebook.accountkit.ui.AccountKitConfiguration;
 import com.facebook.accountkit.ui.LoginType;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Calendar;
 import java.util.Random;
@@ -35,7 +43,10 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import kz.production.kuanysh.tarelka.R;
+import kz.production.kuanysh.tarelka.app.Config;
+import kz.production.kuanysh.tarelka.data.network.model.main.Main;
 import kz.production.kuanysh.tarelka.push.AlarmReceiver;
+import kz.production.kuanysh.tarelka.services.MyFirebaseMessagingService;
 import kz.production.kuanysh.tarelka.ui.base.BaseActivity;
 import kz.production.kuanysh.tarelka.ui.welcome.LoginActivity;
 import kz.production.kuanysh.tarelka.utils.AppConst;
@@ -44,6 +55,8 @@ import kz.production.kuanysh.tarelka.ui.fragments.ChatFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.MainTaskFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.ProfileFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.ProgressFragment;
+import kz.production.kuanysh.tarelka.utils.AppConstants;
+import kz.production.kuanysh.tarelka.utils.NotificationUtils;
 
 public class MainActivity extends BaseActivity implements MainMvpView{
 
@@ -57,7 +70,8 @@ public class MainActivity extends BaseActivity implements MainMvpView{
     public static final String TAG_CHAT="chat";
     public static final String TAG_PROGRESS="progress";
     public static final String TAG_PROFILE="profile";
-
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+    public static final String MAINACTIVITY_KEY="keyTask";
 
 
     @Override
@@ -70,22 +84,35 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         mPresenter.onAttach(this);
 
         setUp();
+        FirebaseMessaging.getInstance().subscribeToTopic(mPresenter.getDataManager().getAccessToken()+Config.TOPIC_GLOBAL);
         if(getIntent().getStringExtra(TAG_PROGRESS)!=null){
             if(getIntent().getStringExtra(TAG_PROGRESS).equals(TAG_PROGRESS)){
+                BottomNavigationViewEx bottomNavigationViewEx= (BottomNavigationViewEx) findViewById(R.id.navigation);
+                final Menu menu = bottomNavigationViewEx.getMenu();
+                MenuItem menuItem0 = menu.getItem(2);
+                menuItem0.setChecked(true);
                 mPresenter.onProgressClick();
             }
             else{
                 mPresenter.onMainCLick();
             }
-        }else{
+        }else if(getIntent().getStringExtra(AppConstants.PUSH_ACTION)!=null){
+            if(getIntent().getStringExtra(AppConstants.PUSH_ACTION).equals(AppConstants.PUSH_ACTION)){
+                BottomNavigationViewEx bottomNavigationViewEx= (BottomNavigationViewEx) findViewById(R.id.navigation);
+                final Menu menu = bottomNavigationViewEx.getMenu();
+                MenuItem menuItem0 = menu.getItem(1);
+                menuItem0.setChecked(true);
+                mPresenter.onChatClick();
+            }
+        }
+        else{
             mPresenter.onMainCLick();
         }
 
 
-        mPresenter.getMvpView().fireNotificationMorning();
-        mPresenter.getMvpView().fireNotificationAfternoon();
-        mPresenter.getMvpView().fireNotificationEvening();
-        mPresenter.onMainCLick();
+        //mPresenter.getMvpView().fireNotificationMorning();
+       // mPresenter.getMvpView().fireNotificationAfternoon();
+       // mPresenter.getMvpView().fireNotificationEvening();
 
     }
 
@@ -95,8 +122,7 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         BottomNavigationViewEx bottomNavigationViewEx= (BottomNavigationViewEx) findViewById(R.id.navigation);
         final Menu menu = bottomNavigationViewEx.getMenu();
 
-        MenuItem menuItem = menu.getItem(0);
-        menuItem.setChecked(true);
+
         bottomNavigationViewEx.enableAnimation(false);
         bottomNavigationViewEx.enableItemShiftingMode(false);
         bottomNavigationViewEx.enableShiftingMode(false);
@@ -131,7 +157,49 @@ public class MainActivity extends BaseActivity implements MainMvpView{
                 return false;
             }
         });
+
+
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                // checking for type intent filter
+                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
+
+                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                    // new push notification is received
+                    String message = intent.getStringExtra(AppConstants.PUSH_KEY);
+
+                    mPresenter.getMvpView().onMessageReceivedNotification("admin",message);
+                    mPresenter.getMvpView().showMessage("New from admin:" + message);
+
+                }
+            }
+        };
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // register GCM registration complete receiver
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.REGISTRATION_COMPLETE));
+
+        // register new push message receiver
+        // by doing this, the activity will be notified each time a new message arrives
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.PUSH_NOTIFICATION));
+
+        // clear the notification area when the app is opened
+        NotificationUtils.clearNotifications(getApplicationContext());
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
+    }
+
 
 
     @Override
@@ -178,45 +246,68 @@ public class MainActivity extends BaseActivity implements MainMvpView{
     @Override
     public void fireNotificationMorning() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+
         Intent notificationIntent = new Intent(this, AlarmReceiver.class);
         Random ran = new Random();
-        int x = ran.nextInt(1000) + 5;
+        int x = ran.nextInt(100) + 5;
         PendingIntent broadcast = PendingIntent.getBroadcast(this, x, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 14);
-        cal.set(Calendar.MINUTE, 2);
+        cal.set(Calendar.HOUR_OF_DAY, 8);
+        cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 0);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
+
     }
     @Override
     public void fireNotificationAfternoon() {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager2 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent notificationIntent = new Intent(this, AlarmReceiver.class);
         Random ran = new Random();
         int x = ran.nextInt(1000) + 5;
         PendingIntent broadcast = PendingIntent.getBroadcast(this, x, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 14);
-        cal.set(Calendar.MINUTE, 3);
+        cal.set(Calendar.HOUR_OF_DAY, 13);
+        cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 0);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
+        alarmManager2.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
     }
 
     @Override
     public void fireNotificationEvening() {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager3 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent notificationIntent = new Intent(this, AlarmReceiver.class);
         Random ran = new Random();
         int x = ran.nextInt(1000) + 5;
         PendingIntent broadcast = PendingIntent.getBroadcast(this, x, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 14);
-        cal.set(Calendar.MINUTE, 4);
+        cal.set(Calendar.HOUR_OF_DAY, 18);
+        cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 0);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
+        alarmManager3.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
+    }
+
+    @Override
+    public void onMessageReceivedNotification(String title, String message) {
+        mPresenter.getMvpView().showMessage("in realizing"+message);
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setTicker("New message from admin")
+                        .setContentTitle("Tarelka - Admin")
+                        .setContentText(message);
+
+        Notification notification = builder.build();
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+
+
     }
 
     @Override

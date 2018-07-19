@@ -41,7 +41,6 @@ public class MainTaskPresenter<V extends MainTaskMvpView> extends BasePresenter<
                     public void accept(@NonNull Main blogResponse)
                             throws Exception {
                         getMvpView().hideLoading();
-                        getMvpView().showMessage("Tasks get successfully!");
                         getMvpView().updateAimsList(blogResponse.getResult());
 
                     }

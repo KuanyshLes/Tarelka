@@ -13,5 +13,8 @@ public interface ProgressMvpPresenter<V extends ProgressMvpView> extends MvpPres
 
     void onViewPrepared();
 
+    void setDates();
+
+    void onSendShowProgress(String date);
 
 }

@@ -2,19 +2,25 @@ package kz.production.kuanysh.tarelka.data.network;
 
 import android.graphics.Bitmap;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Single;
 import kz.production.kuanysh.tarelka.data.network.model.aim.Aim;
 import kz.production.kuanysh.tarelka.data.network.model.chat.ChatInfo;
+import kz.production.kuanysh.tarelka.data.network.model.goal.SendGoal;
 import kz.production.kuanysh.tarelka.data.network.model.main.Main;
 import kz.production.kuanysh.tarelka.data.network.model.profile.Authorization;
+import kz.production.kuanysh.tarelka.data.network.model.progress.Progress;
 import kz.production.kuanysh.tarelka.data.network.model.quiz.Quiz;
 import kz.production.kuanysh.tarelka.data.network.model.quizquestions.Questions;
 import kz.production.kuanysh.tarelka.data.network.model.quizquestions.QuizResult;
+import kz.production.kuanysh.tarelka.data.network.model.sendmeal.SendMeal;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
@@ -49,7 +55,7 @@ public interface ApiHelper {
     @FormUrlEncoded
     @POST(ApiEndPoint.PROFILE)
     Single<Authorization> updateProfileInfo(@Field("token") String token, @Field("fio") String name,
-                                            @Field("weight") String weight,@Field("age") String age );
+                                            @Field("weight") int weight,@Field("age") int age,@Field("height") int height );
 
     @FormUrlEncoded
     @POST(ApiEndPoint.PROFILE)
@@ -58,7 +64,7 @@ public interface ApiHelper {
 
     @FormUrlEncoded
     @POST(ApiEndPoint.CHAT)
-    Single<ChatInfo> getChats(@Field("token") String token);
+    Single<ChatInfo> getChats(@Field("token") String token,@Field("page") int currentPage);
 
     @FormUrlEncoded
     @POST(ApiEndPoint.SEND_MESSAGE)
@@ -97,5 +103,17 @@ public interface ApiHelper {
                                                                                                   @Part("images") RequestBody description,
                                                                                                   @Part List<MultipartBody.Part> image);
 
+    @FormUrlEncoded
+    @POST(ApiEndPoint.SEND_GOAL)
+    Single<SendGoal> sendGoal(@Field("token") String token,
+                              @Field("goal_id") int id);
+
+    @FormUrlEncoded
+    @POST(ApiEndPoint.SEND_MEALS)
+    Single<SendMeal> sendMeals(@FieldMap Map<String,String> meals);
+
+    @FormUrlEncoded
+    @POST(ApiEndPoint.GET_PROGRESS)
+    Single<Progress> getProgress(@Field("token") String token,@Field("date") String date);
 
 }

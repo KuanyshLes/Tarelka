@@ -105,6 +105,75 @@ public class ProfileEditPresenter<V extends ProfileEditMvpView> extends BasePres
     }
 
     @Override
+    public void onSaveClickWithoutImage(String name, String age, String weight, int height) {
+        if(getDataManager().getAccessToken()!=null){
+            getMvpView().showMessage(getDataManager().getAccessToken().toString());
+            getCompositeDisposable().add(getDataManager().getApiHelper().updateProfileInfo(
+                    getDataManager().getAccessToken(),name,Integer.valueOf(weight),Integer.valueOf(age),Integer.valueOf(height))
+                    .subscribeOn(getSchedulerProvider().io()).
+                            observeOn(getSchedulerProvider().ui())
+                    .subscribe(new Consumer<Authorization>() {
+                        @Override
+                        public void accept(Authorization response) throws Exception {
+                            getMvpView().showMessage("Succesfully updated");
+                        /*StringBuilder builder = new StringBuilder();
+                        for(String s : response.getResult().getGoals()) {
+                            builder.append(s+",");
+                        }
+                        String str = builder.toString();*/
+                            getDataManager().updateUserInfo(
+                                    response.getResult().getToken(),
+                                    response.getResult().getId(),
+                                    DataManager.LoggedInMode.LOGGED_IN_MODE_SERVER,
+                                    response.getResult().getFio(),
+                                    response.getResult().getStatus(),
+                                    response.getResult().getPhone(),
+                                    response.getResult().getAvatar(),
+                                    response.getResult().getAge(),
+                                    response.getResult().getWeight(),
+                                    getDataManager().getAims(),
+                                    response.getResult().getHeight());
+
+                            if (!isViewAttached()) {
+                                return;
+                            }
+
+                            getMvpView().hideLoading();
+
+                            getMvpView().openProfileFragment();
+
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+
+                            if (!isViewAttached()) {
+                                return;
+                            }
+
+                            if(throwable.getMessage() != null)
+                                Log.i("MESS", throwable.getMessage());
+
+                            if(throwable.getCause() != null)
+                                throwable.printStackTrace();
+
+                            getMvpView().showMessage("Cannot update");
+
+                            getMvpView().hideLoading();
+
+                            // handle the login error here
+                            if (throwable instanceof ANError) {
+                                ANError anError = (ANError) throwable;
+                                handleApiError(anError);
+                            }
+                        }
+                    }));
+        }else{
+            getMvpView().showMessage("Token is required");
+        }
+    }
+
+    @Override
     public void onAddPhotoClick() {
         getMvpView().openImagePicker();
     }

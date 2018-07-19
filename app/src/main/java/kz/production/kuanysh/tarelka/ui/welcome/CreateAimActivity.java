@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import javax.inject.Inject;
 
@@ -35,7 +36,7 @@ public class CreateAimActivity extends BaseActivity implements CreateAimMvpView 
 
     public static AimsAdapter aimsAdapter;
     private Intent intent;
-    List<Integer> list;
+    public static Stack<Integer> selectedPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,15 +60,15 @@ public class CreateAimActivity extends BaseActivity implements CreateAimMvpView 
     @Override
     protected void setUp() {
         aimsList=new ArrayList<>();
-        list=new ArrayList<>();
-        aimsAdapter=new AimsAdapter(CreateAimActivity.this, aimsList,list);
+        selectedPosition=new Stack<>();
+        aimsAdapter=new AimsAdapter(CreateAimActivity.this, aimsList,selectedPosition);
         aims.setAdapter(aimsAdapter);
         mPresenter.onViewPrepared();
     }
 
     @OnClick(R.id.aims_next)
     public void goFoodChoose(){
-        mPresenter.onNextClick();
+        mPresenter.getMvpView().check();
     }
 
 
@@ -82,6 +83,15 @@ public class CreateAimActivity extends BaseActivity implements CreateAimMvpView 
         aimsList=aims;
         aimsAdapter.addItems(aimsList);
         aimsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void check() {
+        if(!selectedPosition.isEmpty()){
+            mPresenter.onNextClick(aimsList.get(selectedPosition.peek()).getId());
+        }else{
+            mPresenter.getMvpView().showMessage("Please select one of the items");
+        }
     }
 
     @Override

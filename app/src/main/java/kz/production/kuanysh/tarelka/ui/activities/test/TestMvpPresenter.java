@@ -13,7 +13,10 @@ public interface TestMvpPresenter <V extends TestMvpView> extends MvpPresenter<V
 
     void onNextClick(int position);
 
+    void onPrevClick(int position);
+
     void onCancellClick();
+
 
     void onViewPrepared(String id);
 

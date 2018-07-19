@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -103,7 +104,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter .ViewHolder> {
             case VIEW_TYPE_RECEIVE:
                 if(chat_item.get(i).getMessage()!=null){
                     viewHolder.received_message.setText(chat_item.get(i).getMessage().toString());
-                }else if(chat_item.get(i).getMessage()==null){
+                }else{
                     viewHolder.received_message.setText("");
                 }
                 viewHolder.received_time.setText(format.getHours()+":"+format.getMinutes());
@@ -111,12 +112,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter .ViewHolder> {
             case VIEW_TYPE_SEND:
                 if(chat_item.get(i).getMessage()!=null ){
                     viewHolder.sended_message.setText(chat_item.get(i).getMessage().toString());
-                }else if(chat_item.get(i).getMessage()==null ){
-                    if (chat_item.get(i).getImage()!=null) {
-                        Glide.with(viewHolder.image1.getContext()).load(chat_item.get(i).getImage().get(0).toString()).into(viewHolder.image1);
-                        Log.d("myTag", "onBindViewHolder: "+chat_item.get(i).getImage().get(0).toString());
-                        setSize(viewHolder.image1);
-                    }
+                }else{
+                    Glide.with(viewHolder.image1.getContext()).load(chat_item.get(i).getImage().get(0).toString()).into(viewHolder.image1);
+                    Log.d("myTag", "onBindViewHolder: "+chat_item.get(i).getImage().get(0).toString());
+                    setSize(viewHolder.image1);
                     Log.d("myTag", "onBindViewHolder: image message position " + i);
 
                 }
@@ -134,14 +133,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter .ViewHolder> {
         return chat_item.size();
     }
     public void addItems(List<Chat> chats) {
-        Collections.reverse(chats);
-        chat_item.addAll(chats);
+        chat_item=chats;
         notifyDataSetChanged();
+    }
+    public void removeItems(){
+        chat_item.clear();
     }
     public void setSize(View view){
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(170, 170);
         view.setLayoutParams(layoutParams);
     }
+
+
 
 }
 

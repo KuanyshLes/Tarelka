@@ -9,7 +9,7 @@
     tools:context="kz.production.kuanysh.tarelka.ui.fragments.ProfileFragment"
     android:weightSum="25">
     <FrameLayout
-        android:layout_weight="9"
+        android:layout_weight="9.3"
         android:layout_width="match_parent"
         android:layout_height="0dp">
 
@@ -34,14 +34,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="3.5"
+                android:layout_weight="4.1"
                 android:orientation="horizontal"
                 android:weightSum="10">
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="4">
+                    android:layout_weight="4.13">
 
                 </View>
 
@@ -52,7 +52,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_gravity="right"
-                    android:layout_weight="2"
+                    android:layout_weight="2.1"
                     app:carbon_cornerRadius="8dp"
                     android:src="@mipmap/profile_photo"
                     app:civ_border_color="@color/colorWhite"

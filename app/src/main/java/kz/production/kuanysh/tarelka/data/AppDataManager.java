@@ -4,21 +4,27 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import butterknife.OnClick;
 import io.reactivex.Single;
+import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.data.network.ApiHeader;
 import kz.production.kuanysh.tarelka.data.network.ApiHelper;
 import kz.production.kuanysh.tarelka.data.network.RestApi;
 import kz.production.kuanysh.tarelka.data.network.model.aim.Aim;
 import kz.production.kuanysh.tarelka.data.network.model.chat.ChatInfo;
+import kz.production.kuanysh.tarelka.data.network.model.goal.SendGoal;
 import kz.production.kuanysh.tarelka.data.network.model.main.Main;
 import kz.production.kuanysh.tarelka.data.network.model.profile.Authorization;
+import kz.production.kuanysh.tarelka.data.network.model.progress.Progress;
 import kz.production.kuanysh.tarelka.data.network.model.quiz.Quiz;
 import kz.production.kuanysh.tarelka.data.network.model.quizquestions.Questions;
 import kz.production.kuanysh.tarelka.data.network.model.quizquestions.QuizResult;
+import kz.production.kuanysh.tarelka.data.network.model.sendmeal.SendMeal;
 import kz.production.kuanysh.tarelka.data.prefs.PreferencesHelper;
 import kz.production.kuanysh.tarelka.di.ApplicationContext;
 import okhttp3.MultipartBody;
@@ -44,6 +50,8 @@ public class AppDataManager implements DataManager {
         mPreferencesHelper = preferencesHelper;
         mApiHelper = apiHelper;
     }
+
+
 
     @Override
     public ApiHeader getApiHeader() {
@@ -76,8 +84,8 @@ public class AppDataManager implements DataManager {
     }
 
     @Override
-    public Single<Authorization> updateProfileInfo(String token, String name, String weight, String age) {
-        return mApiHelper.updateProfileInfo(token,name,weight,age);
+    public Single<Authorization> updateProfileInfo(String token, String name, int weight, int age,int height) {
+        return mApiHelper.updateProfileInfo(token,name,weight,age,height);
 
     }
 
@@ -87,8 +95,8 @@ public class AppDataManager implements DataManager {
     }
 
     @Override
-    public Single<ChatInfo> getChats(String token) {
-        return mApiHelper.getChats(token);
+    public Single<ChatInfo> getChats(String token,int currentPage) {
+        return mApiHelper.getChats(token,currentPage);
     }
 
     @Override
@@ -121,6 +129,31 @@ public class AppDataManager implements DataManager {
         return mApiHelper.sendImageMessage(token,description,part);
     }
 
+    @Override
+    public Single<SendGoal> sendGoal(String token, int id) {
+        return mApiHelper.sendGoal(token,id);
+    }
+
+    @Override
+    public Single<SendMeal> sendMeals(Map<String, String> meals) {
+        return mApiHelper.sendMeals(meals);
+    }
+
+    @Override
+    public Single<Progress> getProgress(String token, String date) {
+        return mApiHelper.getProgress(token,date);
+    }
+
+
+    @Override
+    public String getFirebaseToken() {
+        return mPreferencesHelper.getFirebaseToken();
+    }
+
+    @Override
+    public void setFirebaseToken(String refreshedToken) {
+        mPreferencesHelper.setFirebaseToken(refreshedToken);
+    }
 
     @Override
     public int getCurrentUserLoggedInMode() {
@@ -258,6 +291,11 @@ public class AppDataManager implements DataManager {
     @Override
     public ApiHelper getImageApiHelper() {
         return RestApi.getApiImageHelper();
+    }
+
+    @Override
+    public void updateFirebaseToken(String token) {
+        mPreferencesHelper.setFirebaseToken(token);
     }
 
 

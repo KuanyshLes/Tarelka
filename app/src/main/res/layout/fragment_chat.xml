@@ -51,16 +51,22 @@
         android:layout_margin="10dp"
         android:layout_below="@id/main_toolbar"
         android:weightSum="15">
+        <ProgressBar
+            android:id="@+id/chat_progressbar"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="invisible" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/chat_recycler"
-            android:layout_weight="14.2"
+            android:layout_weight="13.4"
             android:layout_width="match_parent"
             android:scrollbars="vertical"
-            android:background="@drawable/rectangle_left_top_right"
             android:layout_height="0dp">
 
         </android.support.v7.widget.RecyclerView>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,6 +78,7 @@
                 android:id="@+id/chat_image_message"
                 android:layout_weight="0.085"
                 android:layout_width="0dp"
+                android:layout_margin="5dp"
                 android:layout_height="match_parent"
                 android:src="@drawable/attachment"/>
 
@@ -79,7 +86,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
-                android:layout_weight="0.9"
+                android:layout_weight="0.915"
                 android:background="@drawable/rect_with_corner"
                 android:orientation="horizontal"
                 android:padding="3dp"

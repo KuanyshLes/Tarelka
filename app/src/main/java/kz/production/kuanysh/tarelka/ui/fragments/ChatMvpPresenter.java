@@ -13,15 +13,15 @@ import okhttp3.MultipartBody;
 @PerActivity
 public interface ChatMvpPresenter<V extends ChatMvpView> extends MvpPresenter<V> {
 
-    void onSendClick(String message);
+    void onSendClick(String message,int currentPage);
 
-    void onSendImage(Uri uri, String path, Context context);
+    void onSendImage(Uri uri, String path, Context context,int currentPage);
 
     void onImageclick();
 
     void onMailClick();
 
-    void onViewPrepared();
+    void onViewPrepared(int page);
 
 
 

@@ -3,6 +3,7 @@ package kz.production.kuanysh.tarelka.data.network;
 import android.graphics.Bitmap;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -10,11 +11,14 @@ import javax.inject.Singleton;
 import io.reactivex.Single;
 import kz.production.kuanysh.tarelka.data.network.model.aim.Aim;
 import kz.production.kuanysh.tarelka.data.network.model.chat.ChatInfo;
+import kz.production.kuanysh.tarelka.data.network.model.goal.SendGoal;
 import kz.production.kuanysh.tarelka.data.network.model.main.Main;
 import kz.production.kuanysh.tarelka.data.network.model.profile.Authorization;
+import kz.production.kuanysh.tarelka.data.network.model.progress.Progress;
 import kz.production.kuanysh.tarelka.data.network.model.quiz.Quiz;
 import kz.production.kuanysh.tarelka.data.network.model.quizquestions.Questions;
 import kz.production.kuanysh.tarelka.data.network.model.quizquestions.QuizResult;
+import kz.production.kuanysh.tarelka.data.network.model.sendmeal.SendMeal;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
@@ -64,9 +68,9 @@ public class AppApiHelper implements ApiHelper {
     }
 
     @Override
-    public Single<Authorization> updateProfileInfo(String token,String name, String weight, String age) {
+    public Single<Authorization> updateProfileInfo(String token,String name, int weight, int age,int height) {
 
-        return RestApi.getApiHelper().updateProfileInfo(token,name,age,weight);
+        return RestApi.getApiHelper().updateProfileInfo(token,name,age,weight,height);
     }
 
     @Override
@@ -75,8 +79,8 @@ public class AppApiHelper implements ApiHelper {
     }
 
     @Override
-    public Single<ChatInfo> getChats(String token) {
-        return RestApi.getApiHelper().getChats(token);
+    public Single<ChatInfo> getChats(String token,int currentPage) {
+        return RestApi.getApiHelper().getChats(token,currentPage);
     }
 
     @Override
@@ -109,6 +113,21 @@ public class AppApiHelper implements ApiHelper {
     @Override
     public Single<kz.production.kuanysh.tarelka.data.network.model.chat.receive.Result> sendImageMessage(RequestBody token, RequestBody description, List<MultipartBody.Part> part) {
         return RestApi.getApiImageHelper().sendImageMessage(token,description,part);
+    }
+
+    @Override
+    public Single<SendGoal> sendGoal(String token, int id) {
+        return RestApi.getApiHelper().sendGoal(token,id);
+    }
+
+    @Override
+    public Single<SendMeal> sendMeals(Map<String, String> meals) {
+        return RestApi.getApiHelper().sendMeals(meals);
+    }
+
+    @Override
+    public Single<Progress> getProgress(String token, String date) {
+        return RestApi.getApiHelper().getProgress(token,date);
     }
 
 

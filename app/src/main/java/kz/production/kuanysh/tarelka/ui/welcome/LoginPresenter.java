@@ -54,7 +54,7 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V>
                 .subscribe(new Consumer<Authorization>() {
                     @Override
                     public void accept(Authorization response) throws Exception {
-                        getMvpView().showMessage("Accept");
+
                         String str="";
                         /*if(response.getResult().getGoals()==null || response.getResult().getGoals().equals("")){
                             StringBuilder builder = new StringBuilder();

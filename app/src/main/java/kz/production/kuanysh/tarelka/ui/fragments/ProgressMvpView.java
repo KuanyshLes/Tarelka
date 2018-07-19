@@ -15,7 +15,7 @@ public interface ProgressMvpView extends MvpView{
 
     void updateQuizList(List<Result> quizList);
 
-    void updateDate();
+    void updateProgress(int progress);
 
-    void updateProgress();
+    void onSetSpinnerDate(List<String> dates);
 }

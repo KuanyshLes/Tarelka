@@ -13,7 +13,7 @@ public interface ChatMvpView extends MvpView {
 
     void openSendAsSocial();
 
-    void updateChat(List<Chat> chatList);
+    void updateChat(List<Chat> chatList,int page_number);
 
     void openImagePicker();
 

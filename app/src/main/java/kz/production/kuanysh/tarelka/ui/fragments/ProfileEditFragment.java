@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -136,7 +138,10 @@ public class ProfileEditFragment extends BaseFragment implements ProfileEditMvpV
                     Integer.valueOf(height.getText().toString()));
         }
         else{
-            mPresenter.getMvpView().showMessage("Please select an image");
+            mPresenter.onSaveClickWithoutImage(name.getText().toString(),
+                    age.getText().toString(),
+                    weight.getText().toString(),
+                    Integer.valueOf(height.getText().toString()));
         }
 
 
@@ -213,10 +218,11 @@ public class ProfileEditFragment extends BaseFragment implements ProfileEditMvpV
         weight.setText(mPresenter.getDataManager().getWeight());
         height.setText(mPresenter.getDataManager().getHeight());
 
-
-        /*Glide.with(this)
+        if(mPresenter.getDataManager().getImage()!=null){
+            Glide.with(this)
                 .load(mPresenter.getDataManager().getImage())
-                .into(photo);*/
+                .into(photo);
+        }
         //aim.setText("");
     }
 

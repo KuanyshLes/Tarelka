@@ -19,4 +19,8 @@ public interface TestMvpView extends MvpView {
 
     void showResult();
 
+    void showCancellDialog();
+
+    void showSuccessDialog();
+
 }

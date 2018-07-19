@@ -36,6 +36,7 @@ import kz.production.kuanysh.tarelka.utils.AppConstants;
 @Singleton
 public class AppPreferencesHelper implements PreferencesHelper {
 
+    private static final String PREF_KEY_FIREBASE_TOKEN= "PREF_KEY_FIREBASE_TOKEN";
     private static final String PREF_KEY_USER_LOGGED_IN_MODE = "PREF_KEY_USER_LOGGED_IN_MODE";
     private static final String PREF_KEY_CURRENT_USER_ID = "PREF_KEY_CURRENT_USER_ID";
     private static final String PREF_KEY_ACCESS_TOKEN = "PREF_KEY_ACCESS_TOKEN";
@@ -82,7 +83,15 @@ public class AppPreferencesHelper implements PreferencesHelper {
     }
 
 
+    @Override
+    public String getFirebaseToken() {
+        return mPrefs.getString(PREF_KEY_FIREBASE_TOKEN, null);
+    }
 
+    @Override
+    public void setFirebaseToken(String refreshedToken) {
+        mPrefs.edit().putString(PREF_KEY_FIREBASE_TOKEN, refreshedToken).apply();
+    }
 
     @Override
     public int getCurrentUserLoggedInMode() {

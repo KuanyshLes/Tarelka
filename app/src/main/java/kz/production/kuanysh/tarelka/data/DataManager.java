@@ -16,6 +16,8 @@ public interface DataManager extends ApiHelper,PreferencesHelper {
 
     ApiHelper getImageApiHelper();
 
+    void updateFirebaseToken(String token);
+
 
 
     void updateUserInfo(

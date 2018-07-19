@@ -1,5 +1,7 @@
 package kz.production.kuanysh.tarelka.ui.activities.mainactivity;
 
+import android.content.Intent;
+
 import kz.production.kuanysh.tarelka.ui.base.MvpView;
 
 /**
@@ -19,7 +21,11 @@ public interface MainMvpView extends MvpView {
     void openProgressFragment();
 
     void fireNotificationMorning();
+
     void fireNotificationAfternoon();
+
     void fireNotificationEvening();
+
+    void onMessageReceivedNotification(String title, String message);
 
 }

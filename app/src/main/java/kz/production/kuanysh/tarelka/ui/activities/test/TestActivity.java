@@ -1,8 +1,12 @@
 package kz.production.kuanysh.tarelka.ui.activities.test;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -11,6 +15,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -63,6 +68,9 @@ public class TestActivity extends BaseActivity implements TestMvpView {
     @BindView(R.id.test_next)
     ImageView next;
 
+    @BindView(R.id.test_prev)
+    ImageView prev;
+
     private static List<Result> quizQuestion;
 
     public static int currentTestNumber=0;
@@ -73,7 +81,14 @@ public class TestActivity extends BaseActivity implements TestMvpView {
     public static String WRONG_COLOR ="#bf7669";
     public static String WHITE_COLOR ="#FFFFFF";
 
+    public static final String STATUS_DIALOG_CANCELL="CANCELL";
+    public static final String STATUS_DIALOG_SUCCESS="SUCCESS";
+    private static Dialog dialog;
+    private static AlertDialog.Builder mBuilder;
 
+    private static List<String> userAnswers;
+    private static List<String> correctAnswers;
+    private static int passedTestCount=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,52 +107,72 @@ public class TestActivity extends BaseActivity implements TestMvpView {
 
     @OnClick(R.id.test_cancell)
     public void goQuiz(){
-        mPresenter.onCancellClick();
+            mPresenter.onCancellClick();
     }
 
     @OnClick(R.id.test_next)
     public void next(){
-        if(answer1.isChecked() || answer2.isChecked() || answer3.isChecked() || answer4.isChecked() || answer5.isChecked()){
+        if(currentTestNumber<passedTestCount){
             currentTestNumber++;
-            mPresenter.getMvpView().showMessage("Next if");
-            if(currentTestNumber!=quizQuestion.size()){
-                setDefault();
-                setChecked();
-                setClickable(true);
-                mPresenter.onNextClick(currentTestNumber);
+            mPresenter.onNextClick(currentTestNumber);
+        }else {
+            if(answer1.isChecked() || answer2.isChecked() || answer3.isChecked() || answer4.isChecked() || answer5.isChecked()){
+                currentTestNumber++;
+
+               // mPresenter.getMvpView().showMessage("Next if");
+                if(currentTestNumber!=quizQuestion.size()){
+                    setDefault();
+                    setChecked();
+                    setClickable(true);
+                    mPresenter.onNextClick(currentTestNumber);
+                }
+                else if(currentTestNumber==quizQuestion.size()){
+                    //mPresenter.getMvpView().showMessage("Next else if");
+                    mPresenter.onNextClick(currentTestNumber);
+                }
+            }else{
+                mPresenter.getMvpView().showMessage("Please select one item");
             }
-            else if(currentTestNumber==quizQuestion.size()){
-                mPresenter.getMvpView().showMessage("Next else if");
-                mPresenter.onNextClick(currentTestNumber);
-            }
-        }else{
-            mPresenter.getMvpView().showMessage("Please select one item");
         }
 
+
     }
+    @OnClick(R.id.test_prev)
+    public void prev(){
+        currentTestNumber--;
+        mPresenter.onPrevClick(currentTestNumber);
+        setClickable(false);
+    }
+
+
     @OnClick(R.id.test_ans1)
     public void ans1(){
         mPresenter.onAnswerClick();
+        passedTestCount++;
         setClickable(false);
     }
     @OnClick(R.id.test_ans2)
     public void ans2(){
         mPresenter.onAnswerClick();
+        passedTestCount++;
         setClickable(false);
     }
     @OnClick(R.id.test_ans3)
     public void ans3(){
         mPresenter.onAnswerClick();
+        passedTestCount++;
         setClickable(false);
     }
     @OnClick(R.id.test_ans4)
     public void ans4(){
         mPresenter.onAnswerClick();
+        passedTestCount++;
         setClickable(false);
     }
     @OnClick(R.id.test_ans5)
     public void ans5(){
         mPresenter.onAnswerClick();
+        passedTestCount++;
         setClickable(false);
     }
 
@@ -149,6 +184,8 @@ public class TestActivity extends BaseActivity implements TestMvpView {
         }else {
             mPresenter.getMvpView().showMessage("error");
         }
+        userAnswers=new ArrayList<>();
+        correctAnswers=new ArrayList<>();
     }
     private void setClickable(Boolean clickableFalse){
         answer1.setClickable(clickableFalse);
@@ -219,6 +256,9 @@ public class TestActivity extends BaseActivity implements TestMvpView {
                 }
 
                 mPresenter.getMvpView().showMessage("True! Cool");
+
+                userAnswers.add(ANSWER);
+                correctAnswers.add(correctAnswerString);
             }
 
         }else{
@@ -267,18 +307,89 @@ public class TestActivity extends BaseActivity implements TestMvpView {
                         break;
                 }
                 mPresenter.getMvpView().showMessage("Not correct answer:(");
+                userAnswers.add(ANSWER);
+                correctAnswers.add(correctAnswerString);
             }
 
         }
+
+
         int minus=quizQuestion.size()-currentTestNumber;
         if(minus==1){
-            if(minus==1){
+            mPresenter.getMvpView().showSuccessDialog();
+        }
+    }
+
+    @Override
+    public void showCancellDialog() {
+        mBuilder= new AlertDialog.Builder(this);
+        View mView =getLayoutInflater().inflate(R.layout.dialog_cancell,null);
+        mBuilder.setView(mView);
+
+        dialog=mBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.show();
+
+        //size
+        Rect displayRectangle = new Rect();
+        Window window = this.getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        //set size
+        dialog.getWindow().setLayout((int)(displayRectangle.width() *
+                0.84f), (int)(displayRectangle.height() * 0.22f));
+
+
+        TextView ok=(TextView)mView.findViewById(R.id.dialog_cancell_ok);
+        TextView cancell=(TextView)mView.findViewById(R.id.dialog_cancell_back);
+        cancell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                next.setVisibility(View.INVISIBLE);
+                next.setEnabled(false);
+                mPresenter.sendResult(Integer.parseInt(getIntent().getStringExtra(ProgressFragment.KEY_QUIZ_TEST)),
+                        currentTestNumber+1,correctAnswer);
+            }
+        });
+    }
+
+    @Override
+    public void showSuccessDialog() {
+        mBuilder= new AlertDialog.Builder(this);
+        View mView =getLayoutInflater().inflate(R.layout.dialog_success,null);
+        mBuilder.setView(mView);
+
+        dialog=mBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.show();
+
+        //size
+        Rect displayRectangle = new Rect();
+        Window window = this.getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        //set size
+        dialog.getWindow().setLayout((int)(displayRectangle.width() *
+                0.84f), (int)(displayRectangle.height() * 0.22f));
+
+
+        TextView ok=(TextView)mView.findViewById(R.id.dialog_success_ok);
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 mPresenter.getMvpView().showMessage(correctAnswer+" correct answer");
                 mPresenter.sendResult(Integer.parseInt(getIntent().getStringExtra(ProgressFragment.KEY_QUIZ_TEST)),
                         currentTestNumber+1,correctAnswer);
 
             }
-        }
+        });
     }
 
 
@@ -292,6 +403,23 @@ public class TestActivity extends BaseActivity implements TestMvpView {
     @Override
     public void updateTest(int position) {
         if(quizQuestion.size()>position){
+            prev.setEnabled(true);
+            prev.setVisibility(View.VISIBLE);
+            if(position==0){
+                prev.setVisibility(View.INVISIBLE);
+                prev.setEnabled(false);
+            }
+            if(position==quizQuestion.size()-1){
+                next.setVisibility(View.INVISIBLE);
+                next.setEnabled(false);
+
+            }
+            //mPresenter.getMvpView().showMessage("update test position "+position);
+            setDefault();
+            setClickable(true);
+            setChecked();
+
+
             allNumber.setText("из "+quizQuestion.size()+"");
             currentNumber.setText(String.valueOf(position+1));
             question.setText("  " +quizQuestion.get(position).getQuestion().toString());
@@ -301,6 +429,76 @@ public class TestActivity extends BaseActivity implements TestMvpView {
             answer4.setText("  " +quizQuestion.get(position).getAnswerD().toString());
             answer5.setText("  " +quizQuestion.get(position).getAnswerE().toString());
         }
+        if(currentTestNumber<passedTestCount){
+            if(correctAnswers.get(position).equals(userAnswers.get(position))){
+                setDefault();
+                //mPresenter.getMvpView().showMessage("was correct");
+                switch (correctAnswers.get(position)) {
+                    case "A":
+                        answer1.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer1.setChecked(true);
+                        break;
+                    case "B":
+                        answer2.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer2.setChecked(true);
+                        break;
+                    case "C":
+                        answer3.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer3.setChecked(true);
+                        break;
+                    case "D":
+                        answer4.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer4.setChecked(true);
+                        break;
+                    case "E":
+                        answer5.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer5.setChecked(true);
+                        break;
+                }
+            }else {
+                setDefault();
+                //mPresenter.getMvpView().showMessage("was incorrect");
+                switch (userAnswers.get(position)) {
+                    case "A":
+                        answer1.setTextColor(Color.parseColor(WRONG_COLOR));
+                        break;
+                    case "B":
+                        answer2.setTextColor(Color.parseColor(WRONG_COLOR));
+                        break;
+                    case "C":
+                        answer3.setTextColor(Color.parseColor(WRONG_COLOR));
+                        break;
+                    case "D":
+                        answer4.setTextColor(Color.parseColor(WRONG_COLOR));
+                        break;
+                    case "E":
+                        answer5.setTextColor(Color.parseColor(WRONG_COLOR));
+                        break;
+                }
+                switch (correctAnswers.get(position)) {
+                    case "A":
+                        answer1.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer1.setChecked(true);
+                        break;
+                    case "B":
+                        answer2.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer2.setChecked(true);
+                        break;
+                    case "C":
+                        answer3.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer3.setChecked(true);
+                        break;
+                    case "D":
+                        answer4.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer4.setChecked(true);
+                        break;
+                    case "E":
+                        answer5.setTextColor(Color.parseColor(CORRECT_COLOR));
+                        answer5.setChecked(true);
+                        break;
+                }
+            }
+        }
 
     }
 
@@ -308,7 +506,7 @@ public class TestActivity extends BaseActivity implements TestMvpView {
     public void getQuestions(List<Result> quiz) {
         quizQuestion=new ArrayList<>();
         quizQuestion.addAll(quiz);
-        mPresenter.getMvpView().showMessage(quizQuestion.size()+" size");
+        //mPresenter.getMvpView().showMessage(quizQuestion.size()+" size");
         mPresenter.getMvpView().updateTest(currentTestNumber);
 
     }

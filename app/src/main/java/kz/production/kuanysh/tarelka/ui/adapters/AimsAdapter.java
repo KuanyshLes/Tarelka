@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+import java.util.Stack;
 
 import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.data.network.model.aim.Result;
@@ -27,13 +28,13 @@ public class AimsAdapter extends BaseAdapter {
 
     private final Context mContext;
     private List<Result> aimsList;
-    private List<Integer> list;
+    private Stack<Integer> list;
 
 
-    public AimsAdapter(Context context, List<Result> aimsList,List<Integer> list) {
+    public AimsAdapter(Context context, List<Result> aimsList,Stack<Integer> list) {
         this.mContext = context;
         this.aimsList = aimsList;
-        this.list = list;
+        this.list=list;
     }
 
 
@@ -64,26 +65,7 @@ public class AimsAdapter extends BaseAdapter {
 
         final TextView name=(TextView)convertView.findViewById(R.id.aims_name);
         final ImageView image=(ImageView)convertView.findViewById(R.id.aims_grid_item_image);
-        name.setPadding(0,20,0,0);
-
         final ImageView select=(ImageView)convertView.findViewById(R.id.aims_select);
-
-
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext, "clicked", Toast.LENGTH_SHORT).show();
-                if(select.getVisibility()==View.GONE){
-                    list.add(position);
-                    setAnimation(name,select, AppConst.TAG_GONE);
-                }else if(select.getVisibility()==View.VISIBLE){
-                    list.remove(position);
-                    setAnimation(name,select, AppConst.TAG_VISIBLE);
-                }
-            }
-        });
-
-
 
         final ViewHolder viewHolder = new ViewHolder(name,select);
         convertView.setTag(viewHolder);
@@ -91,11 +73,27 @@ public class AimsAdapter extends BaseAdapter {
         final ViewHolder getViewHolder = (ViewHolder)convertView.getTag();
         viewHolder.name.setText(aimsList.get(position).getTitle());
 
-        Glide.with(mContext)
+        Glide.with(image.getContext())
                 .load(aimsList.get(position).getImage())
                 .into(image);
-        Toast.makeText(mContext, aimsList.get(position).getTitle()+"", Toast.LENGTH_SHORT).show();
 
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                list.push(position);
+                for(int i=0;i<aimsList.size();i++){
+                    View viewItem=parent.getChildAt(i);
+                    if(position!=i){
+                        setAnimation(viewItem,1);
+                    }else{
+                        setAnimation(viewItem,2);
+
+                    }
+                }
+
+
+            }
+        });
 
         return convertView;
     }
@@ -108,35 +106,33 @@ public class AimsAdapter extends BaseAdapter {
             this.select = select;
         }
     }
-    private void setAnimation(TextView name,ImageView select,String status){
-        if(status.equals(AppConst.TAG_GONE)){
-            Animation animate = new AlphaAnimation(0f, 1.0f);
-            animate.setDuration(600);
-            animate.setFillAfter(true);
-            name.startAnimation(animate);
-            name.setPadding(0,0,0,0);
-            select.startAnimation(animate);
-            select.setVisibility(View.VISIBLE);
+    private void setAnimation(View viewItem,int code){
+        TextView name= (TextView) viewItem.findViewById(R.id.aims_name);
+        ImageView select= (ImageView) viewItem.findViewById(R.id.aims_select);
 
-        }else if(status.equals(AppConst.TAG_VISIBLE)){
+        if(code==1){
             Animation animate = new AlphaAnimation(0f, 1.0f);
             animate.setDuration(600);
             animate.setFillAfter(true);
             name.startAnimation(animate);
-            name.setPadding(0,15,0,0);
 
             Animation animate1 = new AlphaAnimation(1f, 0f);
             animate.setDuration(600);
             animate.setFillAfter(true);
             select.startAnimation(animate1);
             select.setVisibility(View.GONE);
+        }else if(code==2){
+            Animation animate = new AlphaAnimation(0f, 1.0f);
+            animate.setDuration(600);
+            animate.setFillAfter(true);
+            name.startAnimation(animate);
+            select.startAnimation(animate);
+            select.setVisibility(View.VISIBLE);
+
         }
-
-
-        //return animate;
     }
     public void addItems(List<Result> aims){
-        aimsList=aims;
+        aimsList.addAll(aims);
     }
 
 

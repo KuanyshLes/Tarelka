@@ -26,6 +26,9 @@ import kz.production.kuanysh.tarelka.data.DataManager;
 
 public interface PreferencesHelper {
 
+    String getFirebaseToken();
+    void setFirebaseToken(String refreshedToken);
+
     int getCurrentUserLoggedInMode();
 
     void setCurrentUserLoggedInMode(DataManager.LoggedInMode mode);

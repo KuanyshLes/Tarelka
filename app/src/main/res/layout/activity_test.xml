@@ -62,7 +62,7 @@
         android:background="@color/colorBlackTransNew"
         android:gravity="center|left"
         android:paddingLeft="30dp"
-        android:text="Что?Где?Когда?"
+        android:text=""
         android:textColor="@color/colorWhite"
         android:textSize="17sp" />
 
@@ -84,7 +84,7 @@
             android:layout_weight="1"
             android:button="@drawable/shape_radiobutton"
             android:checked="false"
-            android:text=" Ответ 1"
+            android:text=""
             android:textColor="@color/colorWhite"
             android:textSize="17sp" />
 
@@ -95,7 +95,7 @@
             android:layout_weight="1"
             android:button="@drawable/shape_radiobutton"
             android:checked="false"
-            android:text=" Ответ 1"
+            android:text=""
             android:textColor="@color/colorWhite"
             android:textSize="17sp" />
 
@@ -106,7 +106,7 @@
             android:layout_weight="1"
             android:button="@drawable/shape_radiobutton"
             android:checked="false"
-            android:text=" Ответ 1"
+            android:text=""
             android:textColor="@color/colorWhite"
             android:textSize="17sp" />
 
@@ -117,7 +117,7 @@
             android:layout_weight="1"
             android:button="@drawable/shape_radiobutton"
             android:checked="false"
-            android:text=" Ответ 1"
+            android:text=""
             android:textColor="@color/colorWhite"
             android:textSize="17sp" />
 
@@ -128,7 +128,7 @@
             android:layout_weight="1"
             android:button="@drawable/shape_radiobutton"
             android:checked="false"
-            android:text=" Ответ 1"
+            android:text=""
             android:textColor="@color/colorWhite"
             android:textSize="17sp" />
     </RadioGroup>
@@ -145,17 +145,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="3"
-            android:visibility="invisible"
+            android:layout_weight="2.5"
+            android:visibility="visible"
             app:srcCompat="@mipmap/btn_test_left" />
+        <View
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+
+        </View>
 
         <ImageView
             android:id="@+id/test_next"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingLeft="55dp"
             android:layout_gravity="center"
-            android:layout_weight="3"
+            android:layout_weight="2.5"
             app:srcCompat="@mipmap/btn_test_right" />
 
     </LinearLayout>
