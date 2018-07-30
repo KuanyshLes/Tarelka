@@ -15,6 +15,7 @@ import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.data.network.ApiHeader;
 import kz.production.kuanysh.tarelka.data.network.ApiHelper;
 import kz.production.kuanysh.tarelka.data.network.RestApi;
+import kz.production.kuanysh.tarelka.data.network.model.admin.AdminInfo;
 import kz.production.kuanysh.tarelka.data.network.model.aim.Aim;
 import kz.production.kuanysh.tarelka.data.network.model.chat.ChatInfo;
 import kz.production.kuanysh.tarelka.data.network.model.goal.SendGoal;
@@ -79,8 +80,8 @@ public class AppDataManager implements DataManager {
     }
 
     @Override
-    public Single<Main> getMainTasks() {
-        return mApiHelper.getMainTasks();
+    public Single<Main> getMainTasks(String  token) {
+        return mApiHelper.getMainTasks(token);
     }
 
     @Override
@@ -140,8 +141,13 @@ public class AppDataManager implements DataManager {
     }
 
     @Override
-    public Single<Progress> getProgress(String token, String date) {
-        return mApiHelper.getProgress(token,date);
+    public Single<Progress> getProgress(String token) {
+        return mApiHelper.getProgress(token);
+    }
+
+    @Override
+    public Single<AdminInfo> getAdminInfo() {
+        return mApiHelper.getAdminInfo();
     }
 
 
@@ -265,6 +271,26 @@ public class AppDataManager implements DataManager {
     @Override
     public void setHeight(String height) {
         mPreferencesHelper.setHeight(height);
+    }
+
+    @Override
+    public String getAlarmSetted() {
+        return mPreferencesHelper.getAlarmSetted();
+    }
+
+    @Override
+    public void setAlarmSetted(String alarm) {
+        mPreferencesHelper.setAlarmSetted(alarm);
+    }
+
+    @Override
+    public String donePhoneConfirmation() {
+        return mPreferencesHelper.donePhoneConfirmation();
+    }
+
+    @Override
+    public void setDonePhoneConfirmation(String action) {
+        mPreferencesHelper.setDonePhoneConfirmation(action);
     }
 
     @Override

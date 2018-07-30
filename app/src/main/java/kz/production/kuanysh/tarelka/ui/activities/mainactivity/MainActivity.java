@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
@@ -47,6 +48,7 @@ import kz.production.kuanysh.tarelka.app.Config;
 import kz.production.kuanysh.tarelka.data.network.model.main.Main;
 import kz.production.kuanysh.tarelka.push.AlarmReceiver;
 import kz.production.kuanysh.tarelka.services.MyFirebaseMessagingService;
+import kz.production.kuanysh.tarelka.ui.activities.profileedit.ProfileEditActivity;
 import kz.production.kuanysh.tarelka.ui.base.BaseActivity;
 import kz.production.kuanysh.tarelka.ui.welcome.LoginActivity;
 import kz.production.kuanysh.tarelka.utils.AppConst;
@@ -72,6 +74,7 @@ public class MainActivity extends BaseActivity implements MainMvpView{
     public static final String TAG_PROFILE="profile";
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     public static final String MAINACTIVITY_KEY="keyTask";
+    private Boolean exit = false;
 
 
     @Override
@@ -104,17 +107,84 @@ public class MainActivity extends BaseActivity implements MainMvpView{
                 menuItem0.setChecked(true);
                 mPresenter.onChatClick();
             }
+        }else if(getIntent().getStringExtra(ProfileEditActivity.KEY_EDIT_PROFILE)!=null){
+            if(getIntent().getStringExtra(ProfileEditActivity.KEY_EDIT_PROFILE).equals(ProfileEditActivity.KEY_EDIT_PROFILE)){
+                BottomNavigationViewEx bottomNavigationViewEx= (BottomNavigationViewEx) findViewById(R.id.navigation);
+                final Menu menu = bottomNavigationViewEx.getMenu();
+                MenuItem menuItem0 = menu.getItem(3);
+                menuItem0.setChecked(true);
+                mPresenter.onProfileClick();
+            }
+        }else if(getIntent().getStringExtra(ChatFragment.CAMERA_KEY)!=null){
+            if(getIntent().getStringExtra(ChatFragment.CAMERA_KEY).equals(ChatFragment.CAMERA_KEY)){
+                BottomNavigationViewEx bottomNavigationViewEx= (BottomNavigationViewEx) findViewById(R.id.navigation);
+                final Menu menu = bottomNavigationViewEx.getMenu();
+                MenuItem menuItem0 = menu.getItem(1);
+                menuItem0.setChecked(true);
+                mPresenter.onChatClick();
+            }
         }
         else{
             mPresenter.onMainCLick();
         }
 
-
-        //mPresenter.getMvpView().fireNotificationMorning();
-       // mPresenter.getMvpView().fireNotificationAfternoon();
-       // mPresenter.getMvpView().fireNotificationEvening();
+        if(mPresenter.getDataManager().getAlarmSetted()==null) {
+            mPresenter.getMvpView().fireNotificationMorning();
+            mPresenter.getMvpView().fireNotificationAfternoon();
+            mPresenter.getMvpView().fireNotificationEvening();
+            mPresenter.getDataManager().setAlarmSetted("alarm");
+        }
 
     }
+
+
+    /*@Override
+    public void onBackPressed() {
+        if (exit) {
+            System.exit(0);
+        } else {
+            Toast.makeText(this, "Нажмите еще раз чтобы выйти!",
+                    Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            }, 2 * 1000);
+
+        }
+    }*/
+
+    @Override
+    public void onBackPressed() {
+
+        int count = getFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            if (exit) {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Нажмите еще раз чтобы выйти!",
+                        Toast.LENGTH_SHORT).show();
+                exit = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        exit = false;
+                    }
+                }, 2 * 1000);
+
+            }
+        } else {
+            getFragmentManager().popBackStack();
+        }
+
+    }
+
 
     @Override
     protected void setUp() {
@@ -159,39 +229,10 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         });
 
 
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
+        //mPresenter.getMvpView().fireNotificationMorning();
+        //mPresenter.getMvpView().fireNotificationAfternoon();
+        //mPresenter.getMvpView().fireNotificationEvening();
 
-                // checking for type intent filter
-                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
-
-                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
-                    // new push notification is received
-                    String message = intent.getStringExtra(AppConstants.PUSH_KEY);
-
-                    mPresenter.getMvpView().onMessageReceivedNotification("admin",message);
-                    mPresenter.getMvpView().showMessage("New from admin:" + message);
-
-                }
-            }
-        };
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // register GCM registration complete receiver
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(Config.REGISTRATION_COMPLETE));
-
-        // register new push message receiver
-        // by doing this, the activity will be notified each time a new message arrives
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(Config.PUSH_NOTIFICATION));
-
-        // clear the notification area when the app is opened
-        NotificationUtils.clearNotifications(getApplicationContext());
     }
 
     @Override
@@ -251,13 +292,13 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         Intent notificationIntent = new Intent(this, AlarmReceiver.class);
         Random ran = new Random();
         int x = ran.nextInt(100) + 5;
-        PendingIntent broadcast = PendingIntent.getBroadcast(this, x, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 8);
-        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.HOUR_OF_DAY, 9);
+        cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
 
     }
     @Override
@@ -266,13 +307,13 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         Intent notificationIntent = new Intent(this, AlarmReceiver.class);
         Random ran = new Random();
         int x = ran.nextInt(1000) + 5;
-        PendingIntent broadcast = PendingIntent.getBroadcast(this, x, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, 2, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 13);
-        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.HOUR_OF_DAY, 14);
+        cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
-        alarmManager2.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
+        alarmManager2.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
     }
 
     @Override
@@ -281,18 +322,17 @@ public class MainActivity extends BaseActivity implements MainMvpView{
         Intent notificationIntent = new Intent(this, AlarmReceiver.class);
         Random ran = new Random();
         int x = ran.nextInt(1000) + 5;
-        PendingIntent broadcast = PendingIntent.getBroadcast(this, x, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, 3, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 18);
-        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.HOUR_OF_DAY, 19);
+        cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
-        alarmManager3.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
+        alarmManager3.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
     }
 
     @Override
     public void onMessageReceivedNotification(String title, String message) {
-        mPresenter.getMvpView().showMessage("in realizing"+message);
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)

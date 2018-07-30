@@ -20,14 +20,15 @@ import dagger.Component;
 import kz.production.kuanysh.tarelka.di.PerActivity;
 import kz.production.kuanysh.tarelka.di.module.ActivityModule;
 import kz.production.kuanysh.tarelka.ui.activities.TaskDetailActivity;
+import kz.production.kuanysh.tarelka.ui.activities.profileedit.ProfileEditActivity;
 import kz.production.kuanysh.tarelka.ui.activities.test.TestActivity;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
 import kz.production.kuanysh.tarelka.ui.fragments.ChatFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.MainTaskFragment;
-import kz.production.kuanysh.tarelka.ui.fragments.ProfileEditFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.ProfileFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.ProgressFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.SendMessageFragment;
+import kz.production.kuanysh.tarelka.ui.fragments.social.SocialMediaDirectFragment;
 import kz.production.kuanysh.tarelka.ui.welcome.ChooseFoodActivity;
 import kz.production.kuanysh.tarelka.ui.welcome.CreateAimActivity;
 import kz.production.kuanysh.tarelka.ui.welcome.LoginActivity;
@@ -46,9 +47,10 @@ public interface ActivityComponent {
 
     void inject(ProfileFragment profileFragment);
 
-    void inject(ProfileEditFragment profileEditFragment);
 
     void inject(ChatFragment chatFragment);
+
+    void inject(ProfileEditActivity profileEditActivity);
 
     void inject(SendMessageFragment sendMessageFragment);
 
@@ -63,6 +65,8 @@ public interface ActivityComponent {
     void inject(CreateAimActivity createAimActivity);
 
     void inject(ChooseFoodActivity chooseFoodActivity);
+
+    void inject(SocialMediaDirectFragment socialMediaDirectFragment);
 
 
 }

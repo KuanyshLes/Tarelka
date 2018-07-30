@@ -4,6 +4,7 @@ package kz.production.kuanysh.tarelka.ui.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import butterknife.Unbinder;
 import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.di.component.ActivityComponent;
 import kz.production.kuanysh.tarelka.ui.base.BaseFragment;
+import kz.production.kuanysh.tarelka.ui.fragments.social.SocialMediaDirectFragment;
 
 import static kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity.TAG_CHAT;
 import static kz.production.kuanysh.tarelka.utils.AppConst.TAG_FRAGMENT;
@@ -40,6 +42,9 @@ public class SendMessageFragment extends BaseFragment implements SendMessageMvpV
 
     @BindView(R.id.send_message_text)
     EditText message;
+
+    private Bundle bundle;
+    public static final String EXTRA_SOCIAL_MESSAGE="EXTRA_SOCIAL_MESSAGE";
 
 
     public SendMessageFragment() {
@@ -70,8 +75,13 @@ public class SendMessageFragment extends BaseFragment implements SendMessageMvpV
     }
 
     @OnClick(R.id.send_message_send)
-    public void sendAsSocial(){
-        mPresenter.onSendAsSocialClick();
+    public void sendAsSocial() {
+        if(!TextUtils.isEmpty(message.getText())){
+            mPresenter.getMvpView().openSocialFragment();
+        }else {
+            mPresenter.getMvpView().onError("Text field is empty!");
+        }
+        //mPresenter.onSendAsSocialClick();
     }
 
     @Override
@@ -79,7 +89,7 @@ public class SendMessageFragment extends BaseFragment implements SendMessageMvpV
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .disallowAddToBackStack()
-                .add(R.id.content_frame, ChatFragment.newInstance(), TAG_CHAT)
+                .replace(R.id.content_frame, ChatFragment.newInstance(), TAG_CHAT)
                 .commit();
     }
 
@@ -94,13 +104,19 @@ public class SendMessageFragment extends BaseFragment implements SendMessageMvpV
 
     }
 
-    /*@Override
-    public void startActivityForResult(Intent intent, int requestCode) {
-        super.startActivityForResult(intent, requestCode);
-        if(requestCode==7){
-            mPresenter.onBackClick();
-        }
-    }*/
+    @Override
+    public void openSocialFragment() {
+        SocialMediaDirectFragment socialMediaDirectFragment=new SocialMediaDirectFragment();
+        bundle=new Bundle();
+        bundle.putString(EXTRA_SOCIAL_MESSAGE,message.getText().toString());
+        socialMediaDirectFragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .disallowAddToBackStack()
+                .replace(R.id.content_frame, socialMediaDirectFragment, TAG_CHAT)
+                .commit();
+    }
+
 
     @Override
     protected void setUp(View view) {

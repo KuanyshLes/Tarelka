@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Single;
+import kz.production.kuanysh.tarelka.data.network.model.admin.AdminInfo;
 import kz.production.kuanysh.tarelka.data.network.model.aim.Aim;
 import kz.production.kuanysh.tarelka.data.network.model.chat.ChatInfo;
 import kz.production.kuanysh.tarelka.data.network.model.goal.SendGoal;
@@ -63,8 +64,8 @@ public class AppApiHelper implements ApiHelper {
     }
 
     @Override
-    public Single<Main> getMainTasks() {
-        return RestApi.getApiHelper().getMainTasks();
+    public Single<Main> getMainTasks(String token) {
+        return RestApi.getApiHelper().getMainTasks(token);
     }
 
     @Override
@@ -126,8 +127,13 @@ public class AppApiHelper implements ApiHelper {
     }
 
     @Override
-    public Single<Progress> getProgress(String token, String date) {
-        return RestApi.getApiHelper().getProgress(token,date);
+    public Single<Progress> getProgress(String token) {
+        return RestApi.getApiHelper().getProgress(token);
+    }
+
+    @Override
+    public Single<AdminInfo> getAdminInfo() {
+        return RestApi.getApiHelper().getAdminInfo();
     }
 
 

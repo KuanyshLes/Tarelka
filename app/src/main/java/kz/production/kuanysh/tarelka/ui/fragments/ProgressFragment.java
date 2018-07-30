@@ -15,17 +15,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import kz.production.kuanysh.tarelka.R;
+import kz.production.kuanysh.tarelka.data.network.model.progress.Perc;
+import kz.production.kuanysh.tarelka.data.network.model.quiz.Quizzes;
 import kz.production.kuanysh.tarelka.data.network.model.quiz.Result;
 import kz.production.kuanysh.tarelka.di.component.ActivityComponent;
 import kz.production.kuanysh.tarelka.ui.activities.test.TestActivity;
@@ -52,6 +58,15 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
 
     @Inject
     ProgressAdapter progressAdapter;
+
+    @BindView(R.id.progress_amount)
+    TextView amount;
+
+    private static List<Perc> listPerc;
+
+    private static List<String> listStringDates;
+
+    private static List<Quizzes> quizzesList;
 
     public static final String KEY_QUIZ_TEST="test";
 
@@ -96,31 +111,63 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
     }
 
     @Override
-    public void updateQuizList(List<Result> quizList) {
+    public void updateQuizList(List<Quizzes> quizList) {
+        quizzesList.addAll(quizList);
         progressAdapter.addItems(quizList);
     }
 
     @Override
-    public void updateProgress(int progress) {
-        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", progressBar.getProgress(), progress);
+    public void updateProgress(Double progress) {
+        DecimalFormat df = new DecimalFormat("#.#");
+
+        amount.setText("Ваш прогресс: "+df.format(progress)+"%");
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", progressBar.getProgress(), progress.intValue());
         animation.setDuration(1000);
         animation.setInterpolator(new DecelerateInterpolator());
         animation.start();
     }
 
     @Override
-    public void onSetSpinnerDate(List<String> dates) {
+    public void setProgressDates(List<Perc> list) {
+        //mPresenter.getMvpView().showMessage("setting dates");
+        listPerc.addAll(list);
+        if(listPerc!=null){
+            for(int i=0;i<listPerc.size();i++){
+                /*if(i==listPerc.size()-2){
+                    listStringDates.add("Вчера");
+                }else if(i==listPerc.size()-1){
+                    listStringDates.add("Сегодня");
+                }else{*/
+                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date newDate1=format1.parse(listPerc.get(i).getDate().toString());
+
+                    SimpleDateFormat format2 = new SimpleDateFormat("dd MMM");
+                    String newDate2=format2.format(newDate1);
+                    listStringDates.add(newDate2);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_spinner_item, dates);
+                android.R.layout.simple_spinner_item, listStringDates);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerDate.setAdapter(categoryAdapter);
     }
 
+
     @Override
     protected void setUp(View view) {
+        quizzesList=new ArrayList<>();
+        listPerc=new ArrayList<>();
+        listStringDates=new ArrayList<>();
         linearLayoutManager=new LinearLayoutManager(getActivity());
         progress_recycler.setLayoutManager(linearLayoutManager);
         progress_recycler.setAdapter(progressAdapter);
+
+        progressAdapter.addContext(getActivity());
 
         progressAdapter.setListener(new Listener() {
             @Override
@@ -129,50 +176,18 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
             }
         });
         mPresenter.onViewPrepared();
-        mPresenter.setDates();
+        mPresenter.onSendShowProgress();
 
 
         spinnerDate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                Calendar cal = Calendar.getInstance();
-                switch (position) {
-                    case 0:
-                        cal.add(Calendar.DATE, -2);
-                        SELECTED_DATE=format.format(cal.getTime());
-                        break;
-                    case 1:
-                        cal.add(Calendar.DATE, -1);
-                        SELECTED_DATE=format.format(cal.getTime());
-                        break;
-                    case 2:
-                        cal.add(Calendar.DATE, 0);
-                        SELECTED_DATE=format.format(cal.getTime());
-                        break;
-                    case 3:
-                        cal.add(Calendar.DATE, 1);
-                        SELECTED_DATE=format.format(cal.getTime());
-                        break;
-                    case 4:
-                        cal.add(Calendar.DATE, 2);
-                        SELECTED_DATE=format.format(cal.getTime());
-                        break;
-                    case 5:
-                        cal.add(Calendar.DATE, 3);
-                        SELECTED_DATE=format.format(cal.getTime());
-                        break;
-                }
-                mPresenter.onSendShowProgress(SELECTED_DATE);
+                mPresenter.getMvpView().updateProgress(listPerc.get(position).getPercentage());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.DATE, -2);
-                SELECTED_DATE=format.format(cal.getTime());
-                mPresenter.onSendShowProgress(SELECTED_DATE);
+                mPresenter.getMvpView().updateProgress(listPerc.get(listPerc.size()-1).getPercentage());
             }
         });
     }

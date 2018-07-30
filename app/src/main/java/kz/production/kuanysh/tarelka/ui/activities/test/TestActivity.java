@@ -384,7 +384,7 @@ public class TestActivity extends BaseActivity implements TestMvpView {
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.getMvpView().showMessage(correctAnswer+" correct answer");
+                //mPresenter.getMvpView().showMessage(correctAnswer+" correct answer");
                 mPresenter.sendResult(Integer.parseInt(getIntent().getStringExtra(ProgressFragment.KEY_QUIZ_TEST)),
                         currentTestNumber+1,correctAnswer);
 

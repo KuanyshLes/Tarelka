@@ -41,116 +41,131 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
 
     @Override
     public void onSendClick(String message,int currentPage) {
-
-        if(getDataManager().getAccessToken()!=null){
-            if(message.length()!=0){
-
-                DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
-                Date date=new Date();
-
-                getCompositeDisposable().add(getDataManager()
-                        .getApiHelper().sendMessage(getDataManager().getAccessToken(),message,dateFormat.format(date),
-                                new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()))
-                        .subscribeOn(getSchedulerProvider().io())
-                        .observeOn(getSchedulerProvider().ui())
-                        .subscribe(new Consumer<ChatInfo>() {
-                            @Override
-                            public void accept(@NonNull ChatInfo blogResponse)
-                                    throws Exception {
-
-                                getMvpView().showMessage("Message sent!");
-                                onViewPrepared(currentPage);
-                            }
-                        }, new Consumer<Throwable>() {
-                            @Override
-                            public void accept(@NonNull Throwable throwable)
-                                    throws Exception {
-                                if (!isViewAttached()) {
-                                    return;
-                                }
-
-                                getMvpView().showMessage("Message not sent!");
-
-
-                                // handle the error here
-                                if (throwable instanceof ANError) {
-                                    ANError anError = (ANError) throwable;
-                                    handleApiError(anError);
-                                }
-                            }
-                        }));
-            }else{
-                getMvpView().showMessage("image field is null");
-            }
-
-        }
-        else{
-            getMvpView().showMessage("Something went wrong!");
-        }
-    }
-
-    @Override
-    public void onSendImage(Uri uriImage, String filePath, Context context,int currentPage) {
-        if(filePath!=null && uriImage!=null){
-            Log.i("PATH", uriImage.toString());
-            File file = new File(filePath);
-
-            RequestBody body =
-                    RequestBody.create(MediaType.parse("text/plain"), getDataManager().getAccessToken());
-
-            RequestBody filePart= RequestBody.create(MediaType.parse(context.getContentResolver().getType(uriImage)), file);
-            MultipartBody.Part part =
-                    MultipartBody.Part.createFormData("images[0]", file.getName(), filePart);
-
-            String descriptionString = "images";
-            RequestBody description =
-                    RequestBody.create(
-                            okhttp3.MultipartBody.FORM, descriptionString);
-            List<MultipartBody.Part> images=new ArrayList<>();
-            images.add(part);
-
+        if (getMvpView().isNetworkConnected()) {
             if(getDataManager().getAccessToken()!=null){
-                getMvpView().showLoading();
-                getCompositeDisposable().add(getDataManager()
-                        .getImageApiHelper().sendImageMessage(body,description,images)
-                        .subscribeOn(getSchedulerProvider().io())
-                        .observeOn(getSchedulerProvider().ui())
-                        .subscribe(new Consumer<kz.production.kuanysh.tarelka.data.network.model.chat.receive.Result>() {
-                            @Override
-                            public void accept(@NonNull kz.production.kuanysh.tarelka.data.network.model.chat.receive.Result blogResponse)
-                                    throws Exception {
+                if(message.length()!=0){
 
-                                getMvpView().hideLoading();
-                                getMvpView().showMessage("Image sent!");
-                                onViewPrepared(currentPage);
-                            }
-                        }, new Consumer<Throwable>() {
-                            @Override
-                            public void accept(@NonNull Throwable throwable)
-                                    throws Exception {
-                                if (!isViewAttached()) {
-                                    return;
+                    DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
+                    Date date=new Date();
+
+                    getCompositeDisposable().add(getDataManager()
+                            .getApiHelper().sendMessage(getDataManager().getAccessToken(),message,dateFormat.format(date),
+                                    new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()))
+                            .subscribeOn(getSchedulerProvider().io())
+                            .observeOn(getSchedulerProvider().ui())
+                            .subscribe(new Consumer<ChatInfo>() {
+                                @Override
+                                public void accept(@NonNull ChatInfo blogResponse)
+                                        throws Exception {
+
+                                    //getMvpView().showMessage("Message sent!");
+                                    onViewPrepared(currentPage);
                                 }
-                                getMvpView().hideLoading();
-                                getMvpView().showMessage("Image not sent!");
+                            }, new Consumer<Throwable>() {
+                                @Override
+                                public void accept(@NonNull Throwable throwable)
+                                        throws Exception {
+                                    if (!isViewAttached()) {
+                                        return;
+                                    }
+
+                                    getMvpView().showMessage("Message not sent!");
 
 
-                                // handle the error here
-                                if (throwable instanceof ANError) {
-                                    ANError anError = (ANError) throwable;
-                                    handleApiError(anError);
+                                    // handle the error here
+                                    if (throwable instanceof ANError) {
+                                        ANError anError = (ANError) throwable;
+                                        handleApiError(anError);
+                                    }
                                 }
-                            }
-                        }));
+                            }));
+                }else{
+
+                }
+
             }
             else{
                 getMvpView().showMessage("Something went wrong!");
             }
 
+        }else{
+            getMvpView().onError("Нет подключения к интернету!");
         }
-        else{
-            getMvpView().showMessage("Uri and filePath are null");
+
+
+    }
+
+    @Override
+    public void onSendImage(List<Uri> uri, List<String> path, Context context,int currentPage) {
+        if (getMvpView().isNetworkConnected()) {
+            if(path!=null && uri !=null){
+                List<MultipartBody.Part> images=new ArrayList<>();
+                RequestBody body =
+                        RequestBody.create(MediaType.parse("text/plain"), getDataManager().getAccessToken());
+                for(int i=0;i<uri.size();i++){
+                    Log.i("PATH", uri.get(i).toString());
+                    File file = new File(path.get(i));
+                    RequestBody fbody = RequestBody.create(MediaType.parse("image/*"), file);
+                    //RequestBody filePart= RequestBody.create(MediaType.parse(context.getContentResolver().getType(uri.get(i))), file);
+                    MultipartBody.Part part =
+                            MultipartBody.Part.createFormData("images["+i+"]", file.getName(), fbody);
+                    images.add(part);
+                }
+
+
+                String descriptionString = "images";
+                RequestBody description =
+                        RequestBody.create(
+                                okhttp3.MultipartBody.FORM, descriptionString);
+
+                if(getDataManager().getAccessToken()!=null){
+                    getMvpView().showLoading();
+                    getCompositeDisposable().add(getDataManager()
+                            .getImageApiHelper().sendImageMessage(body,description,images)
+                            .subscribeOn(getSchedulerProvider().io())
+                            .observeOn(getSchedulerProvider().ui())
+                            .subscribe(new Consumer<kz.production.kuanysh.tarelka.data.network.model.chat.receive.Result>() {
+                                @Override
+                                public void accept(@NonNull kz.production.kuanysh.tarelka.data.network.model.chat.receive.Result blogResponse)
+                                        throws Exception {
+
+                                    getMvpView().hideLoading();
+                                    getMvpView().showMessage("Отправьте комментарии к фото!");
+                                    onViewPrepared(currentPage);
+                                }
+                            }, new Consumer<Throwable>() {
+                                @Override
+                                public void accept(@NonNull Throwable throwable)
+                                        throws Exception {
+                                    if (!isViewAttached()) {
+                                        return;
+                                    }
+                                    getMvpView().hideLoading();
+                                    getMvpView().showMessage("Couldn't send image!");
+                                    Log.d("myTag", "accept:error "+ throwable.getMessage());
+
+
+                                    // handle the error here
+                                    if (throwable instanceof ANError) {
+                                        ANError anError = (ANError) throwable;
+                                        handleApiError(anError);
+                                    }
+                                }
+                            }));
+                }
+                else{
+                    getMvpView().showMessage("Something went wrong!");
+                }
+
+            }
+            else{
+                getMvpView().showMessage("Uri and filePath are null");
+            }
+
+        }else {
+            getMvpView().onError("Нет подключения к интернету!");
         }
+
 
     }
 
@@ -169,38 +184,44 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
 
     @Override
     public void onViewPrepared(int pagenumber) {
-        if(getDataManager().getAccessToken()!=null){
-            getCompositeDisposable().add(getDataManager()
-                    .getApiHelper().getChats(getDataManager().getAccessToken(),pagenumber)
-                    .subscribeOn(getSchedulerProvider().io())
-                    .observeOn(getSchedulerProvider().ui())
-                    .subscribe(new Consumer<ChatInfo>() {
-                        @Override
-                        public void accept(@NonNull ChatInfo blogResponse)
-                                throws Exception {
-                            getMvpView().updateChat(blogResponse.getResult().getChats(),blogResponse.getResult().getCountPages());
-                            getMvpView().showMessage("Accessed");
-                        }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(@NonNull Throwable throwable)
-                                throws Exception {
-                            if (!isViewAttached()) {
-                                return;
+        if (getMvpView().isNetworkConnected()) {
+            if(getDataManager().getAccessToken()!=null){
+                getCompositeDisposable().add(getDataManager()
+                        .getApiHelper().getChats(getDataManager().getAccessToken(),pagenumber)
+                        .subscribeOn(getSchedulerProvider().io())
+                        .observeOn(getSchedulerProvider().ui())
+                        .subscribe(new Consumer<ChatInfo>() {
+                            @Override
+                            public void accept(@NonNull ChatInfo blogResponse)
+                                    throws Exception {
+                                getMvpView().updateChat(blogResponse.getResult().getChats(),blogResponse.getResult().getCountPages());
+                                //getMvpView().showMessage("Accessed");
                             }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(@NonNull Throwable throwable)
+                                    throws Exception {
+                                if (!isViewAttached()) {
+                                    return;
+                                }
 
 
-                            // handle the error here
-                            if (throwable instanceof ANError) {
-                                ANError anError = (ANError) throwable;
-                                handleApiError(anError);
+                                // handle the error here
+                                if (throwable instanceof ANError) {
+                                    ANError anError = (ANError) throwable;
+                                    handleApiError(anError);
+                                }
                             }
-                        }
-                    }));
+                        }));
+            }
+            else{
+                getMvpView().showMessage("Something went wrong!");
+            }
+        }else {
+            getMvpView().onError("Нет подключения к интернету!");
         }
-        else{
-            getMvpView().showMessage("Something went wrong!");
-        }
+
+
 
     }
 }

@@ -1,6 +1,7 @@
 package kz.production.kuanysh.tarelka.ui.fragments;
 
 import android.text.format.DateFormat;
+import android.util.Log;
 
 import com.androidnetworking.error.ANError;
 
@@ -39,21 +40,71 @@ public class ProgressPresenter<V extends ProgressMvpView> extends BasePresenter<
 
     @Override
     public void onViewPrepared() {
-        if(getDataManager().getAccessToken()!=null){
-            //getMvpView().showLoading();
+        if (getMvpView().isNetworkConnected()) {
+            if(getDataManager().getAccessToken()!=null){
+                //getMvpView().showLoading();
+                getCompositeDisposable().add(getDataManager()
+                        .getApiHelper().getQuizList(getDataManager().getAccessToken())
+                        .subscribeOn(getSchedulerProvider().io())
+                        .observeOn(getSchedulerProvider().ui())
+                        .subscribe(new Consumer<Quiz>() {
+                            @Override
+                            public void accept(@NonNull Quiz quiz)
+                                    throws Exception {
+
+
+                                getMvpView().updateQuizList(quiz.getResult().getQuizzes());
+
+                                getMvpView().hideLoading();
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(@NonNull Throwable throwable)
+                                    throws Exception {
+                                if (!isViewAttached()) {
+                                    return;
+                                }
+
+                                getMvpView().showMessage("Quiz list open failed!");
+
+                                getMvpView().hideLoading();
+
+                                // handle the error here
+                                if (throwable instanceof ANError) {
+                                    ANError anError = (ANError) throwable;
+                                    handleApiError(anError);
+                                }
+                            }
+                        }));
+            }
+            else{
+                getMvpView().showMessage("Something went wrong!");
+            }
+        }else{
+            getMvpView().onError("Нет подключения к интернету!");
+        }
+
+
+    }
+
+    @Override
+    public void onSendShowProgress() {
+        if (getMvpView().isNetworkConnected()) {
             getCompositeDisposable().add(getDataManager()
-                    .getApiHelper().getQuizList(getDataManager().getAccessToken())
+                    .getApiHelper().getProgress(getDataManager().getAccessToken())
                     .subscribeOn(getSchedulerProvider().io())
                     .observeOn(getSchedulerProvider().ui())
-                    .subscribe(new Consumer<Quiz>() {
+                    .subscribe(new Consumer<Progress>() {
                         @Override
-                        public void accept(@NonNull Quiz quiz)
+                        public void accept(@NonNull Progress progress)
                                 throws Exception {
-
-
-                            getMvpView().updateQuizList(quiz.getResult());
-
                             getMvpView().hideLoading();
+                            if(progress.getStatusCode()==200){
+                                getMvpView().setProgressDates(progress.getResult().getPerc());
+                            }else if(progress.getStatusCode()==404){
+                                getMvpView().showMessage(progress.getMessage());
+
+                            }
                         }
                     }, new Consumer<Throwable>() {
                         @Override
@@ -63,9 +114,9 @@ public class ProgressPresenter<V extends ProgressMvpView> extends BasePresenter<
                                 return;
                             }
 
-                            getMvpView().showMessage("Quiz list open failed!");
-
                             getMvpView().hideLoading();
+                            getMvpView().showMessage("Error occured");
+                            Log.d("myTag", "accept: exception " + throwable.getMessage());
 
                             // handle the error here
                             if (throwable instanceof ANError) {
@@ -74,91 +125,9 @@ public class ProgressPresenter<V extends ProgressMvpView> extends BasePresenter<
                             }
                         }
                     }));
+        }else{
+            getMvpView().onError("Нет подключения к интернету!");
         }
-        else{
-            getMvpView().showMessage("Something went wrong!");
-        }
 
-    }
-
-    @Override
-    public void setDates() {
-        List<String> sixDays=new ArrayList<>();
-
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        Calendar cal3 = Calendar.getInstance();
-        Calendar cal4 = Calendar.getInstance();
-        Calendar cal5 = Calendar.getInstance();
-        Calendar cal6 = Calendar.getInstance();
-
-        cal1.add(Calendar.DATE, -2);
-        String day1=(String) DateFormat.format("dd",cal1);
-        String month=(String) DateFormat.format("MMM",cal1);
-        String firstday=day1+" "+month;
-
-        cal2.add(Calendar.DATE, -1);
-        String day2=(String) DateFormat.format("dd",cal2);
-        String secondday="Вчера";
-
-        cal3.add(Calendar.DATE, 0);
-        String dayToday=(String) DateFormat.format("dd",cal3);
-        String thirdday=dayToday+" "+month;
-
-        cal4.add(Calendar.DATE, 1);
-        String day4=(String) DateFormat.format("dd",cal4);
-        String fourthday=day4+" "+month;
-
-        cal5.add(Calendar.DATE, 2);
-        String day5=(String) DateFormat.format("dd",cal5);
-        String fifthday=day5+" "+month;
-
-        cal6.add(Calendar.DATE, 3);
-        String day6=(String) DateFormat.format("dd",cal6);
-        String sixthday=day6+" "+month;
-
-        sixDays.add(firstday);
-        sixDays.add(secondday);
-        sixDays.add(thirdday);
-        sixDays.add(fourthday);
-        sixDays.add(fifthday);
-        sixDays.add(sixthday);
-
-       getMvpView().onSetSpinnerDate(sixDays);
-    }
-
-    @Override
-    public void onSendShowProgress(String date) {
-        getCompositeDisposable().add(getDataManager()
-                .getApiHelper().getProgress(getDataManager().getAccessToken(),date)
-                .subscribeOn(getSchedulerProvider().io())
-                .observeOn(getSchedulerProvider().ui())
-                .subscribe(new Consumer<Progress>() {
-                    @Override
-                    public void accept(@NonNull Progress progress)
-                            throws Exception {
-                        getMvpView().hideLoading();
-                        if(progress.getStatusCode()==200){
-                            getMvpView().updateProgress(progress.getResult().getPerc());
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable)
-                            throws Exception {
-                        if (!isViewAttached()) {
-                            return;
-                        }
-
-                        getMvpView().hideLoading();
-
-                        // handle the error here
-                        if (throwable instanceof ANError) {
-                            ANError anError = (ANError) throwable;
-                            handleApiError(anError);
-                        }
-                    }
-                }));
     }
 }

@@ -10,11 +10,16 @@ import dagger.Module;
 import dagger.Provides;
 import io.reactivex.disposables.CompositeDisposable;
 import kz.production.kuanysh.tarelka.data.network.model.chat.Chat;
+import kz.production.kuanysh.tarelka.data.network.model.main.Task;
+import kz.production.kuanysh.tarelka.data.network.model.quiz.Quizzes;
 import kz.production.kuanysh.tarelka.di.ActivityContext;
 import kz.production.kuanysh.tarelka.di.PerActivity;
 import kz.production.kuanysh.tarelka.ui.activities.TaskDetailMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.activities.TaskDetailMvpView;
 import kz.production.kuanysh.tarelka.ui.activities.TaskDetailPresenter;
+import kz.production.kuanysh.tarelka.ui.activities.profileedit.ProfileEditNewMvpPresenter;
+import kz.production.kuanysh.tarelka.ui.activities.profileedit.ProfileEditNewMvpView;
+import kz.production.kuanysh.tarelka.ui.activities.profileedit.ProfileEditNewPresenter;
 import kz.production.kuanysh.tarelka.ui.activities.test.TestMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.activities.test.TestMvpView;
 import kz.production.kuanysh.tarelka.ui.activities.test.TestPresenter;
@@ -23,15 +28,13 @@ import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainMvpView;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainPresenter;
 import kz.production.kuanysh.tarelka.ui.adapters.ChatAdapter;
 import kz.production.kuanysh.tarelka.ui.adapters.ProgressAdapter;
+import kz.production.kuanysh.tarelka.ui.adapters.TaskAdapter;
 import kz.production.kuanysh.tarelka.ui.fragments.ChatMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.ChatMvpView;
 import kz.production.kuanysh.tarelka.ui.fragments.ChatPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.MainTaskMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.MainTaskMvpView;
 import kz.production.kuanysh.tarelka.ui.fragments.MainTaskPresenter;
-import kz.production.kuanysh.tarelka.ui.fragments.ProfileEditMvpPresenter;
-import kz.production.kuanysh.tarelka.ui.fragments.ProfileEditMvpView;
-import kz.production.kuanysh.tarelka.ui.fragments.ProfileEditPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.ProfileMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.ProfileMvpView;
 import kz.production.kuanysh.tarelka.ui.fragments.ProfilePresenter;
@@ -41,6 +44,9 @@ import kz.production.kuanysh.tarelka.ui.fragments.ProgressPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.SendMessageMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.SendMessageMvpView;
 import kz.production.kuanysh.tarelka.ui.fragments.SendMessagePresenter;
+import kz.production.kuanysh.tarelka.ui.fragments.social.SocialMvpPresenter;
+import kz.production.kuanysh.tarelka.ui.fragments.social.SocialMvpView;
+import kz.production.kuanysh.tarelka.ui.fragments.social.SocialPresenter;
 import kz.production.kuanysh.tarelka.ui.welcome.ChooseFoodMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.welcome.ChooseFoodMvpView;
 import kz.production.kuanysh.tarelka.ui.welcome.ChooseFoodPresenter;
@@ -115,10 +121,11 @@ public class ActivityModule {
         return presenter;
     }
 
+
     @Provides
     @PerActivity
-    ProfileEditMvpPresenter<ProfileEditMvpView> provideProfileEditPresenter(
-            ProfileEditPresenter<ProfileEditMvpView> presenter) {
+    ProfileEditNewMvpPresenter<ProfileEditNewMvpView> provideProfileEditNewPresenter(
+            ProfileEditNewPresenter<ProfileEditNewMvpView> presenter) {
         return presenter;
     }
 
@@ -173,6 +180,13 @@ public class ActivityModule {
 
     @Provides
     @PerActivity
+    SocialMvpPresenter<SocialMvpView> provideSocialPresenter(
+            SocialPresenter<SocialMvpView> presenter) {
+        return presenter;
+    }
+
+    @Provides
+    @PerActivity
     ChooseFoodMvpPresenter<ChooseFoodMvpView> provideChooseFoodPresenter(
             ChooseFoodPresenter<ChooseFoodMvpView> presenter) {
         return presenter;
@@ -184,8 +198,13 @@ public class ActivityModule {
     }
 
     @Provides
+    TaskAdapter provideTaskAdapter(){
+        return new TaskAdapter(new ArrayList<Task>());
+    }
+
+    @Provides
     ProgressAdapter providerPregressAdapter(){
-        return new ProgressAdapter(new ArrayList<kz.production.kuanysh.tarelka.data.network.model.quiz.Result>());
+        return new ProgressAdapter(new ArrayList<Quizzes>());
     }
 
 //    @Provides

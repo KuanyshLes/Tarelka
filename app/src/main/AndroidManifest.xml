@@ -5,9 +5,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera" android:required="true"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>-->
 
     <application
         android:name=".Tarelka"
@@ -20,6 +22,8 @@
         <activity
             android:name=".ui.activities.mainactivity.MainActivity"
             android:label="@string/app_name"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
@@ -31,33 +35,38 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".ui.welcome.CreateAimActivity"
-            android:theme="@style/Fullscreen" >
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Fullscreen">
+
         </activity>
         <activity
             android:name=".ui.welcome.ChooseFoodActivity"
-            android:theme="@style/Fullscreen" >
-
-        </activity>
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Fullscreen"></activity>
         <activity
             android:name=".ui.activities.TaskDetailActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:theme="@style/Fullscreen" />
         <activity
             android:name=".ui.activities.test.TestActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:theme="@style/Fullscreen" />
-        <activity android:name=".ui.welcome.LoginActivity"
-            android:theme="@style/Fullscreen" >
-        </activity>
-
+        <activity
+            android:name=".ui.welcome.LoginActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/Fullscreen"></activity>
         <activity
             android:name="com.facebook.accountkit.ui.AccountKitActivity"
             android:theme="@style/AppLoginTheme"
-            tools:replace="android:theme">
-        </activity>
-
+            tools:replace="android:theme"></activity>
 
         <receiver android:name=".push.AlarmReceiver" />
 
@@ -66,20 +75,42 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".services.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
-        <meta-data android:name="com.facebook.accountkit.ApplicationName" android:value="@string/app_name" />
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" />
-        <meta-data android:name="com.facebook.accountkit.ClientToken" android:value="@string/account_kit_client_token" />
         <meta-data
-            tools:replace="android:value"
+            android:name="com.facebook.accountkit.ApplicationName"
+            android:value="@string/app_name" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.facebook.accountkit.ClientToken"
+            android:value="@string/account_kit_client_token" />
+        <meta-data
             android:name="android.support.VERSION"
-            android:value="26.1.0" />
+            android:value="26.1.0"
+            tools:replace="android:value" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <activity android:name=".ui.activities.profileedit.ProfileEditActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|adjustResize"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+
+
+
     </application>
+
+
+
 
 </manifest>

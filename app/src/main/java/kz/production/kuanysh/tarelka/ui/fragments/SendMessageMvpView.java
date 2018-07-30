@@ -11,4 +11,6 @@ public interface SendMessageMvpView extends MvpView {
     void openChatFragment();
 
     void sendMessageAsIntent();
+
+    void openSocialFragment();
 }

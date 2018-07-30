@@ -1,5 +1,8 @@
 package kz.production.kuanysh.tarelka.ui.fragments;
 
+import java.util.List;
+
+import kz.production.kuanysh.tarelka.data.network.model.progress.Perc;
 import kz.production.kuanysh.tarelka.di.PerActivity;
 import kz.production.kuanysh.tarelka.ui.base.MvpPresenter;
 
@@ -13,8 +16,7 @@ public interface ProgressMvpPresenter<V extends ProgressMvpView> extends MvpPres
 
     void onViewPrepared();
 
-    void setDates();
 
-    void onSendShowProgress(String date);
+    void onSendShowProgress();
 
 }

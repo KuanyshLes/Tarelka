@@ -13,4 +13,8 @@ public interface ProfileMvpView extends MvpView {
 
     void openEditFragment();
 
+    void openDialog();
+
+    void openLoginActivity();
+
 }

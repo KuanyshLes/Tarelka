@@ -51,77 +51,91 @@ public class TestPresenter<V extends TestMvpView> extends BasePresenter<V>
 
     @Override
     public void onViewPrepared(String id) {
-        getMvpView().showLoading();
-        getCompositeDisposable().add(getDataManager()
-                .getApiHelper().getQuestions(getDataManager().getAccessToken(),id)
-                .subscribeOn(getSchedulerProvider().io())
-                .observeOn(getSchedulerProvider().ui())
-                .subscribe(new Consumer<Questions>() {
-                    @Override
-                    public void accept(@NonNull Questions quiz)
-                            throws Exception {
+        if (getMvpView().isNetworkConnected()) {
+            getMvpView().showLoading();
+            getCompositeDisposable().add(getDataManager()
+                    .getApiHelper().getQuestions(getDataManager().getAccessToken(),id)
+                    .subscribeOn(getSchedulerProvider().io())
+                    .observeOn(getSchedulerProvider().ui())
+                    .subscribe(new Consumer<Questions>() {
+                        @Override
+                        public void accept(@NonNull Questions quiz)
+                                throws Exception {
 
-                        getMvpView().showMessage("Test received!");
+                            getMvpView().showMessage("Test received!");
 
-                        getMvpView().getQuestions(quiz.getResult());
-                        getMvpView().hideLoading();
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable)
-                            throws Exception {
-                        if (!isViewAttached()) {
-                            return;
+                            getMvpView().getQuestions(quiz.getResult());
+                            getMvpView().hideLoading();
                         }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(@NonNull Throwable throwable)
+                                throws Exception {
+                            if (!isViewAttached()) {
+                                return;
+                            }
 
-                        getMvpView().showMessage("Test open failed!");
+                            getMvpView().showMessage("Test open failed!");
 
-                        getMvpView().hideLoading();
+                            getMvpView().hideLoading();
 
-                        // handle the error here
-                        if (throwable instanceof ANError) {
-                            ANError anError = (ANError) throwable;
-                            handleApiError(anError);
+                            // handle the error here
+                            if (throwable instanceof ANError) {
+                                ANError anError = (ANError) throwable;
+                                handleApiError(anError);
+                            }
                         }
-                    }
-                }));
+                    }));
+        }else{
+            getMvpView().onError("Нет подключения к интернету!");
+        }
+
     }
 
     @Override
     public void sendResult(int quiz_id, int max_answer, int correct_answer) {
-        DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
-        Date date=new Date();
+        if (getMvpView().isNetworkConnected()) {
+            DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
+            Date date=new Date();
 
-        getCompositeDisposable().add(getDataManager()
-                .getApiHelper().sendQuizResults(getDataManager().getAccessToken(),quiz_id,max_answer, correct_answer,dateFormat.format(date))
-                .subscribeOn(getSchedulerProvider().io())
-                .observeOn(getSchedulerProvider().ui())
-                .subscribe(new Consumer<QuizResult>() {
-                    @Override
-                    public void accept(@NonNull QuizResult blogResponse)
-                            throws Exception {
+            getCompositeDisposable().add(getDataManager()
+                    .getApiHelper().sendQuizResults(getDataManager().getAccessToken(),quiz_id,max_answer, correct_answer,dateFormat.format(date))
+                    .subscribeOn(getSchedulerProvider().io())
+                    .observeOn(getSchedulerProvider().ui())
+                    .subscribe(new Consumer<QuizResult>() {
+                        @Override
+                        public void accept(@NonNull QuizResult blogResponse)
+                                throws Exception {
 
-                        getMvpView().showMessage("Test results sent!");
+                            getMvpView().showMessage("Результаты теста отправлены!");
 
-                        getMvpView().openProgressFragment();
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable)
-                            throws Exception {
-                        if (!isViewAttached()) {
-                            return;
+                            getMvpView().openProgressFragment();
                         }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(@NonNull Throwable throwable)
+                                throws Exception {
+                            if (!isViewAttached()) {
+                                return;
+                            }
 
-                        getMvpView().showMessage("Results not sent!");
+                            getMvpView().showMessage("Произошло ошибка!");
+                            getMvpView().openProgressFragment();
+                            getMvpView().showMessage("Результаты теста не сохранены!");
 
 
-                        // handle the error here
-                        if (throwable instanceof ANError) {
-                            ANError anError = (ANError) throwable;
-                            handleApiError(anError);
+                            // handle the error here
+                            if (throwable instanceof ANError) {
+                                ANError anError = (ANError) throwable;
+                                handleApiError(anError);
+                            }
                         }
-                    }
-                }));
+                    }));
+        }else{
+            getMvpView().openProgressFragment();
+            getMvpView().onError("Нет подключения к интернету!");
+            getMvpView().showMessage("Результаты теста не сохранены!");
+        }
+
     }
 }

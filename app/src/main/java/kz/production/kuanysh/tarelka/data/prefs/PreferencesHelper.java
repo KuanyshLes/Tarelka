@@ -73,5 +73,13 @@ public interface PreferencesHelper {
 
     void setHeight(String height);
 
+    String getAlarmSetted();
+
+    void setAlarmSetted(String alarm);
+
+    String donePhoneConfirmation();
+
+    void setDonePhoneConfirmation(String action);
+
 
 }

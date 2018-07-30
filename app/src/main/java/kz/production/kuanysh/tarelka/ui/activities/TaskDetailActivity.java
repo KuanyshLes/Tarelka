@@ -2,9 +2,12 @@ package kz.production.kuanysh.tarelka.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,9 +22,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.data.network.model.main.Result;
+import kz.production.kuanysh.tarelka.data.network.model.main.Task;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
 import kz.production.kuanysh.tarelka.ui.base.BaseActivity;
 import kz.production.kuanysh.tarelka.ui.fragments.MainTaskFragment;
+import kz.production.kuanysh.tarelka.utils.AppConst;
 
 public class TaskDetailActivity extends BaseActivity implements TaskDetailMvpView{
 
@@ -37,10 +42,14 @@ public class TaskDetailActivity extends BaseActivity implements TaskDetailMvpVie
     @BindView(R.id.taskDetailTitle)
     TextView title;
 
-    @BindView(R.id.taskDetailText)
-    TextView text;
+    @BindView(R.id.tast_detail_progressbar)
+    ProgressBar progressBar;
 
-    private Result result;
+
+    @BindView(R.id.task_webview)
+    WebView webView;
+
+    private Task result;
     private static Intent intent;
 
     @Override
@@ -57,18 +66,31 @@ public class TaskDetailActivity extends BaseActivity implements TaskDetailMvpVie
         setUnBinder(ButterKnife.bind(this));
         mPresenter.onAttach(TaskDetailActivity.this);
 
-
+        progressBar.setVisibility(View.VISIBLE);
         result=getIntent().getParcelableExtra(MainTaskFragment.KEY_MAIN_TASK);
         if(result!=null){
-            Toast.makeText(this, "extra", Toast.LENGTH_SHORT).show();
             title.setText(result.getTitle());
-            text.setText(result.getText());
-            Glide.with(TaskDetailActivity.this).load(result.getImage()).into(image);
+            if(mPresenter.getMvpView().isNetworkConnected()){
+                if (result.getImage().toString().startsWith("http")) {
+                    Glide.with(TaskDetailActivity.this).load(result.getImage()).into(image);
+                    progressBar.setVisibility(View.GONE);
+                }else{
+                    Glide.with(TaskDetailActivity.this).load(AppConst.BASE_URL+result.getImage()).into(image);
+                    progressBar.setVisibility(View.GONE);
+                }
+
+            }else{
+                progressBar.setVisibility(View.GONE);
+                mPresenter.getMvpView().onError("Нет подключения к интернету!");
+            }
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.loadDataWithBaseURL("", result.getText(), "text/html", "UTF-8", "");
 
         }else{
-            Toast.makeText(this, "error:(", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Couldn't get task detail:(", Toast.LENGTH_SHORT).show();
 
         }
+
 
         }
 

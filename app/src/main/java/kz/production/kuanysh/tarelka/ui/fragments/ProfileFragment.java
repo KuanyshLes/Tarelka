@@ -1,11 +1,18 @@
 package kz.production.kuanysh.tarelka.ui.fragments;
 
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +25,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.di.component.ActivityComponent;
+import kz.production.kuanysh.tarelka.ui.activities.profileedit.ProfileEditActivity;
 import kz.production.kuanysh.tarelka.ui.base.BaseFragment;
+import kz.production.kuanysh.tarelka.ui.welcome.LoginActivity;
 import kz.production.kuanysh.tarelka.utils.AppConst;
 
 import static kz.production.kuanysh.tarelka.utils.AppConst.TAG_FRAGMENT;
@@ -59,7 +68,12 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
     @BindView(R.id.profile_phone)
     TextView phone;
 
+    @BindView(R.id.logout_card)
+    CardView logoutCard;
+
     private Bundle bundle;
+    private static Dialog dialog;
+    private static AlertDialog.Builder mBuilder;
 
 
     public ProfileFragment() {
@@ -90,6 +104,11 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
         return  view;
     }
 
+    @OnClick(R.id.logout_card)
+    public void onExit(){
+        mPresenter.onExitClick();
+    }
+
     @OnClick(R.id.profile_edit)
     public void edit(){
         mPresenter.onEditClick();
@@ -106,7 +125,10 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
 
     @Override
     public void updateInfo(String usernameText, String statusText, String phoneText, String ageText, String weightText, String aimsText, String imageText,String heightText) {
-        name.setText(usernameText);
+        if(usernameText!=null){
+            name.setText(usernameText.replace("\"",""));
+
+        }
         if(ageText.length()!=0){
             age.setText(ageText + AppConst.YEAR);
         }if(weightText.length()!=0){
@@ -115,7 +137,7 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
             height.setText(heightText + AppConst.HEIGHT);
         }
         if(!aimsText.equals("")){
-            aim.setText(aimsText.substring(0,aimsText.length()-1));
+            aim.setText(aimsText.toString());
         }else{
             aim.setText("");
         }
@@ -130,9 +152,50 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
 
     @Override
     public void openEditFragment() {
-        ProfileEditFragment profileEditFragment=new ProfileEditFragment();
-        //profileEditFragment.setArguments(bundle);
-        setFragment(profileEditFragment);
+        Intent intent=new Intent(getActivity(), ProfileEditActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void openDialog() {
+        mBuilder= new AlertDialog.Builder(getActivity());
+        View mView =getLayoutInflater().inflate(R.layout.dialog_exit,null);
+        mBuilder.setView(mView);
+
+        dialog=mBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.show();
+
+        //size
+        Rect displayRectangle = new Rect();
+        Window window = getActivity().getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        //set size
+        dialog.getWindow().setLayout((int)(displayRectangle.width() *
+                0.75f), (int)(displayRectangle.height() * 0.22f));
+
+
+        TextView ok=(TextView)mView.findViewById(R.id.dialog_exit_ok);
+        TextView cancell=(TextView)mView.findViewById(R.id.dialog_exit_cancell);
+        cancell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.getMvpView().openLoginActivity();
+            }
+        });
+    }
+
+    @Override
+    public void openLoginActivity() {
+        Intent intent=new Intent(getActivity(), LoginActivity.class);
+        getActivity().startActivity(intent);
     }
 
     @Override

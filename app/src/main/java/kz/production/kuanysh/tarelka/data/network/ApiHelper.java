@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Single;
+import kz.production.kuanysh.tarelka.data.network.model.admin.AdminInfo;
 import kz.production.kuanysh.tarelka.data.network.model.aim.Aim;
 import kz.production.kuanysh.tarelka.data.network.model.chat.ChatInfo;
 import kz.production.kuanysh.tarelka.data.network.model.goal.SendGoal;
@@ -26,6 +27,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Streaming;
 
 /**
  * Created by User on 24.06.2018.
@@ -49,8 +51,9 @@ public interface ApiHelper {
     @GET(ApiEndPoint.FOODS)
     Single<Aim> getFoodsApi();
 
-    @GET(ApiEndPoint.TASKS)
-    Single<Main> getMainTasks();
+    @FormUrlEncoded
+    @POST(ApiEndPoint.TASKS)
+    Single<Main> getMainTasks(@Field("token") String token);
 
     @FormUrlEncoded
     @POST(ApiEndPoint.PROFILE)
@@ -103,6 +106,8 @@ public interface ApiHelper {
                                                                                                   @Part("images") RequestBody description,
                                                                                                   @Part List<MultipartBody.Part> image);
 
+
+
     @FormUrlEncoded
     @POST(ApiEndPoint.SEND_GOAL)
     Single<SendGoal> sendGoal(@Field("token") String token,
@@ -114,6 +119,11 @@ public interface ApiHelper {
 
     @FormUrlEncoded
     @POST(ApiEndPoint.GET_PROGRESS)
-    Single<Progress> getProgress(@Field("token") String token,@Field("date") String date);
+    Single<Progress> getProgress(@Field("token") String token);
+
+    @GET(ApiEndPoint.ADMIN_INFO)
+    Single<AdminInfo> getAdminInfo();
+
+
 
 }

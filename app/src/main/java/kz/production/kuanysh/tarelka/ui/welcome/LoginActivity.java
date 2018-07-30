@@ -1,10 +1,12 @@
 package kz.production.kuanysh.tarelka.ui.welcome;
 
 import android.content.Intent;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.facebook.accountkit.AccessToken;
@@ -18,37 +20,79 @@ import com.facebook.accountkit.ui.AccountKitActivity;
 import com.facebook.accountkit.ui.AccountKitConfiguration;
 import com.facebook.accountkit.ui.LoginType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
+import kz.production.kuanysh.tarelka.ui.adapters.WelcomeViewpagerAdapter;
 import kz.production.kuanysh.tarelka.ui.base.BaseActivity;
+import me.relex.circleindicator.CircleIndicator;
 
 public class LoginActivity extends BaseActivity implements LoginMvpView {
 
     @Inject
     LoginPresenter<LoginMvpView> mPresenter;
 
+    @BindView(R.id.welcome_viewpager)
+    ViewPager viewPager;
+
+    @BindView(R.id.welcome_button)
+    Button skip;
+
+    @BindView(R.id.welcome_indicator)
+    CircleIndicator indicator;
+
+    private static List<String> imageLink;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        //AccountKit.sdkInitialize(getApplicationContext());
+        //mCallbackmanager = CallbackManager.Factory.create();
 
         getActivityComponent().inject(this);
 
         setUnBinder(ButterKnife.bind(this));
 
         mPresenter.onAttach(LoginActivity.this);
+        setUp();
 
-        onSMSLoginFlow();
     }
 
     @Override
     protected void setUp() {
+        imageLink=new ArrayList<>();
+        imageLink.add("https://dj0j0ofql4htg.cloudfront.net/cms2/image_manager/uploads/News/299128/7/default.jpg");
+        imageLink.add("https://static.independent.co.uk/s3fs-public/thumbnails/image/2016/04/29/13/lionel-messi.jpg?w968h681");
+        imageLink.add("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF9UhXJ30iOSnAILilMbR-FGD0V5gWFxvQWCS9sOhE5FkW5DyUWg");
 
+        WelcomeViewpagerAdapter welcomeViewpagerAdapter=new WelcomeViewpagerAdapter(this,imageLink);
+        viewPager.setAdapter(welcomeViewpagerAdapter);
+        indicator.setViewPager(viewPager);
     }
+
+    @OnClick(R.id.welcome_button)
+    public void skip(){
+        if(mPresenter.getDataManager().donePhoneConfirmation()==null){
+            mPresenter.getDataManager().setDonePhoneConfirmation("action");
+            onSMSLoginFlow();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
 
 
     public void onSMSLoginFlow() {
@@ -84,11 +128,7 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
                 }
             }
             // Surface the result to your user in an appropriate way.
-            Toast.makeText(
-                    this,
-                    toastMessage,
-                    Toast.LENGTH_LONG)
-                    .show();
+            //Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -108,11 +148,7 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
                 mPresenter.onPhone(phoneNumberString);
 
                 // Surface the result to your user in an appropriate way.
-                Toast.makeText(
-                        LoginActivity.this,
-                        phoneNumberString,
-                        Toast.LENGTH_LONG)
-                        .show();
+                //Toast.makeText(LoginActivity.this, phoneNumberString, Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -135,5 +171,6 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
         Intent intent =new Intent(LoginActivity.this,MainActivity.class);
         startActivity(intent);
     }
+
 
 }

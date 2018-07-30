@@ -44,4 +44,9 @@ public class ProfilePresenter<V extends ProfileMvpView> extends BasePresenter<V>
 
 
     }
+
+    @Override
+    public void onExitClick() {
+        getMvpView().openDialog();
+    }
 }

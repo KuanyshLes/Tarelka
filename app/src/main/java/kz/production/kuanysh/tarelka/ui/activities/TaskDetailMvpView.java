@@ -14,4 +14,6 @@ public interface TaskDetailMvpView extends MvpView {
     void openMainTaskFragment();
 
     void updateFull(List<String> blog);
+
+
 }

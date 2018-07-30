@@ -37,6 +37,8 @@ public class ApiEndPoint {
 
     public static final String SEND_RESULTS ="api/send_result";
 
+    public static final String ADMIN_INFO ="api/info";
+
     public static final String BASE_URL="http://95.163.215.169/";
 
 

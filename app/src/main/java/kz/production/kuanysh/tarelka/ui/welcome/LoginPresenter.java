@@ -45,65 +45,68 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V>
 
     @Override
     public void onPhone(String phone) {
-        if(phone==null){
-            getMvpView().onError("Ошибка:(");
-        }
-        getCompositeDisposable().add(getDataManager().getApiHelper().getAccessTokenAndLogin(phone)
-                                        .subscribeOn(getSchedulerProvider().io()).
-                                        observeOn(getSchedulerProvider().ui())
-                .subscribe(new Consumer<Authorization>() {
-                    @Override
-                    public void accept(Authorization response) throws Exception {
+        if (getMvpView().isNetworkConnected()) {
+            if(phone==null){
+                getMvpView().onError("Ошибка:(");
+            }else{
+                getCompositeDisposable().add(getDataManager().getApiHelper().getAccessTokenAndLogin(phone)
+                        .subscribeOn(getSchedulerProvider().io()).
+                                observeOn(getSchedulerProvider().ui())
+                        .subscribe(new Consumer<Authorization>() {
+                            @Override
+                            public void accept(Authorization response) throws Exception {
+                                getMvpView().hideLoading();
+                                String str="";
+                                getDataManager().updateUserInfo(
+                                        response.getResult().getToken(),
+                                        response.getResult().getId(),
+                                        DataManager.LoggedInMode.LOGGED_IN_MODE_SERVER,
+                                        response.getResult().getFio(),
+                                        response.getResult().getStatus(),
+                                        response.getResult().getPhone(),
+                                        response.getResult().getAvatar(),
+                                        response.getResult().getAge(),
+                                        response.getResult().getWeight(),
+                                        str,
+                                        response.getResult().getHeight());
 
-                        String str="";
-                        /*if(response.getResult().getGoals()==null || response.getResult().getGoals().equals("")){
-                            StringBuilder builder = new StringBuilder();
-                            for(String s : response.getResult().getGoals()) {
-                                builder.append(s+",");
+                                if(response.getStatusCode()==200){
+                                    getMvpView().openAimsActivity();
+                                }else if(response.getStatusCode()==201){
+                                    getDataManager().setAims(response.getResult().getGoals().get(0).toString());
+                                    getMvpView().openMainActivity();
+                                }
+
+
+                                if (!isViewAttached()) {
+                                    return;
+                                }
+
+
                             }
-                            str = builder.toString();
-                        }*/
-                        getDataManager().updateUserInfo(
-                                response.getResult().getToken(),
-                                response.getResult().getId(),
-                                DataManager.LoggedInMode.LOGGED_IN_MODE_SERVER,
-                                response.getResult().getFio(),
-                                response.getResult().getStatus(),
-                                response.getResult().getPhone(),
-                                response.getResult().getAvatar(),
-                                response.getResult().getAge(),
-                                response.getResult().getWeight(),
-                                str,
-                                response.getResult().getHeight());
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
 
-                        if (!isViewAttached()) {
-                            return;
-                        }
-                        getMvpView().hideLoading();
-                        if(response.getStatusCode()==200){
-                            getMvpView().openAimsActivity();
-                        }else if(response.getStatusCode()==201){
-                            getMvpView().openMainActivity();
-                        }
+                                if (!isViewAttached()) {
+                                    return;
+                                }
 
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
+                                getMvpView().hideLoading();
 
-                        if (!isViewAttached()) {
-                            return;
-                        }
+                                // handle the login error here
+                                if (throwable instanceof ANError) {
+                                    ANError anError = (ANError) throwable;
+                                    handleApiError(anError);
+                                }
+                            }
+                        }));
+            }
 
-                        getMvpView().hideLoading();
+        }else{
+            getMvpView().onError("Нет подключения к интернету!");
+        }
 
-                        // handle the login error here
-                        if (throwable instanceof ANError) {
-                            ANError anError = (ANError) throwable;
-                            handleApiError(anError);
-                        }
-                    }
-                }));
 
 
     }

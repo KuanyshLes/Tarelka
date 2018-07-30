@@ -7,27 +7,34 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.data.network.model.main.Result;
+import kz.production.kuanysh.tarelka.data.network.model.main.Task;
 import kz.production.kuanysh.tarelka.helper.Listener;
 import kz.production.kuanysh.tarelka.ui.activities.TaskDetailActivity;
 import kz.production.kuanysh.tarelka.ui.fragments.MainTaskFragment;
+import kz.production.kuanysh.tarelka.utils.AppConst;
 
 /**
  * Created by User on 20.06.2018.
  */
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter .ViewHolder> {
-    private List<Result> task_list;
+    private List<Task> task_list;
     private Context context;
     private Listener listener;
 
+    @Inject
+    Context mContext;
 
-
-    public TaskAdapter (List<Result> task_list,Context context) {
+    public TaskAdapter (List<Task> task_list) {
         this.task_list = task_list;
         this.context = context;
     }
@@ -59,25 +66,45 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter .ViewHolder> {
         TextView name = (TextView) cardView.findViewById(R.id.task_name);
         name.setText(task_list.get(i).getTitle().toString());
 
+        ImageView accessibility = (ImageView) cardView.findViewById(R.id.task_accessibility);
+
+
+        if(task_list.get(i).getAccess()== AppConst.TASK_ACCESS_YES){
+            if(task_list.get(i).getStatus()==AppConst.TASK_ACCESS_YES){
+                accessibility.setVisibility(View.INVISIBLE);
+            }
+        }else if(task_list.get(i).getAccess()== AppConst.TASK_ACCESS_NO){
+            accessibility.setImageResource(R.mipmap.padlock);
+        }
+
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(context, TaskDetailActivity.class);
-                intent.putExtra(MainTaskFragment.KEY_MAIN_TASK,task_list.get(i));
-                context.startActivity(intent);
-
+                if(task_list.get(i).getAccess()== AppConst.TASK_ACCESS_YES){
+                    Intent intent=new Intent(context, TaskDetailActivity.class);
+                    intent.putExtra(MainTaskFragment.KEY_MAIN_TASK,task_list.get(i));
+                    context.startActivity(intent);
+                }else if(task_list.get(i).getAccess()== AppConst.TASK_ACCESS_NO){
+                    Toast.makeText(context, "Задание недоступно!!!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
+
+
     }
     @Override
     public int getItemCount() {
         return task_list.size();
     }
 
-   /* public void addItems(List<Result> mains){
-        task_list=mains;
+  public void addItems(List<Task> mains){
+        task_list.addAll(mains);
         notifyDataSetChanged();
-    }*/
+    }
+    public void addContext(Context contextMethod){
+        context=contextMethod;
+    }
 
 }
 

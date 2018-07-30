@@ -32,36 +32,45 @@ public class MainTaskPresenter<V extends MainTaskMvpView> extends BasePresenter<
     @Override
     public void onViewPrepared() {
         //getMvpView().showLoading();
-        getCompositeDisposable().add(getDataManager()
-                .getApiHelper().getMainTasks()
-                .subscribeOn(getSchedulerProvider().io())
-                .observeOn(getSchedulerProvider().ui())
-                .subscribe(new Consumer<Main>() {
-                    @Override
-                    public void accept(@NonNull Main blogResponse)
-                            throws Exception {
-                        getMvpView().hideLoading();
-                        getMvpView().updateAimsList(blogResponse.getResult());
+        if (getMvpView().isNetworkConnected()) {
+            getCompositeDisposable().add(getDataManager()
+                    .getApiHelper().getMainTasks(getDataManager().getAccessToken())
+                    .subscribeOn(getSchedulerProvider().io())
+                    .observeOn(getSchedulerProvider().ui())
+                    .subscribe(new Consumer<Main>() {
+                        @Override
+                        public void accept(@NonNull Main blogResponse)
+                                throws Exception {
+                            getMvpView().hideLoading();
 
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable)
-                            throws Exception {
-                        if (!isViewAttached()) {
-                            return;
+                            if(blogResponse.getStatusCode()==200){
+                                getMvpView().updateAimsList(blogResponse.getResult().getTasks());
+                            }
+
+
                         }
-                        getMvpView().hideLoading();
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(@NonNull Throwable throwable)
+                                throws Exception {
+                            if (!isViewAttached()) {
+                                return;
+                            }
+                            getMvpView().hideLoading();
 
-                        getMvpView().showMessage("Tasks get error!");
+                            getMvpView().showMessage("Tasks get error!");
 
 
-                        // handle the error here
-                        if (throwable instanceof ANError) {
-                            ANError anError = (ANError) throwable;
-                            handleApiError(anError);
+                            // handle the error here
+                            if (throwable instanceof ANError) {
+                                ANError anError = (ANError) throwable;
+                                handleApiError(anError);
+                            }
                         }
-                    }
-                }));
+                    }));
+        }else{
+            getMvpView().onError("Нет подключения к интернету!");
+        }
+
     }
 }

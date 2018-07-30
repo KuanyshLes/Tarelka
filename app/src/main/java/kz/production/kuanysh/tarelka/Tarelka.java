@@ -5,21 +5,21 @@ import android.app.Application;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.interceptors.HttpLoggingInterceptor;
 import com.facebook.accountkit.AccountKit;
+import com.yandex.metrica.YandexMetrica;
+import com.yandex.metrica.YandexMetricaConfig;
 
 import javax.inject.Inject;
 
 import kz.production.kuanysh.tarelka.data.DataManager;
 import kz.production.kuanysh.tarelka.di.component.*;
 import kz.production.kuanysh.tarelka.di.module.ApplicationModule;
+import kz.production.kuanysh.tarelka.utils.AppConst;
 
 /**
  * Created by User on 26.06.2018.
  */
 
 public class Tarelka extends Application {
-
-
-
     @Inject
     DataManager mDataManager;
 
@@ -37,6 +37,10 @@ public class Tarelka extends Application {
 
         mApplicationComponent.inject(this);
         AccountKit.initialize(getApplicationContext());
+
+        YandexMetricaConfig.Builder configBuilder = YandexMetricaConfig.newConfigBuilder(AppConst.APP_METRICA_API_KEY);
+        YandexMetrica.activate(getApplicationContext(), configBuilder.build());
+        YandexMetrica.enableActivityAutoTracking(this);
 
         //AppLogger.init();
 

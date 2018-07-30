@@ -13,4 +13,6 @@ public interface ProfileMvpPresenter <V extends ProfileMvpView> extends MvpPrese
 
 
     void onViewPrepared();
+
+    void onExitClick();
 }

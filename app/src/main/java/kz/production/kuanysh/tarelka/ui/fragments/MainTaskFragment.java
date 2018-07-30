@@ -11,6 +11,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.data.network.model.main.Result;
+import kz.production.kuanysh.tarelka.data.network.model.main.Task;
 import kz.production.kuanysh.tarelka.di.component.ActivityComponent;
 import kz.production.kuanysh.tarelka.push.AlarmReceiver;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
@@ -45,9 +47,10 @@ public class MainTaskFragment extends BaseFragment implements MainTaskMvpView{
     @BindView(R.id.task_recycler)
     RecyclerView tasks;
 
-    private static List<Result> main;
+    private static List<Task> taskList;
 
-    private TaskAdapter taskAdapter;
+    @Inject
+    TaskAdapter taskAdapter;
 
     private LinearLayoutManager linearLayoutManager;
     private Intent intent;
@@ -80,11 +83,13 @@ public class MainTaskFragment extends BaseFragment implements MainTaskMvpView{
             mPresenter.onAttach(this);
         }
 
+        Log.d("myTag", "token: "+mPresenter.getDataManager().getAccessToken());
 
         //mPresenter.getMvpView().fireNotification();
 
         return view;
     }
+
 
 
     @Override
@@ -97,50 +102,26 @@ public class MainTaskFragment extends BaseFragment implements MainTaskMvpView{
 
     @Override
     protected void setUp(View view) {
-        main=new ArrayList<>();
+        taskList=new ArrayList<>();
         linearLayoutManager=new LinearLayoutManager(getActivity());
         tasks.setLayoutManager(linearLayoutManager);
-        taskAdapter=new TaskAdapter(main,getActivity());
         tasks.setAdapter(taskAdapter);
+        taskAdapter.addContext(getActivity());
         mPresenter.onViewPrepared();
     }
 
     @Override
-    public void updateAimsList(List<Result> tasks) {
-        main.addAll(tasks);
-        taskAdapter.notifyDataSetChanged();
+    public void updateAimsList(List<Task> tasks) {
+        if(tasks!=null){
+            taskList.addAll(tasks);
+            taskAdapter.addItems(tasks);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void fireNotification() {
-        /*Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 11);
-        calendar.set(Calendar.SECOND, 0);
 
-        Calendar calendar1 = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 12);
-        calendar.set(Calendar.SECOND, 0);
-
-        Calendar calendar2 = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 13);
-        calendar.set(Calendar.SECOND, 0);
-
-        Intent intent1 = new Intent(getActivity(), AlarmReceiver.class);
-        PendingIntent broadcast = PendingIntent.getBroadcast(getActivity(), 100,intent1, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        AlarmManager am = (AlarmManager) getActivity().getSystemService(getActivity().ALARM_SERVICE);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar1.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar2.getTimeInMillis(), AlarmManager.INTERVAL_DAY, broadcast);
-//        am.setRepeating((AlarmManager.RTC_WAKEUP), calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, broadcast);
-//        //am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), broadcast);
-//        am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), broadcast);
-//        am.setExact(AlarmManager.RTC_WAKEUP, calendar1.getTimeInMillis(), broadcast);
-//        am.setExact(AlarmManager.RTC_WAKEUP, calendar2.getTimeInMillis(), broadcast);*/
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
 
         Intent notificationIntent = new Intent("android.media.action.DISPLAY_NOTIFICATION");

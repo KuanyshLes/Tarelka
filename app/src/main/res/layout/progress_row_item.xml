@@ -8,7 +8,7 @@
     app:contentPadding="5dp"
     app:cardElevation="3dp"
     app:cardCornerRadius="5dp"
-    android:layout_height="95dp">
+    android:layout_height="80dp">
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -16,29 +16,35 @@
         android:weightSum="10">
         <TextView
             android:id="@+id/progress_order"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
             android:background="@drawable/shape_circle"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="22dp"
-            android:layout_marginRight="18dp"
-            android:layout_marginBottom="25dp"
+            android:layout_margin="17dp"
             android:gravity="center"
             android:textSize="18sp"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/colorPrimary"
             android:text="1"/>
 
         <TextView
             android:id="@+id/progress_text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="9.9"
+            android:layout_weight="9"
             android:paddingTop="5dp"
             android:layout_marginTop="10dp"
             android:scrollbars="vertical"
-            android:text="Stu Unger Rise And Fall A Lord of the rings seasons coming"
+            android:text="Test1"
+            android:paddingLeft="10dp"
             android:textColor="@color/colorBlack"
-            android:textSize="16.5sp" />
+            android:textSize="17sp" />
+
+        <ImageView
+            android:id="@+id/progress_accessibility"
+            android:layout_weight="0.65"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@mipmap/check_square" />
+
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

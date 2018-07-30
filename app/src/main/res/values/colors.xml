@@ -7,6 +7,7 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorMoreGrey">#2b2a2a</color>
     <color name="colorGrey">#a7a6a6</color>
+    <color name="colorNotAccess">#7c7979</color>
     <color name="colorBlack">#000000</color>
     <color name="colorNew">#000000</color>
     <color name="colorGreyMiddle">#c5c5cb</color>
@@ -14,6 +15,7 @@
     <color name="colorTestBack">#3a3c48</color>
     <color name="colorTestBack1">#643a3c48</color>
     <color name="colorBlackTrans">#ab000000</color>
+    <color name="colorBlackTransBlack">#ea000000</color>
     <color name="colorBlackTransNew">#f5060215</color>
     <color name="colorNotCorrect">#bf7669</color>
 

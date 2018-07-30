@@ -49,6 +49,8 @@ public class AppPreferencesHelper implements PreferencesHelper {
     private static final String PREF_KEY_CURRENT_USER_AIMS= "PREF_KEY_CURRENT_USER_AIMS";
     private static final String PREF_KEY_CURRENT_USER_PHONE= "PREF_KEY_CURRENT_USER_PHONE";
     private static final String PREF_KEY_CURRENT_USER_HEIGHT= "PREF_KEY_CURRENT_USER_HEIGHT";
+    private static final String PREF_KEY_CURRENT_USER_ALARM= "PREF_KEY_CURRENT_USER_ALARM";
+    private static final String PREF_KEY_CURRENT_USER_ACCOUNT= "PREF_KEY_CURRENT_USER_ACCOUNT";
 
 
 
@@ -173,6 +175,26 @@ public class AppPreferencesHelper implements PreferencesHelper {
     @Override
     public void setHeight(String height) {
         mPrefs.edit().putString(PREF_KEY_CURRENT_USER_HEIGHT, height).apply();
+    }
+
+    @Override
+    public String getAlarmSetted() {
+        return mPrefs.getString(PREF_KEY_CURRENT_USER_ALARM, null);
+    }
+
+    @Override
+    public void setAlarmSetted(String alarm) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_USER_ALARM, alarm).apply();
+    }
+
+    @Override
+    public String donePhoneConfirmation() {
+        return mPrefs.getString(PREF_KEY_CURRENT_USER_ACCOUNT, null);
+    }
+
+    @Override
+    public void setDonePhoneConfirmation(String action) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_USER_ACCOUNT, action).apply();
     }
 
     @Override
