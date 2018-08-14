@@ -76,28 +76,40 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.ViewHo
 
 
         if(progress_task_list.get(i).getAccess()== AppConst.QUIZ_ACCESS_YES){
-
-        }else if(progress_task_list.get(i).getAccess()== AppConst.QUIZ_ACCESS_NO){
+            accessibility.setImageResource(R.mipmap.check_square);
+        }else if(progress_task_list.get(i).getAccess()== AppConst.QUIZ_ACCESS_NO &&
+                progress_task_list.get(i).getStatus()==1){
+            accessibility.setImageResource(R.mipmap.check_square);
+        }else if(progress_task_list.get(i).getAccess()== AppConst.QUIZ_ACCESS_NO &&
+                progress_task_list.get(i).getStatus()==0){
             accessibility.setImageResource(R.mipmap.padlock);
-            text.setTextColor(mContext.getResources().getColor(R.color.colorNotAccess));
+            text.setTextColor(mContext.getResources().getColor(R.color.carbon_grey_400));
         }
+
+
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(progress_task_list.get(i).getAccess()== AppConst.QUIZ_ACCESS_YES){
+                if(progress_task_list.get(i).getAccess()== AppConst.QUIZ_ACCESS_YES &&
+                        progress_task_list.get(i).getStatus()==0){
                     if(listener!=null){
                         listener.onClick(progress_task_list.get(i).getId());
                     }
-                }else if(progress_task_list.get(i).getAccess()== AppConst.QUIZ_ACCESS_NO){
-                    if(progress_task_list.get(i).getImgIn7days()==false){
-                        Toast.makeText(mContext, "Для прохождения , вы должны отправить фото в течение недели!", Toast.LENGTH_SHORT).show();
-                    }else{
-                        if(progress_task_list.get(i).get7days()==false){
-                            Toast.makeText(mContext, "Тест можно пройти только в течения недели!", Toast.LENGTH_SHORT).show();
-                        }
+
+                }else{
+                    if(progress_task_list.get(i).getStatus()==1){
+                        Toast.makeText(mContext, "Вы уже прошли этот тест", Toast.LENGTH_SHORT).show();
+                       // mPresenter.getMvpView().showMessage("Вы уже прошли этот тест");
+                    }else if(!progress_task_list.get(i).get7days()){
+                        Toast.makeText(mContext, "Тест можно пройти только раз в неделю", Toast.LENGTH_SHORT).show();
+                     //   mPresenter.getMvpView().showMessage("Тест можно пройти только раз в неделю");
+                    }else if(!progress_task_list.get(i).getImgIn7days()){
+                        Toast.makeText(mContext, "Чтобы пройти тест отправьте фото отчет", Toast.LENGTH_SHORT).show();
+                       // mPresenter.getMvpView().showMessage("Чтобы пройти тест отправьте фото отчет");
                     }
                 }
+
 
             }
         });

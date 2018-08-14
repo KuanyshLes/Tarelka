@@ -9,13 +9,17 @@
 
 
     <TextView
-        android:id="@+id/chat_mail"
+        android:id="@+id/food_title_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="25dp"
         android:layout_marginTop="40dp"
-        android:text="Предпочитаете есть?"
-        android:textSize="22sp"
+        android:layout_marginRight="25dp"
+        android:layout_marginLeft="25dp"
+        android:textSize="18sp"
+        android:text="Что вы обычно кушаете из этого списка?"
+        android:fontFamily="@font/montserratbold"
+        android:textColor="@color/carbon_grey_600"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,7 +40,7 @@
         app:layout_constraintBottom_toTopOf="@+id/foods_next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chat_mail" />
+        app:layout_constraintTop_toBottomOf="@+id/food_title_text" />
 
     <ImageView
         android:id="@+id/foods_next"

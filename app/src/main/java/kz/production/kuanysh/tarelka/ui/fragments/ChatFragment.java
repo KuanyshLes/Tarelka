@@ -23,8 +23,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -56,12 +60,17 @@ import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.app.Config;
 import kz.production.kuanysh.tarelka.data.network.model.chat.Chat;
 import kz.production.kuanysh.tarelka.di.component.ActivityComponent;
+import kz.production.kuanysh.tarelka.helper.BottomNavigationViewEx;
 import kz.production.kuanysh.tarelka.ui.base.BaseFragment;
 import kz.production.kuanysh.tarelka.ui.adapters.ChatAdapter;
+import kz.production.kuanysh.tarelka.ui.fragments.social.SocialMediaDirectFragment;
 import kz.production.kuanysh.tarelka.utils.NotificationUtils;
+import me.toptas.fancyshowcase.FancyShowCaseView;
 
 import static android.app.Activity.RESULT_OK;
 import static com.facebook.accountkit.internal.AccountKitController.getApplicationContext;
+import static kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity.TAG_CHAT;
+import static kz.production.kuanysh.tarelka.ui.fragments.ProfileFragment.PROFILE_SOCIAL_KEY;
 import static kz.production.kuanysh.tarelka.utils.AppConst.TAG_FRAGMENT;
 
 /**
@@ -81,17 +90,20 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
     @BindView(R.id.chat_recycler)
     RecyclerView chats;
 
+    @BindView(R.id.chat_view)
+    View chat_view;
+
     @BindView(R.id.chat_send)
     TextView send;
 
     @BindView(R.id.chat_image_message)
     ImageView imageMessage;
 
-    /*@BindView(R.id.chat_progressbar)
-    ProgressBar progressBar;*/
 
     @Inject
     ChatAdapter chatAdapter;
+
+    public static String COMMENT_TITLE="";
 
     @BindView(R.id.chat_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -99,23 +111,18 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
     private int page_number=0;
 
     private static int all_page_number;
-    private static Boolean isImageSended=false;
 
     private static List<Chat> chatsListFra;
     private static ArrayList<Image> imageSelected;
-
-    private LinearLayoutManager linearLayoutManager;
-    private static Uri uriImage;
-    private static String filePath;
-    private static String imageString;
-    private static  Bitmap imageMap;
     private static Dialog dialog;
     private static AlertDialog.Builder mBuilder;
-    private static String mCurrentPhotoPath;
-    private static int IMAGE_CAPTURE=31;
+
+    private LinearLayoutManager linearLayoutManager;
     public static String CAMERA_KEY="camera key";
     public static List<Uri> uriList;
     public static List<String> filePathList;
+    private Bundle bundle;
+    public static final String CHAT_SOCIAL_KEY="afsgdgses";
 
     private BroadcastReceiver mRegistrationBroadcastReceiver;
 
@@ -136,7 +143,6 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_chat, container, false);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         ActivityComponent component = getActivityComponent();
         if (component != null) {
@@ -175,10 +181,7 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
 
     @Override
     public void openSendAsSocial() {
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_frame, new SendMessageFragment(), TAG_FRAGMENT)
-                .addToBackStack(null)
-                .commit();
+        mPresenter.getMvpView().openSociall();
     }
 
     @Override
@@ -190,7 +193,9 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
         }
         chatAdapter.addItems(chatsListFra);
 
-        chats.getLayoutManager().scrollToPosition(chatList.size()-1);
+        if(chatsListFra.size()>6){
+            chats.getLayoutManager().scrollToPosition(chatList.size()-1);
+        }
 
     }
 
@@ -213,38 +218,95 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
                 .start(); // start image picker activity with request code
     }
 
+    @Override
+    public void openSociall() {
+        SocialMediaDirectFragment socialMediaDirectFragment=new SocialMediaDirectFragment();
+        bundle=new Bundle();
+        bundle.putString(PROFILE_SOCIAL_KEY,CHAT_SOCIAL_KEY);
+        socialMediaDirectFragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .disallowAddToBackStack()
+                .replace(R.id.content_frame, socialMediaDirectFragment, TAG_CHAT)
+                .commit();
+    }
+
+    @Override
+    public void openCommentDialog() {
+        mBuilder= new AlertDialog.Builder(getActivity());
+        View mView =getLayoutInflater().inflate(R.layout.dialog_comment,null);
+        mBuilder.setView(mView);
+
+        dialog=mBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.show();
+
+        //size
+        Rect displayRectangle = new Rect();
+        Window window = getActivity().getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        //set size
+        dialog.getWindow().setLayout((int)(displayRectangle.width() *
+                0.85f), (int)(displayRectangle.height() * 0.25f));
+
+        switch (mPresenter.getDataManager().getComment()) {
+            case "1":
+                Log.d("comment", "openCommentDialog: "+mPresenter.getDataManager().getComment());
+                COMMENT_TITLE=getResources().getString(R.string.comment_title1);
+                mPresenter.getDataManager().setComment("2");
+                break;
+            case "2":
+                Log.d("comment", "openCommentDialog: "+mPresenter.getDataManager().getComment());
+                COMMENT_TITLE=getResources().getString(R.string.comment_title2);
+                mPresenter.getDataManager().setComment("3");
+                break;
+            case "3":
+                Log.d("comment", "openCommentDialog: "+mPresenter.getDataManager().getComment());
+                COMMENT_TITLE=getResources().getString(R.string.comment_title3);
+                mPresenter.getDataManager().setComment("1");
+                break;
+        }
+
+
+        TextView title=(TextView)mView.findViewById(R.id.comment_title);
+        title.setText(COMMENT_TITLE);
+        EditText message=(EditText) mView.findViewById(R.id.comment_message);
+        TextView send=(TextView)mView.findViewById(R.id.comment_send);
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!TextUtils.isEmpty(message.getText().toString())){
+                    dialog.dismiss();
+                    chatsListFra.clear();
+                    mPresenter.onSendClick(message.getText().toString(),0);
+                }
+            }
+        });
+    }
+
 
     @Override
     public  void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (com.esafirm.imagepicker.features.ImagePicker.shouldHandle(requestCode, resultCode, data)) {
-            uriList.clear();
-            filePathList.clear();
-            // Get a list of picked images
-            List<com.esafirm.imagepicker.model.Image> images = com.esafirm.imagepicker.features.ImagePicker.getImages(data);
-            for(int i=0;i<images.size();i++){
-                File file = new File(images.get(i).getPath());
-                Uri imageUri = Uri.fromFile(file);
-                uriList.add(imageUri);
-                filePathList.add(images.get(i).getPath());
+        if (data != null) {
+            if (com.esafirm.imagepicker.features.ImagePicker.shouldHandle(requestCode, resultCode, data)) {
+                uriList.clear();
+                filePathList.clear();
+                // Get a list of picked images
+                List<com.esafirm.imagepicker.model.Image> images = com.esafirm.imagepicker.features.ImagePicker.getImages(data);
+                for(int i=0;i<images.size();i++){
+                    File file = new File(images.get(i).getPath());
+                    Uri imageUri = Uri.fromFile(file);
+                    uriList.add(imageUri);
+                    filePathList.add(images.get(i).getPath());
+                }
+                mPresenter.onSendImage(uriList, filePathList, getActivity(), 0);
             }
-            mPresenter.onSendImage(uriList, filePathList, getActivity(), 0);
         }
-    }
-    public static String getPath(Context context, Uri uri ) {
-        String result = null;
-        String[] proj = { MediaStore.Images.Media.DATA };
-        Cursor cursor = context.getContentResolver( ).query( uri, proj, null, null, null );
-        if(cursor != null){
-            if ( cursor.moveToFirst( ) ) {
-                int column_index = cursor.getColumnIndexOrThrow( proj[0] );
-                result = cursor.getString( column_index );
-            }
-            cursor.close( );
+        else {
+            Log.d("myTag", "onActivityResult: data is null");
         }
-        if(result == null) {
-            result = "Not found";
-        }
-        return result;
+
     }
 
     @Override
@@ -253,13 +315,29 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
         filePathList=new ArrayList<>();
         uriList=new ArrayList<>();
         imageSelected=new ArrayList<>();
+
+        if(mPresenter.getDataManager().getFancyChat()!=null){
+            new FancyShowCaseView.Builder(getActivity())
+                    .title(getResources().getString(R.string.fancy_chat))
+                    .titleStyle(R.style.MyTitleStyle, Gravity.CENTER)
+                    .focusOn(chat_view)
+                    .build()
+                    .show();
+            mPresenter.getDataManager().setFancyChat(null);
+        }
+        if(mPresenter.getDataManager().getComment()==null){
+            mPresenter.getDataManager().setComment("1");
+        }
+
+
+
         linearLayoutManager=new LinearLayoutManager(getActivity());
-        linearLayoutManager.setStackFromEnd(true);
+       //linearLayoutManager.setStackFromEnd(true);
         chats.setLayoutManager(linearLayoutManager);
         chats.setAdapter(chatAdapter);
         chatAdapter.addContext(getActivity());
-        //progressBar.setVisibility(View.VISIBLE);
         mPresenter.onViewPrepared(page_number);
+
         chatsListFra=new ArrayList<>();
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -275,6 +353,8 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
             }
         });
 
+
+
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -285,7 +365,7 @@ public class ChatFragment extends BaseFragment implements ChatMvpView {
                 } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
                     chatsListFra.clear();
                     mPresenter.onViewPrepared(0);
-                    Toast.makeText(context, "New message", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "У вас новое сообщение", Toast.LENGTH_SHORT).show();
 
                 }
             }

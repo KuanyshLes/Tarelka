@@ -17,9 +17,8 @@
         android:fontFamily="@font/montserratlightitalic"
         android:layout_marginRight="3dp"
         android:text=""
-        android:layout_marginLeft="8dp"
-        android:gravity="center"
-        android:textSize="13sp" />
+        android:gravity="left|center"
+        android:textSize="12sp" />
 
     <android.support.constraint.ConstraintLayout
         android:orientation="vertical"
@@ -27,27 +26,34 @@
         android:layout_width="0dp"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/chat_sended_message"
+        <LinearLayout
+            android:id="@+id/lin111"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:fontFamily="@font/montserratlight"
-            android:padding="11dp"
-            android:text=""
-            android:textColor="@color/colorBlack"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@+id/send_cons"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/chat_sended_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="right"
+                android:fontFamily="@font/montserratlight"
+                android:padding="11dp"
+                android:text=""
+                android:textColor="@color/colorBlack"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/send_cons"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </LinearLayout>
+
         <FrameLayout
             android:id="@+id/send_cons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chat_sended_message">
+            app:layout_constraintTop_toBottomOf="@+id/lin111">
+
             <carbon.widget.ImageView
                 android:id="@+id/chat_send_image1"
                 android:layout_width="match_parent"
@@ -57,15 +63,27 @@
                 android:layout_gravity="right"
                 app:carbon_cornerRadius="8dp"
                 />
-            <TextView
-                android:id="@+id/chat_send_image_count"
+            <ProgressBar
+                android:id="@+id/progressBar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="26sp"
                 android:visibility="gone"
-                android:textColor="@color/colorBlack"
-                android:gravity="center_horizontal|center_vertical"
-                android:text=""/>
+                />
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/imageCountSuccess"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/chat_send_image_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="26sp"
+                    android:textColor="@color/colorBlack"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text=""/>
+            </LinearLayout>
+
         </FrameLayout>
 
 

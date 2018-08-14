@@ -28,7 +28,7 @@
                 android:layout_margin="16dp"
                 android:layout_weight="3"
                 android:gravity="top|center"
-                android:text="Прогресс"
+                android:text="Экзамены"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/toolbarTitle" />
 
@@ -72,10 +72,12 @@
                         android:layout_marginTop="2dp"
                         android:layout_height="match_parent"
                         android:layout_weight="6"
-                        android:textSize="15sp"
+                        android:textSize="13sp"
+                        android:textColor="@color/carbon_black_87"
+                        android:fontFamily="@font/montserratmedium"
                         android:gravity="left|center"
                         android:paddingLeft="18dp"
-                        android:text="Ваш прогресс" />
+                        android:text="Ваш прогресс: 0%" />
                     <View
                         android:layout_weight="1.5"
                         android:layout_width="0dp"
@@ -83,16 +85,6 @@
 
                     </View>
 
-                    <Spinner
-                        android:id="@+id/progress_spinner"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="2.5"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginRight="10dp"
-                        android:gravity="right|bottom"
-                        android:textSize="18sp"
-                        android:textAppearance="@style/TextAppearance.AppCompat" />
                 </LinearLayout>
 
                 <ProgressBar
@@ -100,7 +92,7 @@
                     android:layout_marginRight="15dp"
                     android:id="@+id/progress_progressbar"
                     android:layout_weight="4.2"
-                    android:max="100"
+                    android:max="12"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="0dp" />
@@ -112,10 +104,36 @@
     </FrameLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/progress_recycler"
-        android:layout_margin="11dp"
-        android:layout_weight="16.5"
+        android:layout_marginTop="11dp"
+        android:layout_marginRight="11dp"
+        android:layout_marginLeft="11dp"
+        android:layout_weight="16.35"
         android:layout_width="match_parent"
         android:layout_height="0dp">
 
     </android.support.v7.widget.RecyclerView>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:weightSum="4">
+        <View
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+        <View
+            android:id="@+id/quiz_view"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+        <View
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+
+
+
+
+
+    </LinearLayout>
 </LinearLayout>

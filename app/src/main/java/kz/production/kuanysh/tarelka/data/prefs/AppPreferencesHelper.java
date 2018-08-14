@@ -52,6 +52,14 @@ public class AppPreferencesHelper implements PreferencesHelper {
     private static final String PREF_KEY_CURRENT_USER_ALARM= "PREF_KEY_CURRENT_USER_ALARM";
     private static final String PREF_KEY_CURRENT_USER_ACCOUNT= "PREF_KEY_CURRENT_USER_ACCOUNT";
 
+    private static final String PREF_KEY_CURRENT_FANCY_EDUCATION= "PREF_KEY_CURRENT_FANCY_EDUCATION";
+    private static final String PREF_KEY_CURRENT_FANCY_QUIZ= "PREF_KEY_CURRENT_FANCY_QUIZ";
+    private static final String PREF_KEY_CURRENT_FANCY_CHAT= "PREF_KEY_CURRENT_FANCY_CHAT";
+    private static final String PREF_KEY_CURRENT_FANCY_PROFILE= "PREF_KEY_CURRENT_FANCY_PROFILE";
+    private static final String PREF_KEY_CURRENT_COMMENT= "PREF_KEY_CURRENT_COMMENT";
+    private static final String PREF_KEY_CURRENT_APP_LAUNCH_COUNT= "PREF_KEY_CURRENT_APP_LAUNCH_COUNT";
+    private static final String PREF_KEY_CURRENT_RATED= "PREF_KEY_CURRENT_RATED";
+
 
 
     private final SharedPreferences mPrefs;
@@ -195,6 +203,77 @@ public class AppPreferencesHelper implements PreferencesHelper {
     @Override
     public void setDonePhoneConfirmation(String action) {
         mPrefs.edit().putString(PREF_KEY_CURRENT_USER_ACCOUNT, action).apply();
+    }
+
+    @Override
+    public String getFancyEducation() {
+        return mPrefs.getString(PREF_KEY_CURRENT_FANCY_EDUCATION, null);
+    }
+
+    @Override
+    public void setFancyEducation(String action) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_FANCY_EDUCATION, action).apply();
+    }
+
+    @Override
+    public String getFancyChat() {
+        return mPrefs.getString(PREF_KEY_CURRENT_FANCY_CHAT, null);
+    }
+
+    @Override
+    public void setFancyChat(String action) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_FANCY_CHAT, action).apply();
+    }
+
+    @Override
+    public String getFancyQuiz() {
+        return mPrefs.getString(PREF_KEY_CURRENT_FANCY_QUIZ, null);
+    }
+
+    @Override
+    public void setFancyQuiz(String action) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_FANCY_QUIZ, action).apply();
+    }
+
+    @Override
+    public String getFancyProfile() {
+        return mPrefs.getString(PREF_KEY_CURRENT_FANCY_PROFILE, null);
+    }
+
+    @Override
+    public void setFancyProfile(String action) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_FANCY_PROFILE, action).apply();
+    }
+
+    @Override
+    public String getComment() {
+        return mPrefs.getString(PREF_KEY_CURRENT_COMMENT, null);
+    }
+
+    @Override
+    public void setComment(String action) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_COMMENT, action).apply();
+    }
+
+    @Override
+    public int getAppLaunchCount() {
+        return mPrefs.getInt(PREF_KEY_CURRENT_APP_LAUNCH_COUNT, 0);
+    }
+
+    @Override
+    public void setAppLaunchCount(int action) {
+        mPrefs.edit().putInt(PREF_KEY_CURRENT_APP_LAUNCH_COUNT, action).apply();
+
+    }
+
+    @Override
+    public String getRated() {
+        return mPrefs.getString(PREF_KEY_CURRENT_RATED, null);
+    }
+
+    @Override
+    public void setRated(String action) {
+        mPrefs.edit().putString(PREF_KEY_CURRENT_RATED, action).apply();
     }
 
     @Override

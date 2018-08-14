@@ -19,6 +19,10 @@ public interface ChatMvpView extends MvpView {
 
     void openImagePicker();
 
+    void openSociall();
+
+    void openCommentDialog();
+
 
 
 

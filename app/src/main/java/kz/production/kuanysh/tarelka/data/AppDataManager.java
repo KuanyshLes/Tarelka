@@ -25,9 +25,11 @@ import kz.production.kuanysh.tarelka.data.network.model.progress.Progress;
 import kz.production.kuanysh.tarelka.data.network.model.quiz.Quiz;
 import kz.production.kuanysh.tarelka.data.network.model.quizquestions.Questions;
 import kz.production.kuanysh.tarelka.data.network.model.quizquestions.QuizResult;
+import kz.production.kuanysh.tarelka.data.network.model.rating.Rating;
 import kz.production.kuanysh.tarelka.data.network.model.sendmeal.SendMeal;
 import kz.production.kuanysh.tarelka.data.prefs.PreferencesHelper;
 import kz.production.kuanysh.tarelka.di.ApplicationContext;
+import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainPresenter;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
@@ -141,6 +143,11 @@ public class AppDataManager implements DataManager {
     }
 
     @Override
+    public Single<SendMeal> sendMealsFavourite(Map<String, String> meals) {
+        return mApiHelper.sendMealsFavourite(meals);
+    }
+
+    @Override
     public Single<Progress> getProgress(String token) {
         return mApiHelper.getProgress(token);
     }
@@ -148,6 +155,11 @@ public class AppDataManager implements DataManager {
     @Override
     public Single<AdminInfo> getAdminInfo() {
         return mApiHelper.getAdminInfo();
+    }
+
+    @Override
+    public Single<Rating> getRating(String token) {
+        return mApiHelper.getRating(token);
     }
 
 
@@ -294,6 +306,76 @@ public class AppDataManager implements DataManager {
     }
 
     @Override
+    public String getFancyEducation() {
+        return mPreferencesHelper.getFancyEducation();
+    }
+
+    @Override
+    public void setFancyEducation(String action) {
+        mPreferencesHelper.setFancyEducation(action);
+    }
+
+    @Override
+    public String getFancyChat() {
+        return mPreferencesHelper.getFancyChat();
+    }
+
+    @Override
+    public void setFancyChat(String action) {
+        mPreferencesHelper.setFancyChat(action);
+    }
+
+    @Override
+    public String getFancyQuiz() {
+        return mPreferencesHelper.getFancyQuiz();
+    }
+
+    @Override
+    public void setFancyQuiz(String action) {
+        mPreferencesHelper.setFancyQuiz(action);
+    }
+
+    @Override
+    public String getFancyProfile() {
+        return mPreferencesHelper.getFancyProfile();
+    }
+
+    @Override
+    public void setFancyProfile(String action) {
+        mPreferencesHelper.setFancyProfile(action);
+    }
+
+    @Override
+    public String getComment() {
+        return mPreferencesHelper.getComment();
+    }
+
+    @Override
+    public void setComment(String action) {
+        mPreferencesHelper.setComment(action);
+    }
+
+    @Override
+    public int getAppLaunchCount() {
+        return mPreferencesHelper.getAppLaunchCount();
+    }
+
+    @Override
+    public void setAppLaunchCount(int action) {
+        mPreferencesHelper.setAppLaunchCount(action);
+    }
+
+    @Override
+    public String getRated() {
+        return mPreferencesHelper.getRated();
+    }
+
+    @Override
+    public void setRated(String action) {
+        mPreferencesHelper.setRated(action);
+    }
+
+    @Override
     public void updateApiHeader(Integer userId, String accessToken) {
         mApiHelper.getApiHeader();
     }
@@ -307,6 +389,7 @@ public class AppDataManager implements DataManager {
                 null,
                 null,
                 null,null,null,null,null,null);
+        mPreferencesHelper.setAlarmSetted(null);
     }
 
     @Override

@@ -27,6 +27,7 @@ import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainMvpPresenter
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainMvpView;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainPresenter;
 import kz.production.kuanysh.tarelka.ui.adapters.ChatAdapter;
+import kz.production.kuanysh.tarelka.ui.adapters.FoodsAdapter;
 import kz.production.kuanysh.tarelka.ui.adapters.ProgressAdapter;
 import kz.production.kuanysh.tarelka.ui.adapters.TaskAdapter;
 import kz.production.kuanysh.tarelka.ui.fragments.ChatMvpPresenter;
@@ -41,9 +42,6 @@ import kz.production.kuanysh.tarelka.ui.fragments.ProfilePresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.ProgressMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.ProgressMvpView;
 import kz.production.kuanysh.tarelka.ui.fragments.ProgressPresenter;
-import kz.production.kuanysh.tarelka.ui.fragments.SendMessageMvpPresenter;
-import kz.production.kuanysh.tarelka.ui.fragments.SendMessageMvpView;
-import kz.production.kuanysh.tarelka.ui.fragments.SendMessagePresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.social.SocialMvpPresenter;
 import kz.production.kuanysh.tarelka.ui.fragments.social.SocialMvpView;
 import kz.production.kuanysh.tarelka.ui.fragments.social.SocialPresenter;
@@ -136,12 +134,6 @@ public class ActivityModule {
         return presenter;
     }
 
-    @Provides
-    @PerActivity
-    SendMessageMvpPresenter<SendMessageMvpView> provideSendMessagePresenter(
-            SendMessagePresenter<SendMessageMvpView> presenter) {
-        return presenter;
-    }
 
     @Provides
     @PerActivity
@@ -195,6 +187,11 @@ public class ActivityModule {
     @Provides
     ChatAdapter provideChatAdapter(){
         return new ChatAdapter(new ArrayList<Chat>());
+    }
+
+    @Provides
+    FoodsAdapter provideFoodsAdapter(){
+        return new FoodsAdapter ();
     }
 
     @Provides

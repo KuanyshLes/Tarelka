@@ -18,9 +18,10 @@
             android:id="@+id/task_name"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="Some text"
+            android:text="Неделя 1 - Учимся пить воду"
             android:padding="10dp"
-            android:textSize="17sp"
+            android:textSize="15sp"
+            android:textColor="@color/carbon_grey_800"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         <ImageView

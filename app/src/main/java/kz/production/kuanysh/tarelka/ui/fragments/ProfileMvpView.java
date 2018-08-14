@@ -17,4 +17,6 @@ public interface ProfileMvpView extends MvpView {
 
     void openLoginActivity();
 
+    void openSocialConsultation();
+
 }

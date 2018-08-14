@@ -37,6 +37,7 @@ import kz.production.kuanysh.tarelka.data.network.model.profile.Authorization;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
 import kz.production.kuanysh.tarelka.ui.base.BaseActivity;
 import kz.production.kuanysh.tarelka.ui.welcome.CreateAimActivity;
+import kz.production.kuanysh.tarelka.ui.welcome.LoginActivity;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -97,6 +98,14 @@ public class ProfileEditActivity extends BaseActivity implements ProfileEditNewM
         mPresenter.onAttach(ProfileEditActivity.this);
         setUp();
 
+        if(getIntent().getStringExtra(LoginActivity.KEY_PRO_REG)!=null){
+            if(getIntent().getStringExtra(LoginActivity.KEY_PRO_REG).equals(LoginActivity.KEY_PRO_REG)){
+                back.setEnabled(false);
+                back.setClickable(false);
+                back.setVisibility(View.INVISIBLE);
+            }
+        }
+
     }
 
     @Override
@@ -108,9 +117,15 @@ public class ProfileEditActivity extends BaseActivity implements ProfileEditNewM
         aim.setText(mPresenter.getDataManager().getAims());
 
         if(mPresenter.getDataManager().getImage()!=null){
-            Glide.with(this)
-                    .load(mPresenter.getDataManager().getImage())
-                    .into(photo);
+            if(mPresenter.getDataManager().getImage().length()>5){
+                Glide.with(this)
+                        .load(mPresenter.getDataManager().getImage())
+                        .into(photo);
+            }else {
+                photo.setImageResource(R.mipmap.profile_photo);
+            }
+        }else {
+            photo.setImageResource(R.mipmap.profile_photo);
         }
 
     }
@@ -147,13 +162,13 @@ public class ProfileEditActivity extends BaseActivity implements ProfileEditNewM
                     name.getText().toString(),
                     age.getText().toString(),
                     weight.getText().toString(),
-                    Integer.valueOf(height.getText().toString()));
+                    height.getText().toString());
         }
         else{
             mPresenter.onSaveClickWithoutImage(name.getText().toString(),
                     age.getText().toString(),
                     weight.getText().toString(),
-                    Integer.valueOf(height.getText().toString()));
+                    height.getText().toString());
         }
 
 

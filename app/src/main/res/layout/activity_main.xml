@@ -11,14 +11,14 @@
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="50dp">
+        android:layout_marginBottom="45dp">
     </FrameLayout>
 
     <kz.production.kuanysh.tarelka.helper.BottomNavigationViewEx
         android:id="@+id/navigation"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
         android:layout_marginEnd="0dp"
+        android:layout_height="45dp"
         android:layout_marginStart="0dp"
         app:itemIconTint="@color/bottom_bar_item_selector"
         android:background="@drawable/white_grey_border_top"

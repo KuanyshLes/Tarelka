@@ -19,6 +19,8 @@ public class ApiEndPoint {
 
     public static final String SEND_MEALS="api/send_meal";
 
+    public static final String SEND_MEALS_FAVOURITE="api/send_meal_second";
+
     public static final String SEND_GOAL="api/send_goal";
 
     public static final String CHAT="api/chat?page=0";
@@ -30,6 +32,8 @@ public class ApiEndPoint {
     public static final String DELETE_MESSAGE="api/delete_message";
 
     public static final String GET_PROGRESS="api/get_progress";
+
+    public static final String GET_RATING="api/get_rating";
 
     public static final String LIST_QUIZ="api/list_quiz";
 

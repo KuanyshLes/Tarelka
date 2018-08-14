@@ -81,5 +81,24 @@ public interface PreferencesHelper {
 
     void setDonePhoneConfirmation(String action);
 
+    String getFancyEducation();
+    void setFancyEducation(String action);
 
+    String getFancyChat();
+    void setFancyChat(String action);
+
+    String getFancyQuiz();
+    void setFancyQuiz(String action);
+
+    String getFancyProfile();
+    void setFancyProfile(String action);
+
+    String getComment();
+    void setComment(String action);
+
+    int getAppLaunchCount();
+    void setAppLaunchCount(int action);
+
+    String getRated();
+    void setRated(String action);
 }

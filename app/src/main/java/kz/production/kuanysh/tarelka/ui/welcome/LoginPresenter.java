@@ -15,7 +15,6 @@
 
 package kz.production.kuanysh.tarelka.ui.welcome;
 
-import com.androidnetworking.error.ANError;
 
 import javax.inject.Inject;
 
@@ -72,7 +71,15 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V>
 
                                 if(response.getStatusCode()==200){
                                     getMvpView().openAimsActivity();
+                                    getDataManager().setFancyChat("chatf");
+                                    getDataManager().setFancyProfile("profilef");
+                                    getDataManager().setFancyEducation("educationf");
+                                    getDataManager().setFancyQuiz("quizf");
                                 }else if(response.getStatusCode()==201){
+                                    getDataManager().setFancyChat(null);
+                                    getDataManager().setFancyProfile(null);
+                                    getDataManager().setFancyEducation(null);
+                                    getDataManager().setFancyQuiz(null);
                                     getDataManager().setAims(response.getResult().getGoals().get(0).toString());
                                     getMvpView().openMainActivity();
                                 }
@@ -94,11 +101,6 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V>
 
                                 getMvpView().hideLoading();
 
-                                // handle the login error here
-                                if (throwable instanceof ANError) {
-                                    ANError anError = (ANError) throwable;
-                                    handleApiError(anError);
-                                }
                             }
                         }));
             }

@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -25,11 +28,17 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.di.component.ActivityComponent;
+import kz.production.kuanysh.tarelka.helper.BottomNavigationViewEx;
 import kz.production.kuanysh.tarelka.ui.activities.profileedit.ProfileEditActivity;
 import kz.production.kuanysh.tarelka.ui.base.BaseFragment;
+import kz.production.kuanysh.tarelka.ui.fragments.social.SocialMediaDirectFragment;
 import kz.production.kuanysh.tarelka.ui.welcome.LoginActivity;
 import kz.production.kuanysh.tarelka.utils.AppConst;
+import me.toptas.fancyshowcase.FancyShowCaseView;
 
+import static com.yandex.metrica.impl.q.a.A;
+import static kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity.TAG_CHAT;
+import static kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity.TAG_PROFILE;
 import static kz.production.kuanysh.tarelka.utils.AppConst.TAG_FRAGMENT;
 
 /**
@@ -68,12 +77,20 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
     @BindView(R.id.profile_phone)
     TextView phone;
 
+    @BindView(R.id.profile_view)
+    View profile_view;
+
     @BindView(R.id.logout_card)
     CardView logoutCard;
+
+    @BindView(R.id.profile_social)
+    CardView social;
 
     private Bundle bundle;
     private static Dialog dialog;
     private static AlertDialog.Builder mBuilder;
+    public static final String PROFILE_SOCIAL_KEY="qwert";
+    FancyShowCaseView fancyShowCaseView;
 
 
     public ProfileFragment() {
@@ -102,6 +119,12 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
 
         }
         return  view;
+    }
+
+
+    @OnClick(R.id.profile_social)
+    public void openSocial(){
+        mPresenter.getMvpView().openSocialConsultation();
     }
 
     @OnClick(R.id.logout_card)
@@ -141,6 +164,7 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
         }else{
             aim.setText("");
         }
+
         phone.setText(phoneText);
         if(imageText.length()!=0){
             Glide.with(this)
@@ -149,6 +173,7 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
         }
 
     }
+
 
     @Override
     public void openEditFragment() {
@@ -187,6 +212,7 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mPresenter.getDataManager().setUserAsLoggedOut();
                 mPresenter.getMvpView().openLoginActivity();
             }
         });
@@ -199,7 +225,22 @@ public class ProfileFragment extends BaseFragment implements ProfileMvpView{
     }
 
     @Override
+    public void openSocialConsultation() {
+        SocialMediaDirectFragment socialMediaDirectFragment=new SocialMediaDirectFragment();
+        bundle=new Bundle();
+        bundle.putString(PROFILE_SOCIAL_KEY,PROFILE_SOCIAL_KEY);
+        socialMediaDirectFragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .disallowAddToBackStack()
+                .replace(R.id.content_frame, socialMediaDirectFragment, TAG_PROFILE)
+                .commit();
+    }
+
+    @Override
     protected void setUp(View view) {
+
+
 
         mPresenter.onViewPrepared();
     }

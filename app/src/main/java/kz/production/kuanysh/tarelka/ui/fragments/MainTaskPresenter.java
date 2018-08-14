@@ -1,6 +1,5 @@
 package kz.production.kuanysh.tarelka.ui.fragments;
 
-import com.androidnetworking.error.ANError;
 
 import javax.inject.Inject;
 
@@ -61,11 +60,6 @@ public class MainTaskPresenter<V extends MainTaskMvpView> extends BasePresenter<
                             getMvpView().showMessage("Tasks get error!");
 
 
-                            // handle the error here
-                            if (throwable instanceof ANError) {
-                                ANError anError = (ANError) throwable;
-                                handleApiError(anError);
-                            }
                         }
                     }));
         }else{

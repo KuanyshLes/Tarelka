@@ -1,12 +1,14 @@
 package kz.production.kuanysh.tarelka.ui.welcome;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.accountkit.AccessToken;
@@ -29,7 +31,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import kz.production.kuanysh.tarelka.R;
+import kz.production.kuanysh.tarelka.data.prefs.Board;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
+import kz.production.kuanysh.tarelka.ui.activities.profileedit.ProfileEditActivity;
 import kz.production.kuanysh.tarelka.ui.adapters.WelcomeViewpagerAdapter;
 import kz.production.kuanysh.tarelka.ui.base.BaseActivity;
 import me.relex.circleindicator.CircleIndicator;
@@ -43,12 +47,19 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
     ViewPager viewPager;
 
     @BindView(R.id.welcome_button)
-    Button skip;
+    TextView skip;
 
     @BindView(R.id.welcome_indicator)
     CircleIndicator indicator;
 
+
+    @BindView(R.id.welcome_title)
+    TextView title;
+
     private static List<String> imageLink;
+    private static  List<Board> listBoard;
+    private static int current=0;
+    public static final String KEY_PRO_REG="b jnkl";
 
 
 
@@ -71,31 +82,66 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
     @Override
     protected void setUp() {
         imageLink=new ArrayList<>();
-        imageLink.add("https://dj0j0ofql4htg.cloudfront.net/cms2/image_manager/uploads/News/299128/7/default.jpg");
-        imageLink.add("https://static.independent.co.uk/s3fs-public/thumbnails/image/2016/04/29/13/lionel-messi.jpg?w968h681");
-        imageLink.add("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF9UhXJ30iOSnAILilMbR-FGD0V5gWFxvQWCS9sOhE5FkW5DyUWg");
+        listBoard=new ArrayList<>();
 
-        WelcomeViewpagerAdapter welcomeViewpagerAdapter=new WelcomeViewpagerAdapter(this,imageLink);
+        listBoard.add(new Board("Это приложение для желающих " +
+                "скорректировать фигуру по уникальной концепсии где 80% резуль" +
+                "тата - это то, что вы едите, а 20% - это физическая активность",R.drawable.group146));
+        listBoard.add(new Board("Это приложение имеет обратную\n" +
+                "связь с профессионалами, которые помогут достичь необходимых результатов и будут следить, что вы едите и пьете бесплатно.",R.drawable.chat_icon));
+        listBoard.add(new Board("Вы достигнете нужных результатов,немного изменив привычки питания под присмотром " +
+                "профессионалов.",R.drawable.group129));
+
+        WelcomeViewpagerAdapter welcomeViewpagerAdapter=new WelcomeViewpagerAdapter(this,listBoard);
         viewPager.setAdapter(welcomeViewpagerAdapter);
         indicator.setViewPager(viewPager);
+
+        mPresenter.getMvpView().checkState();
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mPresenter.getMvpView().checkState();
+                current=position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @OnClick(R.id.welcome_button)
     public void skip(){
-        if(mPresenter.getDataManager().donePhoneConfirmation()==null){
-            mPresenter.getDataManager().setDonePhoneConfirmation("action");
+        if(current!=2){
+            current++;
+            viewPager.setCurrentItem(current,true);
+            mPresenter.getMvpView().checkState();
+        }else{
+            mPresenter.getMvpView().showLoading();
             onSMSLoginFlow();
+            current=0;
+
         }
+
     }
 
     @Override
     protected void onResume() {
+
         super.onResume();
     }
 
 
 
     public void onSMSLoginFlow() {
+        mPresenter.getMvpView().hideLoading();
         final Intent intent = new Intent(this, AccountKitActivity.class);
         AccountKitConfiguration.AccountKitConfigurationBuilder configurationBuilder =
                 new AccountKitConfiguration.AccountKitConfigurationBuilder(
@@ -170,6 +216,26 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
     public void openMainActivity() {
         Intent intent =new Intent(LoginActivity.this,MainActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void checkState() {
+
+        if(viewPager.getCurrentItem()==0){
+            title.setText("Привет! Вас приветствует Тарелка");
+            skip.setTextColor(getResources().getColor(R.color.carbon_grey_400));
+            skip.setText("Далее");
+        }
+        else if(viewPager.getCurrentItem()==1){
+            title.setText("Без диет и спортзала!");
+            skip.setTextColor(getResources().getColor(R.color.carbon_grey_400));
+            skip.setText("Далее");
+        }
+        else if(viewPager.getCurrentItem()==2){
+            skip.setTextColor(getResources().getColor(R.color.colorPrimary));
+            skip.setText("Понятно, приступаем");
+            title.setText("Приложение бесплатно!");
+        }
     }
 
 

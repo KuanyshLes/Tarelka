@@ -1,6 +1,5 @@
 package kz.production.kuanysh.tarelka.ui.activities.test;
 
-import com.androidnetworking.error.ANError;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -62,7 +61,6 @@ public class TestPresenter<V extends TestMvpView> extends BasePresenter<V>
                         public void accept(@NonNull Questions quiz)
                                 throws Exception {
 
-                            getMvpView().showMessage("Test received!");
 
                             getMvpView().getQuestions(quiz.getResult());
                             getMvpView().hideLoading();
@@ -75,15 +73,10 @@ public class TestPresenter<V extends TestMvpView> extends BasePresenter<V>
                                 return;
                             }
 
-                            getMvpView().showMessage("Test open failed!");
+                            getMvpView().showMessage("Что-то пошло не так!");
 
                             getMvpView().hideLoading();
 
-                            // handle the error here
-                            if (throwable instanceof ANError) {
-                                ANError anError = (ANError) throwable;
-                                handleApiError(anError);
-                            }
                         }
                     }));
         }else{
@@ -107,7 +100,6 @@ public class TestPresenter<V extends TestMvpView> extends BasePresenter<V>
                         public void accept(@NonNull QuizResult blogResponse)
                                 throws Exception {
 
-                            getMvpView().showMessage("Результаты теста отправлены!");
 
                             getMvpView().openProgressFragment();
                         }
@@ -124,11 +116,6 @@ public class TestPresenter<V extends TestMvpView> extends BasePresenter<V>
                             getMvpView().showMessage("Результаты теста не сохранены!");
 
 
-                            // handle the error here
-                            if (throwable instanceof ANError) {
-                                ANError anError = (ANError) throwable;
-                                handleApiError(anError);
-                            }
                         }
                     }));
         }else{

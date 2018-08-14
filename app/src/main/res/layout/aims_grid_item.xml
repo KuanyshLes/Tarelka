@@ -1,57 +1,61 @@
-<carbon.widget.RelativeLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="100dp"
-    android:layout_height="100dp"
-    android:gravity="center"
-    android:orientation="vertical"
-    app:carbon_maxHeight="100dp"
-    app:carbon_maxWidth="100dp"
-    android:animateLayoutChanges="true"
-    app:carbon_cornerRadius="11dp"
-    app:contentPadding="5dp">
-
-    <carbon.widget.ImageView
-        android:id="@+id/aims_grid_item_image"
+    android:layout_width="match_parent"
+    android:layout_marginBottom="7dp"
+    android:layout_height="85dp">
+    <carbon.widget.RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:adjustViewBounds="false"
-        android:scaleType="centerCrop"
-        android:background="@drawable/rabbitswall">
-
-    </carbon.widget.ImageView>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="vertical"
-        android:background="@color/colorBlackTrans"
-        android:weightSum="10">
-        <View
-            android:layout_weight="3.2"
+
+        android:animateLayoutChanges="true"
+        app:carbon_cornerRadius="11dp"
+        app:contentPadding="5dp">
+
+        <carbon.widget.ImageView
+            android:id="@+id/aims_grid_item_image"
             android:layout_width="match_parent"
-            android:layout_height="0dp">
+            android:layout_height="match_parent"
+            android:adjustViewBounds="false"
+            android:scaleType="centerCrop">
 
-        </View>
-        <ImageView
-            android:layout_weight="2.2"
-            android:id="@+id/aims_select"
-            android:layout_gravity="center"
+        </carbon.widget.ImageView>
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:visibility="gone"
-            app:srcCompat="@mipmap/choose" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/colorBlackTrans"
+            android:weightSum="10">
+            <View
+                android:layout_weight="3.2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
 
-        <TextView
-            android:layout_weight="4.6"
-            android:id="@+id/aims_name"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="bottom"
-            android:gravity="center"
-            android:text="Бежать"
-            android:textColor="@color/colorWhite"
-            android:textSize="13.5sp" />
-    </LinearLayout>
+            </View>
+            <ImageView
+                android:layout_weight="2.2"
+                android:id="@+id/aims_select"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:srcCompat="@mipmap/choose" />
+
+            <TextView
+                android:layout_weight="4.6"
+                android:id="@+id/aims_name"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="bottom"
+                android:gravity="center"
+                android:text="Бежать"
+                android:textColor="@color/colorWhite"
+                android:textSize="16sp" />
+        </LinearLayout>
 
 
-</carbon.widget.RelativeLayout>
+    </carbon.widget.RelativeLayout>
+
+</android.support.v7.widget.CardView>

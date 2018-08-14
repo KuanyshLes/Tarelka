@@ -31,7 +31,7 @@
                 <ImageView
                     android:id="@+id/profile_edit_back"
                     android:layout_weight="1"
-                    android:padding="8dp"
+                    android:padding="5dp"
                     android:layout_gravity="left"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -45,6 +45,7 @@
                 <TextView
                     android:id="@+id/profile_edit_save_new"
                     android:layout_width="0dp"
+                    android:textSize="16sp"
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
                     android:layout_weight="4"
@@ -128,9 +129,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="0.6"
             android:gravity="left|bottom"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:text="Ф.И.О" />
 
         <EditText
@@ -138,18 +139,18 @@
             android:id="@+id/profile_edit_name_new"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:gravity="left|top"
-            android:layout_marginTop="5dp"
+            android:gravity="center|left"
+            android:textColor="@color/carbon_black_87"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:text=""
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:inputType="text"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="0.6"
             android:gravity="left|center"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:text="Вес,кг" />
 
         <EditText
@@ -157,19 +158,19 @@
             android:id="@+id/profile_edit_weight_new"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:textSize="16sp"
-            android:layout_marginTop="5dp"
+            android:textSize="15sp"
+            android:gravity="center|left"
             android:scrollbars="vertical"
-            android:gravity="left|top"
+            android:textColor="@color/carbon_black_87"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:text=""
             android:inputType="number"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="0.6"
             android:gravity="left|center"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:text="Возраст" />
 
         <EditText
@@ -177,19 +178,18 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="left|top"
+            android:gravity="center|left"
             android:scrollbars="vertical"
             android:text=""
             android:inputType="number"
-            android:layout_marginTop="5dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="16sp" />
+            android:textSize="15sp" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="0.6"
             android:gravity="left|center"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:text="Рост,см" />
 
         <EditText
@@ -197,36 +197,35 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="left|top"
+            android:gravity="center|left"
             android:scrollbars="vertical"
             android:text=""
             android:inputType="number"
-            android:layout_marginTop="5dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="16sp" />
+            android:textSize="15sp" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/profile_edit_aim_new_card"
-            android:layout_weight="1.2"
+            android:layout_weight="1.6"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
+            android:layout_marginBottom="1dp"
             app:cardCornerRadius="3dp"
-            app:cardElevation="1dp"
-            app:contentPadding="2dp">
+            app:cardElevation="1dp">
 
             <TextView
                 android:id="@+id/profile_edit_aim_new"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center|left"
-                android:padding="5dp"
-                android:text="Stu Under Rise And Fall of A Lord of the rings seasons coming"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:text=""
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textSize="16.5sp" />
+                android:textColor="@color/carbon_grey_700"
+                android:textSize="16sp" />
 
         </android.support.v7.widget.CardView>
     </LinearLayout>

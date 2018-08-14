@@ -2,6 +2,7 @@ package kz.production.kuanysh.tarelka.ui.welcome;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Window;
@@ -13,6 +14,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import kz.production.kuanysh.tarelka.R;
+import kz.production.kuanysh.tarelka.data.DataManager;
 import kz.production.kuanysh.tarelka.ui.base.BaseActivity;
 import kz.production.kuanysh.tarelka.utils.AppConst;
 import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
@@ -23,11 +25,11 @@ import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
  */
 public class SplashScreenActivity extends BaseActivity implements SplashMvpView {
 
-
     @Inject
     SplashPresenter<SplashMvpView> mPresenter;
 
     private Intent intent;
+    public static final String KEY_LAUNCH="lauch";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,26 +43,26 @@ public class SplashScreenActivity extends BaseActivity implements SplashMvpView 
         getActivityComponent().inject(this);
         setUnBinder(ButterKnife.bind(this));
 
+        if(mPresenter.getDataManager().getAppLaunchCount()==0){
+            mPresenter.getDataManager().setAppLaunchCount(1);
+        }else{
+            mPresenter.getDataManager().setAppLaunchCount(mPresenter.getDataManager().getAppLaunchCount()+1);
+        }
 
 
-        ImageView splash=(ImageView)findViewById(R.id.imageView) ;
-
-        Thread timer=new Thread()
-        {
+        new Handler().postDelayed(new Runnable(){
+            @Override
             public void run() {
-                try {
-                    sleep(AppConst.SPLASH_DISPLAY_TIME);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                finally
-                {
-                    mPresenter.onAttach(SplashScreenActivity.this);
+                if (mPresenter.getDataManager().getCurrentUserLoggedInMode() == DataManager.LoggedInMode.LOGGED_IN_MODE_LOGGED_OUT.getType()) {
+                    intent =new Intent(SplashScreenActivity.this,LoginActivity.class);
+                    startActivity(intent);
+                } else {
+                    intent =new Intent(SplashScreenActivity.this,MainActivity.class);
+                    intent.putExtra(KEY_LAUNCH,KEY_LAUNCH);
+                    startActivity(intent);
                 }
             }
-        };
-        timer.start();
+        }, AppConst.SPLASH_DISPLAY_TIME);
 
     }
 
@@ -71,7 +73,7 @@ public class SplashScreenActivity extends BaseActivity implements SplashMvpView 
 
     @Override
     public void openMainActivity() {
-        intent =new Intent(SplashScreenActivity.this,MainActivity.class);
+        Intent intent =new Intent(SplashScreenActivity.this,MainActivity.class);
         startActivity(intent);
     }
 
@@ -79,5 +81,11 @@ public class SplashScreenActivity extends BaseActivity implements SplashMvpView 
     public void openLoginActivity() {
         intent =new Intent(SplashScreenActivity.this,LoginActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mPresenter.onDetach();
+        super.onDestroy();
     }
 }

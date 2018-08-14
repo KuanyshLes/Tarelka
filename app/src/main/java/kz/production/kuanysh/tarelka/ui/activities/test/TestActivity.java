@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -115,23 +116,24 @@ public class TestActivity extends BaseActivity implements TestMvpView {
         if(currentTestNumber<passedTestCount){
             currentTestNumber++;
             mPresenter.onNextClick(currentTestNumber);
-        }else {
-            if(answer1.isChecked() || answer2.isChecked() || answer3.isChecked() || answer4.isChecked() || answer5.isChecked()){
-                currentTestNumber++;
+            Log.d("myTest", " first if currentTestNumber"+currentTestNumber+" quizQuestion.size()"+quizQuestion.size());
 
+        }else {
+            if(answer1.isChecked() ||
+                    answer2.isChecked() || answer3.isChecked() ||
+                    answer4.isChecked() || answer5.isChecked()){
                // mPresenter.getMvpView().showMessage("Next if");
                 if(currentTestNumber!=quizQuestion.size()){
                     setDefault();
                     setChecked();
                     setClickable(true);
                     mPresenter.onNextClick(currentTestNumber);
-                }
-                else if(currentTestNumber==quizQuestion.size()){
-                    //mPresenter.getMvpView().showMessage("Next else if");
-                    mPresenter.onNextClick(currentTestNumber);
+                    currentTestNumber++;
+                    Log.d("myTest", " else  currentTestNumber"+currentTestNumber+" quizQuestion.size()"+quizQuestion.size());
+
                 }
             }else{
-                mPresenter.getMvpView().showMessage("Please select one item");
+                mPresenter.getMvpView().showMessage("Выберите один из ответов");
             }
         }
 
@@ -182,7 +184,7 @@ public class TestActivity extends BaseActivity implements TestMvpView {
             String extra=getIntent().getStringExtra(ProgressFragment.KEY_QUIZ_TEST);
             mPresenter.onViewPrepared(extra);
         }else {
-            mPresenter.getMvpView().showMessage("error");
+            mPresenter.getMvpView().showMessage("ошибка");
         }
         userAnswers=new ArrayList<>();
         correctAnswers=new ArrayList<>();
@@ -255,7 +257,6 @@ public class TestActivity extends BaseActivity implements TestMvpView {
                         break;
                 }
 
-                mPresenter.getMvpView().showMessage("True! Cool");
 
                 userAnswers.add(ANSWER);
                 correctAnswers.add(correctAnswerString);
@@ -306,18 +307,12 @@ public class TestActivity extends BaseActivity implements TestMvpView {
                         answer5.setChecked(true);
                         break;
                 }
-                mPresenter.getMvpView().showMessage("Not correct answer:(");
                 userAnswers.add(ANSWER);
                 correctAnswers.add(correctAnswerString);
             }
 
         }
 
-
-        int minus=quizQuestion.size()-currentTestNumber;
-        if(minus==1){
-            mPresenter.getMvpView().showSuccessDialog();
-        }
     }
 
     @Override
@@ -402,6 +397,12 @@ public class TestActivity extends BaseActivity implements TestMvpView {
 
     @Override
     public void updateTest(int position) {
+        if(position==quizQuestion.size()){
+            //mPresenter.getMvpView().showMessage("Next else if");
+            Log.d("myTest", "next: the last qst  currentTestNumber"+currentTestNumber+" quizQuestion.size()"+quizQuestion.size());
+            // mPresenter.onNextClick(currentTestNumber);
+            mPresenter.getMvpView().showSuccessDialog();
+        }
         if(quizQuestion.size()>position){
             prev.setEnabled(true);
             prev.setVisibility(View.VISIBLE);
@@ -409,11 +410,11 @@ public class TestActivity extends BaseActivity implements TestMvpView {
                 prev.setVisibility(View.INVISIBLE);
                 prev.setEnabled(false);
             }
-            if(position==quizQuestion.size()-1){
+          /*  if(position==quizQuestion.size()-1){
                 next.setVisibility(View.INVISIBLE);
                 next.setEnabled(false);
 
-            }
+            }*/
             //mPresenter.getMvpView().showMessage("update test position "+position);
             setDefault();
             setClickable(true);
@@ -515,6 +516,8 @@ public class TestActivity extends BaseActivity implements TestMvpView {
 
     @Override
     protected void onDestroy() {
+        mPresenter.sendResult(Integer.parseInt(getIntent().getStringExtra(ProgressFragment.KEY_QUIZ_TEST)),
+                currentTestNumber+1,correctAnswer);
         mPresenter.onDetach();
         super.onDestroy();
     }

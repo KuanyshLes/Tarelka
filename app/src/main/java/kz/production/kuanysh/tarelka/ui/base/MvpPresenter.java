@@ -16,7 +16,6 @@
 package kz.production.kuanysh.tarelka.ui.base;
 
 
-import com.androidnetworking.error.ANError;
 
 /**
  * Every presenter in the app must either implement this interface or extend BasePresenter
@@ -28,7 +27,7 @@ public interface MvpPresenter<V extends MvpView> {
 
     void onDetach();
 
-    void handleApiError(ANError error);
+    void handleApiError();
 
     void setUserAsLoggedOut();
 }

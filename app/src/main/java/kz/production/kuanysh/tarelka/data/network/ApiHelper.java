@@ -17,6 +17,7 @@ import kz.production.kuanysh.tarelka.data.network.model.progress.Progress;
 import kz.production.kuanysh.tarelka.data.network.model.quiz.Quiz;
 import kz.production.kuanysh.tarelka.data.network.model.quizquestions.Questions;
 import kz.production.kuanysh.tarelka.data.network.model.quizquestions.QuizResult;
+import kz.production.kuanysh.tarelka.data.network.model.rating.Rating;
 import kz.production.kuanysh.tarelka.data.network.model.sendmeal.SendMeal;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -118,11 +119,19 @@ public interface ApiHelper {
     Single<SendMeal> sendMeals(@FieldMap Map<String,String> meals);
 
     @FormUrlEncoded
+    @POST(ApiEndPoint.SEND_MEALS_FAVOURITE)
+    Single<SendMeal> sendMealsFavourite(@FieldMap Map<String,String> meals);
+
+    @FormUrlEncoded
     @POST(ApiEndPoint.GET_PROGRESS)
     Single<Progress> getProgress(@Field("token") String token);
 
     @GET(ApiEndPoint.ADMIN_INFO)
     Single<AdminInfo> getAdminInfo();
+
+    @FormUrlEncoded
+    @POST(ApiEndPoint.GET_RATING)
+    Single<Rating> getRating(@Field("token") String token);
 
 
 

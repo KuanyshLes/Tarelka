@@ -8,7 +8,7 @@
     app:contentPadding="5dp"
     app:cardElevation="3dp"
     app:cardCornerRadius="5dp"
-    android:layout_height="80dp">
+    android:layout_height="75dp">
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -19,24 +19,32 @@
             android:layout_width="33dp"
             android:layout_height="33dp"
             android:background="@drawable/shape_circle"
-            android:layout_margin="17dp"
+            android:layout_marginTop="17dp"
+            android:layout_marginBottom="17dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginLeft="17dp"
             android:gravity="center"
-            android:textSize="18sp"
-            android:textColor="@color/colorPrimary"
+            android:textSize="19sp"
+            android:textColor="#929bce"
             android:text="1"/>
 
         <TextView
             android:id="@+id/progress_text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="9"
-            android:paddingTop="5dp"
+            android:layout_weight="9.1"
             android:layout_marginTop="10dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="2dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:paddingTop="2dp"
+            android:layout_marginBottom="5dp"
             android:scrollbars="vertical"
-            android:text="Test1"
-            android:paddingLeft="10dp"
-            android:textColor="@color/colorBlack"
-            android:textSize="17sp" />
+            android:text=""
+            android:paddingLeft="5dp"
+            android:textColor="@color/carbon_black_87"
+            android:textSize="15sp" />
 
         <ImageView
             android:id="@+id/progress_accessibility"

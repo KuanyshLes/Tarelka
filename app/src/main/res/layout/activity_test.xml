@@ -12,7 +12,8 @@
         android:orientation="horizontal"
         android:layout_weight="2.5"
         android:layout_width="match_parent"
-        android:background="@color/colorBlackTransNew"
+        android:background="@drawable/es_shape"
+        android:backgroundTint="@color/colorBlackTransNew"
         android:layout_height="0dp"
         android:weightSum="25">
 
@@ -22,7 +23,6 @@
             android:layout_height="match_parent"
             android:layout_weight="3"
             android:gravity="bottom"
-            android:paddingBottom="5dp"
             android:paddingLeft="30dp"
             android:text="1"
             android:textColor="@color/colorWhite"
@@ -34,7 +34,6 @@
             android:layout_height="match_parent"
             android:layout_weight="5"
             android:gravity="left|bottom"
-            android:paddingBottom="5dp"
             android:paddingLeft="2dp"
             android:text="из 20"
             android:textColor="@color/colorWhite"
@@ -46,7 +45,6 @@
             android:layout_height="match_parent"
             android:layout_weight="17"
             android:gravity="right|bottom"
-            android:paddingBottom="5dp"
             android:paddingRight="15dp"
             android:text="Отменить"
             android:textColor="@color/colorWhite"
@@ -57,12 +55,12 @@
         android:id="@+id/test_question"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="0.8dp"
         android:layout_weight="3.2"
+        android:layout_marginTop="0.2dp"
         android:background="@color/colorBlackTransNew"
         android:gravity="center|left"
         android:paddingLeft="30dp"
-        android:text=""
+        android:text="qwerbfefwdfrdbewd"
         android:textColor="@color/colorWhite"
         android:textSize="17sp" />
 

@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,16 +26,12 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import kz.production.kuanysh.tarelka.R;
-import kz.production.kuanysh.tarelka.data.network.model.main.Result;
 import kz.production.kuanysh.tarelka.data.network.model.main.Task;
 import kz.production.kuanysh.tarelka.di.component.ActivityComponent;
-import kz.production.kuanysh.tarelka.push.AlarmReceiver;
-import kz.production.kuanysh.tarelka.ui.activities.mainactivity.MainActivity;
 import kz.production.kuanysh.tarelka.ui.base.BaseFragment;
-import kz.production.kuanysh.tarelka.utils.AppConst;
-import kz.production.kuanysh.tarelka.data.TarelkaDataFactory;
 import kz.production.kuanysh.tarelka.ui.activities.TaskDetailActivity;
 import kz.production.kuanysh.tarelka.ui.adapters.TaskAdapter;
+import me.toptas.fancyshowcase.FancyShowCaseView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,6 +43,9 @@ public class MainTaskFragment extends BaseFragment implements MainTaskMvpView{
 
     @BindView(R.id.task_recycler)
     RecyclerView tasks;
+
+    @BindView(R.id.task_view)
+    View task_view;
 
     private static List<Task> taskList;
 
@@ -95,13 +95,28 @@ public class MainTaskFragment extends BaseFragment implements MainTaskMvpView{
     @Override
     public void openTaskDetailActivity(int position) {
         intent =new Intent(getActivity(), TaskDetailActivity.class);
-        intent.putExtra(AppConst.TASK_KEY,TarelkaDataFactory.getFoodsList().get(position));
         getActivity().startActivity(intent);
+    }
+    public String getEmojiByUnicode(int unicode){
+       // String happy = "Feeling happy " + getEmojiByUnicode(unicode);
+        return new String(Character.toChars(unicode));
     }
 
 
     @Override
     protected void setUp(View view) {
+        if(mPresenter.getDataManager().getFancyEducation()!=null){
+            int unicode = 0x1F601;
+            new FancyShowCaseView.Builder(getActivity())
+                    .title(getResources().getString(R.string.fancy_education)+" "+getEmojiByUnicode(unicode))
+                    .titleStyle(R.style.MyTitleStyle, Gravity.CENTER)
+                    .focusOn(task_view)
+                    .build()
+                    .show();
+            mPresenter.getDataManager().setFancyEducation(null);
+        }
+
+
         taskList=new ArrayList<>();
         linearLayoutManager=new LinearLayoutManager(getActivity());
         tasks.setLayoutManager(linearLayoutManager);

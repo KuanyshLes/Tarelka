@@ -20,7 +20,7 @@
                 android:id="@+id/chat_mail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Задание"
+                android:text="База знаний"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/toolbarTitle"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -41,5 +41,26 @@
         android:layout_margin="10dp">
 
     </android.support.v7.widget.RecyclerView>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_below="@id/task_recycler"
+        android:layout_height="0dp"
+        android:weightSum="4">
+        <View
+            android:id="@+id/task_view"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+        <View
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+
+
+
+
+
+    </LinearLayout>
 
 </RelativeLayout>

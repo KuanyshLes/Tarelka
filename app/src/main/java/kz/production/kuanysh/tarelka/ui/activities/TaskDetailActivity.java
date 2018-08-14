@@ -2,6 +2,7 @@ package kz.production.kuanysh.tarelka.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -42,8 +43,6 @@ public class TaskDetailActivity extends BaseActivity implements TaskDetailMvpVie
     @BindView(R.id.taskDetailTitle)
     TextView title;
 
-    @BindView(R.id.tast_detail_progressbar)
-    ProgressBar progressBar;
 
 
     @BindView(R.id.task_webview)
@@ -55,10 +54,6 @@ public class TaskDetailActivity extends BaseActivity implements TaskDetailMvpVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         setContentView(R.layout.activity_task_detail);
 
 
@@ -66,23 +61,22 @@ public class TaskDetailActivity extends BaseActivity implements TaskDetailMvpVie
         setUnBinder(ButterKnife.bind(this));
         mPresenter.onAttach(TaskDetailActivity.this);
 
-        progressBar.setVisibility(View.VISIBLE);
         result=getIntent().getParcelableExtra(MainTaskFragment.KEY_MAIN_TASK);
         if(result!=null){
             title.setText(result.getTitle());
-            if(mPresenter.getMvpView().isNetworkConnected()){
+            Glide.with(TaskDetailActivity.this).load(AppConst.BASE_URL+result.getImage()).into(image);
+            /*if(mPresenter.getMvpView().isNetworkConnected()){
                 if (result.getImage().toString().startsWith("http")) {
                     Glide.with(TaskDetailActivity.this).load(result.getImage()).into(image);
-                    progressBar.setVisibility(View.GONE);
                 }else{
-                    Glide.with(TaskDetailActivity.this).load(AppConst.BASE_URL+result.getImage()).into(image);
-                    progressBar.setVisibility(View.GONE);
+
                 }
 
             }else{
-                progressBar.setVisibility(View.GONE);
                 mPresenter.getMvpView().onError("Нет подключения к интернету!");
-            }
+            }*/
+
+
             webView.getSettings().setJavaScriptEnabled(true);
             webView.loadDataWithBaseURL("", result.getText(), "text/html", "UTF-8", "");
 
@@ -90,6 +84,13 @@ public class TaskDetailActivity extends BaseActivity implements TaskDetailMvpVie
             Toast.makeText(this, "Couldn't get task detail:(", Toast.LENGTH_SHORT).show();
 
         }
+
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.getMvpView().showMessage("Image clicked!");
+            }
+        });
 
 
         }

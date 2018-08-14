@@ -27,7 +27,6 @@ import kz.production.kuanysh.tarelka.ui.fragments.ChatFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.MainTaskFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.ProfileFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.ProgressFragment;
-import kz.production.kuanysh.tarelka.ui.fragments.SendMessageFragment;
 import kz.production.kuanysh.tarelka.ui.fragments.social.SocialMediaDirectFragment;
 import kz.production.kuanysh.tarelka.ui.welcome.ChooseFoodActivity;
 import kz.production.kuanysh.tarelka.ui.welcome.CreateAimActivity;
@@ -51,8 +50,6 @@ public interface ActivityComponent {
     void inject(ChatFragment chatFragment);
 
     void inject(ProfileEditActivity profileEditActivity);
-
-    void inject(SendMessageFragment sendMessageFragment);
 
     void inject(ProgressFragment progressFragment);
 

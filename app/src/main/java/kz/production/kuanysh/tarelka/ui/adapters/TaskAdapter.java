@@ -64,17 +64,25 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter .ViewHolder> {
         CardView cardView = viewHolder.cardView;
 
         TextView name = (TextView) cardView.findViewById(R.id.task_name);
-        name.setText(task_list.get(i).getTitle().toString());
+        if(task_list.get(i).getTitle().toString()!=null){
+            name.setText(task_list.get(i).getTitle().toString());
+        }
 
         ImageView accessibility = (ImageView) cardView.findViewById(R.id.task_accessibility);
 
 
         if(task_list.get(i).getAccess()== AppConst.TASK_ACCESS_YES){
             if(task_list.get(i).getStatus()==AppConst.TASK_ACCESS_YES){
+                accessibility.setVisibility(View.VISIBLE);
+                name.setTextColor(context.getResources().getColor(R.color.carbon_grey_800));
+            }
+            if(task_list.get(i).getStatus()==AppConst.TASK_ACCESS_NO){
                 accessibility.setVisibility(View.INVISIBLE);
+                name.setTextColor(context.getResources().getColor(R.color.carbon_grey_800));
             }
         }else if(task_list.get(i).getAccess()== AppConst.TASK_ACCESS_NO){
             accessibility.setImageResource(R.mipmap.padlock);
+            name.setTextColor(context.getResources().getColor(R.color.carbon_grey_400));
         }
 
         cardView.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +93,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter .ViewHolder> {
                     intent.putExtra(MainTaskFragment.KEY_MAIN_TASK,task_list.get(i));
                     context.startActivity(intent);
                 }else if(task_list.get(i).getAccess()== AppConst.TASK_ACCESS_NO){
-                    Toast.makeText(context, "Задание недоступно!!!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Задание недоступно!    ", Toast.LENGTH_SHORT).show();
                 }
             }
         });

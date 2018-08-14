@@ -4,9 +4,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.androidnetworking.error.ANError;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import id.zelory.compressor.Compressor;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
@@ -69,14 +70,9 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
                                         return;
                                     }
 
-                                    getMvpView().showMessage("Message not sent!");
+                                    getMvpView().showMessage("Не удалось отправить сообщение!Проверьте свое подключение к интернету");
 
 
-                                    // handle the error here
-                                    if (throwable instanceof ANError) {
-                                        ANError anError = (ANError) throwable;
-                                        handleApiError(anError);
-                                    }
                                 }
                             }));
                 }else{
@@ -85,7 +81,7 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
 
             }
             else{
-                getMvpView().showMessage("Something went wrong!");
+                getMvpView().showMessage("Что-то пошло не так! Проверьте свое подключение к интернету");
             }
 
         }else{
@@ -105,11 +101,17 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
                 for(int i=0;i<uri.size();i++){
                     Log.i("PATH", uri.get(i).toString());
                     File file = new File(path.get(i));
-                    RequestBody fbody = RequestBody.create(MediaType.parse("image/*"), file);
-                    //RequestBody filePart= RequestBody.create(MediaType.parse(context.getContentResolver().getType(uri.get(i))), file);
-                    MultipartBody.Part part =
-                            MultipartBody.Part.createFormData("images["+i+"]", file.getName(), fbody);
-                    images.add(part);
+                    try {
+                        File compressedImageFile = new Compressor(context).compressToFile(file);
+                        RequestBody fbody = RequestBody.create(MediaType.parse("image/*"), compressedImageFile);
+                        //RequestBody filePart= RequestBody.create(MediaType.parse(context.getContentResolver().getType(uri.get(i))), file);
+                        MultipartBody.Part part =
+                                MultipartBody.Part.createFormData("images["+i+"]", file.getName(), fbody);
+                        images.add(part);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
 
 
@@ -126,12 +128,13 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
                             .observeOn(getSchedulerProvider().ui())
                             .subscribe(new Consumer<kz.production.kuanysh.tarelka.data.network.model.chat.receive.Result>() {
                                 @Override
-                                public void accept(@NonNull kz.production.kuanysh.tarelka.data.network.model.chat.receive.Result blogResponse)
+                                public void accept(@NonNull kz.production.kuanysh.tarelka.data.network.model.chat.receive.Result
+                                                           blogResponse)
                                         throws Exception {
 
                                     getMvpView().hideLoading();
-                                    getMvpView().showMessage("Отправьте комментарии к фото!");
-                                    onViewPrepared(currentPage);
+                                    //onViewPrepared(currentPage);
+                                    getMvpView().openCommentDialog();
                                 }
                             }, new Consumer<Throwable>() {
                                 @Override
@@ -141,20 +144,15 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
                                         return;
                                     }
                                     getMvpView().hideLoading();
-                                    getMvpView().showMessage("Couldn't send image!");
+                                    getMvpView().showMessage("Не удалось отправить изображение!");
                                     Log.d("myTag", "accept:error "+ throwable.getMessage());
 
 
-                                    // handle the error here
-                                    if (throwable instanceof ANError) {
-                                        ANError anError = (ANError) throwable;
-                                        handleApiError(anError);
-                                    }
                                 }
                             }));
                 }
                 else{
-                    getMvpView().showMessage("Something went wrong!");
+                    getMvpView().showMessage("Что-то пошло не так!Проверьте свое подключение к интернету");
                 }
 
             }
@@ -194,6 +192,8 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
                             @Override
                             public void accept(@NonNull ChatInfo blogResponse)
                                     throws Exception {
+                                getMvpView().hideKeyboard();
+
                                 getMvpView().updateChat(blogResponse.getResult().getChats(),blogResponse.getResult().getCountPages());
                                 //getMvpView().showMessage("Accessed");
                             }
@@ -205,17 +205,11 @@ public class ChatPresenter<V extends ChatMvpView> extends BasePresenter<V>
                                     return;
                                 }
 
-
-                                // handle the error here
-                                if (throwable instanceof ANError) {
-                                    ANError anError = (ANError) throwable;
-                                    handleApiError(anError);
-                                }
                             }
                         }));
             }
             else{
-                getMvpView().showMessage("Something went wrong!");
+                getMvpView().showMessage("Что-то пошло не так!Проверьте свое подключение к интернету");
             }
         }else {
             getMvpView().onError("Нет подключения к интернету!");

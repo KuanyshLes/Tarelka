@@ -2,6 +2,8 @@ package kz.production.kuanysh.tarelka.ui.welcome;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -32,8 +34,8 @@ public class CreateAimActivity extends BaseActivity implements CreateAimMvpView 
     @BindView(R.id.aims_next)
     ImageView next;
 
-    @BindView(R.id.gridview_aim)
-    GridView aims;
+    @BindView(R.id.recycler_aim)
+    RecyclerView aims;
 
     @BindView(R.id.back_aim_edit)
     ImageView back;
@@ -42,6 +44,8 @@ public class CreateAimActivity extends BaseActivity implements CreateAimMvpView 
     TextView text;
 
     List<Result> aimsList;
+
+    LinearLayoutManager linearLayoutManager;
 
     public static AimsAdapter aimsAdapter;
     private Intent intent;
@@ -66,9 +70,7 @@ public class CreateAimActivity extends BaseActivity implements CreateAimMvpView 
         if(getIntent().getStringExtra(ProfileEditActivity.KEY_EDIT_AIM)!=null){
             if(getIntent().getStringExtra(ProfileEditActivity.KEY_EDIT_AIM).equals(ProfileEditActivity.KEY_EDIT_AIM)){
                 text.setVisibility(View.INVISIBLE);
-                next.setVisibility(View.INVISIBLE);
                 text.setEnabled(false);
-                next.setEnabled(false);
             }
         }else{
             back.setVisibility(View.INVISIBLE);
@@ -80,25 +82,36 @@ public class CreateAimActivity extends BaseActivity implements CreateAimMvpView 
 
     @OnClick(R.id.back_aim_edit)
     public void goBack(){
-        if(!selectedPosition.isEmpty()){
-            mPresenter.onBackClick(aimsList.get(selectedPosition.peek()).getId());
-        }else{
-            mPresenter.getMvpView().openProfileEditActivity();
-        }
+        mPresenter.getMvpView().openProfileEditActivity();
     }
 
     @Override
     protected void setUp() {
         aimsList=new ArrayList<>();
         selectedPosition=new Stack<>();
+        linearLayoutManager=new LinearLayoutManager(this);
         aimsAdapter=new AimsAdapter(CreateAimActivity.this, aimsList,selectedPosition);
         aims.setAdapter(aimsAdapter);
+        aims.setLayoutManager(linearLayoutManager);
         mPresenter.onViewPrepared();
+        aimsAdapter.addManager(linearLayoutManager);
     }
 
     @OnClick(R.id.aims_next)
     public void goFoodChoose(){
-        mPresenter.getMvpView().check();
+        if(getIntent().getStringExtra(ProfileEditActivity.KEY_EDIT_AIM)!=null) {
+            if (getIntent().getStringExtra(ProfileEditActivity.KEY_EDIT_AIM).equals(ProfileEditActivity.KEY_EDIT_AIM)) {
+                if(!selectedPosition.isEmpty()){
+                    mPresenter.onBackClick(aimsList.get(selectedPosition.peek()).getId());
+                }else{
+                    mPresenter.getMvpView().showMessage("Выберите одну из целей");
+                  //  mPresenter.getMvpView().openProfileEditActivity();
+                }
+            }
+        }else{
+            mPresenter.getMvpView().check();
+        }
+
     }
 
 

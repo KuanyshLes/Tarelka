@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ import kz.production.kuanysh.tarelka.ui.activities.test.TestActivity;
 import kz.production.kuanysh.tarelka.helper.Listener;
 import kz.production.kuanysh.tarelka.ui.adapters.ProgressAdapter;
 import kz.production.kuanysh.tarelka.ui.base.BaseFragment;
+import me.toptas.fancyshowcase.FancyShowCaseView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,14 +49,15 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
     @Inject
     ProgressPresenter<ProgressMvpView> mPresenter;
 
-    @BindView(R.id.progress_spinner)
-    Spinner spinnerDate;
 
     @BindView(R.id.progress_progressbar)
     ProgressBar progressBar;
 
     @BindView(R.id.progress_recycler)
     RecyclerView progress_recycler;
+
+    @BindView(R.id.quiz_view)
+    View quiz_view;
 
     @Inject
     ProgressAdapter progressAdapter;
@@ -118,10 +121,10 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
 
     @Override
     public void updateProgress(Double progress) {
-        DecimalFormat df = new DecimalFormat("#.#");
-
-        amount.setText("Ваш прогресс: "+df.format(progress)+"%");
-        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", progressBar.getProgress(), progress.intValue());
+        DecimalFormat df = new DecimalFormat("#.##");
+        Double total=(progress*13)/100;
+        amount.setText("Ваш прогресс: "+(df.format(total))+"%");
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, progress.intValue());
         animation.setDuration(1000);
         animation.setInterpolator(new DecelerateInterpolator());
         animation.start();
@@ -129,32 +132,11 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
 
     @Override
     public void setProgressDates(List<Perc> list) {
-        //mPresenter.getMvpView().showMessage("setting dates");
-        listPerc.addAll(list);
-        if(listPerc!=null){
-            for(int i=0;i<listPerc.size();i++){
-                /*if(i==listPerc.size()-2){
-                    listStringDates.add("Вчера");
-                }else if(i==listPerc.size()-1){
-                    listStringDates.add("Сегодня");
-                }else{*/
-                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-                try {
-                    Date newDate1=format1.parse(listPerc.get(i).getDate().toString());
-
-                    SimpleDateFormat format2 = new SimpleDateFormat("dd MMM");
-                    String newDate2=format2.format(newDate1);
-                    listStringDates.add(newDate2);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_spinner_item, listStringDates);
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDate.setAdapter(categoryAdapter);
+        mPresenter.getMvpView().updateProgress(Double.valueOf(list.size()));
+    }
+    public String getEmojiByUnicode(int unicode){
+        // String happy = "Feeling happy " + getEmojiByUnicode(unicode);
+        return new String(Character.toChars(unicode));
     }
 
 
@@ -163,6 +145,19 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
         quizzesList=new ArrayList<>();
         listPerc=new ArrayList<>();
         listStringDates=new ArrayList<>();
+        if(mPresenter.getDataManager().getFancyQuiz()!=null){
+            int unicode = 0x1F601;
+            new FancyShowCaseView.Builder(getActivity())
+                    .title(getResources().getString(R.string.fancy_quiz)+" "+getEmojiByUnicode(unicode))
+                    .titleStyle(R.style.MyTitleStyle, Gravity.CENTER)
+                    .focusOn(quiz_view)
+                    .build()
+                    .show();
+            mPresenter.getDataManager().setFancyQuiz(null);
+        }
+
+
+
         linearLayoutManager=new LinearLayoutManager(getActivity());
         progress_recycler.setLayoutManager(linearLayoutManager);
         progress_recycler.setAdapter(progressAdapter);
@@ -178,18 +173,6 @@ public class ProgressFragment extends BaseFragment implements ProgressMvpView{
         mPresenter.onViewPrepared();
         mPresenter.onSendShowProgress();
 
-
-        spinnerDate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.getMvpView().updateProgress(listPerc.get(position).getPercentage());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                mPresenter.getMvpView().updateProgress(listPerc.get(listPerc.size()-1).getPercentage());
-            }
-        });
     }
 
     @Override

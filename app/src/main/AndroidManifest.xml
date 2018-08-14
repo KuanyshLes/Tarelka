@@ -14,6 +14,7 @@
     <application
         android:name=".Tarelka"
         android:allowBackup="true"
+        android:largeHeap="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -24,8 +25,8 @@
             android:label="@string/app_name"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan|adjustResize" />
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.welcome.SplashScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -35,6 +36,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".ui.welcome.CreateAimActivity"
@@ -42,17 +44,22 @@
             android:screenOrientation="portrait"
             android:theme="@style/Fullscreen">
 
+
         </activity>
         <activity
             android:name=".ui.welcome.ChooseFoodActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:theme="@style/Fullscreen"></activity>
+            android:theme="@style/Fullscreen">
+
+
+
+        </activity>
         <activity
             android:name=".ui.activities.TaskDetailActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:theme="@style/Fullscreen" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.activities.test.TestActivity"
             android:configChanges="orientation"
@@ -68,7 +75,9 @@
             android:theme="@style/AppLoginTheme"
             tools:replace="android:theme"></activity>
 
-        <receiver android:name=".push.AlarmReceiver" />
+        <receiver android:name=".push.MorningAlarmReceiver" />
+        <receiver android:name=".push.AfternoonAlarmReceiver" />
+        <receiver android:name=".push.EveningAlarmReceiver" />
 
         <service android:name=".services.MyFirebaseMessagingService">
             <intent-filter>

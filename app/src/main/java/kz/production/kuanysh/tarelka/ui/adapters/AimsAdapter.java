@@ -5,6 +5,10 @@ package kz.production.kuanysh.tarelka.ui.adapters;
  */
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +28,15 @@ import kz.production.kuanysh.tarelka.R;
 import kz.production.kuanysh.tarelka.data.network.model.aim.Result;
 import kz.production.kuanysh.tarelka.utils.AppConst;
 
-public class AimsAdapter extends BaseAdapter {
+public class AimsAdapter extends RecyclerView.Adapter<AimsAdapter.ViewHolder> {
 
     private final Context mContext;
     private List<Result> aimsList;
     private Stack<Integer> list;
+    private LinearLayoutManager mLinearLayoutManager;
+    private static int selected;
+    private static int beforeSelected=Integer.MAX_VALUE;
+    private static Boolean aBoolean;
 
 
     public AimsAdapter(Context context, List<Result> aimsList,Stack<Integer> list) {
@@ -37,74 +45,61 @@ public class AimsAdapter extends BaseAdapter {
         this.list=list;
     }
 
+    class ViewHolder extends RecyclerView.ViewHolder {
+         private CardView cardView;
+         public ViewHolder(CardView itemView) {
+             super(itemView);
+             cardView=itemView;
+         }
 
-    @Override
-    public int getCount() {
-        return aimsList.size();
     }
 
 
     @Override
-    public long getItemId(int position) {
-        return 0;
+    public AimsAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        CardView cv = (CardView) LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.aims_grid_item, viewGroup, false);
+        return new AimsAdapter.ViewHolder(cv);
     }
 
-
     @Override
-    public Object getItem(int position) {
-        return null;
-    }
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        CardView cardView = holder.cardView;
+
+        final TextView name=(TextView)cardView.findViewById(R.id.aims_name);
+        final ImageView image=(ImageView)cardView.findViewById(R.id.aims_grid_item_image);
+        final ImageView select=(ImageView)cardView.findViewById(R.id.aims_select);
 
 
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            final LayoutInflater layoutInflater = LayoutInflater.from(mContext);
-            convertView = layoutInflater.inflate(R.layout.aims_grid_item, null);
-        }
-
-        final TextView name=(TextView)convertView.findViewById(R.id.aims_name);
-        final ImageView image=(ImageView)convertView.findViewById(R.id.aims_grid_item_image);
-        final ImageView select=(ImageView)convertView.findViewById(R.id.aims_select);
-
-        final ViewHolder viewHolder = new ViewHolder(name,select);
-        convertView.setTag(viewHolder);
-
-        final ViewHolder getViewHolder = (ViewHolder)convertView.getTag();
-        viewHolder.name.setText(aimsList.get(position).getTitle());
+        name.setText(aimsList.get(position).getTitle());
 
         Glide.with(image.getContext())
                 .load(aimsList.get(position).getImage())
                 .into(image);
 
-        convertView.setOnClickListener(new View.OnClickListener() {
+        cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 list.push(position);
-                for(int i=0;i<aimsList.size();i++){
-                    View viewItem=parent.getChildAt(i);
-                    if(position!=i){
-                        setAnimation(viewItem,1);
-                    }else{
-                        setAnimation(viewItem,2);
+                selected=position;
 
-                    }
+                if(beforeSelected!=Integer.MAX_VALUE){
+                    setAnimation(mLinearLayoutManager.getChildAt(beforeSelected),1);
                 }
+
+                setAnimation(mLinearLayoutManager.getChildAt(position),2);
+                beforeSelected=position;
+
+
 
 
             }
         });
-
-        return convertView;
     }
-    private class ViewHolder {
-        private TextView name;
-        private ImageView select;
 
-        public ViewHolder(TextView name,ImageView select) {
-            this.name = name;
-            this.select = select;
-        }
+    @Override
+    public int getItemCount() {
+        return aimsList.size();
     }
     private void setAnimation(View viewItem,int code){
         TextView name= (TextView) viewItem.findViewById(R.id.aims_name);
@@ -133,6 +128,9 @@ public class AimsAdapter extends BaseAdapter {
     }
     public void addItems(List<Result> aims){
         aimsList.addAll(aims);
+    }
+    public void addManager(LinearLayoutManager linearLayoutManager){
+           mLinearLayoutManager=linearLayoutManager;
     }
 
 

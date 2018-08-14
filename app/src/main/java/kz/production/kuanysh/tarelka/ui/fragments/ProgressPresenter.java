@@ -3,7 +3,6 @@ package kz.production.kuanysh.tarelka.ui.fragments;
 import android.text.format.DateFormat;
 import android.util.Log;
 
-import com.androidnetworking.error.ANError;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,20 +64,15 @@ public class ProgressPresenter<V extends ProgressMvpView> extends BasePresenter<
                                     return;
                                 }
 
-                                getMvpView().showMessage("Quiz list open failed!");
+                                getMvpView().showMessage("Убедитесь что вы подключены к интернету!");
 
                                 getMvpView().hideLoading();
 
-                                // handle the error here
-                                if (throwable instanceof ANError) {
-                                    ANError anError = (ANError) throwable;
-                                    handleApiError(anError);
-                                }
                             }
                         }));
             }
             else{
-                getMvpView().showMessage("Something went wrong!");
+                getMvpView().showMessage("Что-то пошло не так!");
             }
         }else{
             getMvpView().onError("Нет подключения к интернету!");
@@ -115,14 +109,9 @@ public class ProgressPresenter<V extends ProgressMvpView> extends BasePresenter<
                             }
 
                             getMvpView().hideLoading();
-                            getMvpView().showMessage("Error occured");
+                         //   getMvpView().showMessage("Error occured");
                             Log.d("myTag", "accept: exception " + throwable.getMessage());
 
-                            // handle the error here
-                            if (throwable instanceof ANError) {
-                                ANError anError = (ANError) throwable;
-                                handleApiError(anError);
-                            }
                         }
                     }));
         }else{
